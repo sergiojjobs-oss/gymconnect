@@ -12,6 +12,8 @@ public interface EntrenadorRepository extends JpaRepository<Entrenador, Long> {
 
     Optional<Entrenador> findByUsuarioId(Long usuarioId);
 
+    Optional<Entrenador> findByUsuarioEmail(String email);
+
     @Query("SELECT e FROM Entrenador e WHERE " +
            "(:especialidad IS NULL OR :especialidad MEMBER OF e.especialidades) AND " +
            "(:precioMax IS NULL OR e.precioMensual <= :precioMax) AND " +

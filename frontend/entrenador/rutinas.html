@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rutinas — GymConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="../js/config.js"></script>
+  <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
+  <style>
+    .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
+    .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
+    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--muted-light); padding:0 0.75rem; margin:1rem 0 0.4rem; }
+    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--muted-light); transition:background var(--t),color var(--t); }
+    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text-light); }
+    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--green-l); font-weight:700; }
+    .main-content { padding:2.5rem; overflow-y:auto; }
+    .rutina-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem 1.5rem; margin-bottom:0.75rem; transition:border-color var(--t); }
+    .rutina-card:hover { border-color:var(--green); }
+    .badge { display:inline-block; font-size:0.7rem; font-weight:800; text-transform:uppercase; padding:0.2rem 0.6rem; border-radius:20px; background:rgba(22,163,74,0.12); color:var(--green); margin-right:0.4rem; }
+    .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; }
+    .modal-bg.open { display:flex; }
+    .modal-box { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:2rem; width:100%; max-width:520px; }
+    .form-group { margin-bottom:1.25rem; }
+    .form-group label { display:block; font-size:0.78rem; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:0.4rem; }
+    .form-group input, .form-group textarea, .form-group select { width:100%; padding:0.7rem 1rem; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:0.9rem; font-family:inherit; }
+    .form-group input:focus, .form-group textarea:focus { outline:none; border-color:var(--green); }
+    .form-group textarea { resize:vertical; min-height:100px; }
+    .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(20px); background:var(--text); color:var(--text-light); padding:.85rem 1.5rem; border-radius:8px; font-size:.88rem; font-weight:600; box-shadow:0 8px 32px rgba(0,0,0,.2); opacity:0; transition:opacity .3s,transform .3s; z-index:1100; border-left:4px solid var(--green); white-space:nowrap; pointer-events:none; }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    @media (max-width:768px) { .dashboard-layout { grid-template-columns:1fr; } .sidebar { display:none; } .main-content { padding:1.5rem; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+      <nav>
+        <a href="perfil.html">Mi perfil</a>
+        <button class="btn btn-outline" style="font-size:0.82rem;" onclick="logout()">Cerrar sesión</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <span class="sidebar-label">Panel</span>
+      <a href="perfil.html">👤 Mi perfil</a>
+      <a href="rutinas.html" class="active">📋 Rutinas</a>
+      <a href="../chat/index.html">💬 Mensajes</a>
+      <a href="clientes.html">👥 Clientes</a>
+      <a href="resultados.html">🏆 Resultados</a>
+      <span class="sidebar-label">Cuenta</span>
+      <a href="planes.html">💳 Mi suscripción</a>
+      <a href="ajustes.html">⚙️ Ajustes</a>
+      <a href="../login.html" onclick="localStorage.clear()">🚪 Salir</a>
+    </aside>
+
+    <main class="main-content">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h1 style="font-size:1.4rem;font-weight:900;text-transform:uppercase;">Rutinas</h1>
+          <p style="font-size:0.85rem;color:var(--muted);margin-top:0.25rem;">Crea y gestiona rutinas para compartir con tus clientes.</p>
+        </div>
+        <button class="btn btn-primary" onclick="abrirModal()">+ Nueva rutina</button>
+      </div>
+
+      <div id="lista"></div>
+      <div id="vacio" style="text-align:center;padding:4rem;color:var(--muted);">
+        <div style="font-size:3rem;margin-bottom:0.75rem;">📋</div>
+        <p>Aún no has creado ninguna rutina.<br>Pulsa <strong>+ Nueva rutina</strong> para empezar.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal nueva rutina -->
+  <div class="modal-bg" id="modal" onclick="cerrarSiFondo(event)">
+    <div class="modal-box">
+      <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:1.5rem;">Nueva rutina</h2>
+      <form onsubmit="crearRutina(event)">
+        <div class="form-group">
+          <label>Nombre de la rutina</label>
+          <input type="text" id="rNombre" placeholder="ej. Hipertrofia — Upper/Lower" required />
+        </div>
+        <div class="form-group">
+          <label>Nivel</label>
+          <select id="rNivel">
+            <option value="Principiante">Principiante</option>
+            <option value="Intermedio" selected>Intermedio</option>
+            <option value="Avanzado">Avanzado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Días por semana</label>
+          <input type="number" id="rDias" min="1" max="7" value="4" />
+        </div>
+        <div class="form-group">
+          <label>Descripción / ejercicios</label>
+          <textarea id="rDesc" placeholder="Describe los ejercicios, series y repeticiones…"></textarea>
+        </div>
+        <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:0.5rem;">
+          <button type="button" class="btn btn-outline" onclick="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Crear rutina</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    let rutinas = JSON.parse(localStorage.getItem('gc_rutinas') || '[]');
+
+    function logout() { localStorage.clear(); window.location.href = '../login.html'; }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function renderRutinas() {
+      const lista = document.getElementById('lista');
+      const vacio = document.getElementById('vacio');
+      vacio.style.display = rutinas.length === 0 ? 'block' : 'none';
+      lista.innerHTML = rutinas.map((r, i) => `
+        <div class="rutina-card">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+            <div>
+              <div style="font-weight:800;font-size:1rem;margin-bottom:0.4rem;">${r.nombre}</div>
+              <span class="badge">${r.nivel}</span>
+              <span class="badge" style="background:rgba(217,119,6,0.1);color:#d97706;">${r.dias} días/semana</span>
+            </div>
+            <button class="btn btn-outline" style="font-size:0.78rem;padding:0.35rem 0.8rem;color:#dc2626;border-color:#dc2626;" onclick="eliminar(${i})">Eliminar</button>
+          </div>
+          ${r.descripcion ? `<p style="font-size:0.85rem;color:var(--text-2);margin-top:0.75rem;line-height:1.7;white-space:pre-wrap;">${r.descripcion}</p>` : ''}
+        </div>`).join('');
+    }
+
+    function abrirModal() { document.getElementById('modal').classList.add('open'); }
+    function cerrarModal() { document.getElementById('modal').classList.remove('open'); }
+    function cerrarSiFondo(e) { if (e.target === document.getElementById('modal')) cerrarModal(); }
+
+    function crearRutina(e) {
+      e.preventDefault();
+      rutinas.unshift({
+        nombre: document.getElementById('rNombre').value.trim(),
+        nivel:  document.getElementById('rNivel').value,
+        dias:   document.getElementById('rDias').value,
+        descripcion: document.getElementById('rDesc').value.trim()
+      });
+      localStorage.setItem('gc_rutinas', JSON.stringify(rutinas));
+      cerrarModal();
+      renderRutinas();
+      showToast('✓ Rutina creada');
+      e.target.reset();
+    }
+
+    function eliminar(i) {
+      rutinas.splice(i, 1);
+      localStorage.setItem('gc_rutinas', JSON.stringify(rutinas));
+      renderRutinas();
+      showToast('Rutina eliminada');
+    }
+
+    renderRutinas();
+  </script>
+</body>
+</html>

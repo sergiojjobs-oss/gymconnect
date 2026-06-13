@@ -10,17 +10,41 @@
 </head>
 <body>
 
+  <style>
+    .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
+    .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
+    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--muted-light); padding:0 0.75rem; margin:1rem 0 0.4rem; }
+    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--muted-light); transition:background var(--t),color var(--t); }
+    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text-light); }
+    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--green-l); font-weight:700; }
+    .main-content { padding:2.5rem; overflow-y:auto; }
+    @media (max-width:768px) { .dashboard-layout { grid-template-columns:1fr; } .sidebar { display:none; } .main-content { padding:1.5rem; } }
+  </style>
+
   <header>
     <div class="container">
       <a href="../index.html" class="logo">Gym<span>Connect</span></a>
       <nav>
-        <a href="resultados.html">← Panel</a>
         <button class="btn btn-outline" style="font-size:0.82rem;" onclick="logout()">Cerrar sesión</button>
       </nav>
     </div>
   </header>
 
-  <main style="max-width:900px; margin:3rem auto; padding:0 1.5rem;">
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <span class="sidebar-label">Panel</span>
+      <a href="perfil.html" class="active">👤 Mi perfil</a>
+      <a href="rutinas.html">📋 Rutinas</a>
+      <a href="../chat/index.html">💬 Mensajes</a>
+      <a href="clientes.html">👥 Clientes</a>
+      <a href="resultados.html">🏆 Resultados</a>
+      <span class="sidebar-label">Cuenta</span>
+      <a href="planes.html">💳 Mi suscripción</a>
+      <a href="ajustes.html">⚙️ Ajustes</a>
+      <a href="../login.html" onclick="localStorage.clear()">🚪 Salir</a>
+    </aside>
+
+  <main class="main-content">
 
     <div id="cargando" style="text-align:center;padding:4rem;color:var(--muted);">Cargando perfil…</div>
 
@@ -66,28 +90,25 @@
     </div>
 
   </main>
+  </div><!-- end dashboard-layout -->
 
   <footer><p>&copy; 2026 <strong>GymConnect</strong></p></footer>
 
   <script>
     const token = localStorage.getItem('gc_token');
-    const user  = JSON.parse(localStorage.getItem('gc_user') || 'null');
 
     function logout() {
-      localStorage.removeItem('gc_token');
-      localStorage.removeItem('gc_user');
+      localStorage.clear();
       window.location.href = '../login.html';
     }
 
     async function cargarPerfil() {
       try {
-        // Buscar el entrenador por usuario logueado
-        const res = await fetch(`${API}/api/entrenadores`, {
+        const res = await fetch(`${API}/api/entrenadores/mi-perfil`, {
           headers: { Authorization: 'Bearer ' + token }
         });
-        const lista = await res.json();
-        // Encontrar el que corresponde al usuario logueado
-        const ent = lista.find(e => e.nombre === user.nombre) || lista[0];
+        if (!res.ok) throw new Error();
+        const ent = await res.json();
 
         document.getElementById('cargando').style.display = 'none';
         document.getElementById('contenido').style.display = 'block';
