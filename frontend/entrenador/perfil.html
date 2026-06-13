@@ -139,8 +139,13 @@
 
         const iniciales = (ent.nombre.charAt(0) + ent.apellido.charAt(0)).toUpperCase();
         const avatar = document.getElementById('avatar');
-        avatar.textContent = iniciales;
-        avatar.style.background = ent.avatarColor || 'linear-gradient(135deg,#16a34a,#84cc16)';
+        if (ent.fotoUrl) {
+          avatar.style.background = 'none';
+          avatar.innerHTML = `<img src="${ent.fotoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+        } else {
+          avatar.textContent = iniciales;
+          avatar.style.background = ent.avatarColor || 'linear-gradient(135deg,#16a34a,#84cc16)';
+        }
 
         document.getElementById('nombre').textContent = ent.nombre + ' ' + ent.apellido;
         document.getElementById('ciudad').textContent = 'Entrenador certificado · ' + (ent.ciudad || '—');
