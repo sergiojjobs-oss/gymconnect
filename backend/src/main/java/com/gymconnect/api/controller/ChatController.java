@@ -86,26 +86,27 @@ public class ChatController {
         List<Map<String, Object>> resultado = new ArrayList<>();
 
         if (yo.getRol() == Usuario.Rol.ENTRENADOR) {
-            // Entrenador: combinar relaciones activas + usuarios con mensajes
             Map<Long, Map<String, Object>> vistos = new LinkedHashMap<>();
 
-            // 1. Relaciones activas (clientes que han pagado)
+            // 1. Relaciones activas primero (clientes que han pagado)
             var relaciones = relacionRepo.findByEntrenadorUsuarioIdAndEstado(yo.getId(), Relacion.Estado.ACTIVA);
             for (Relacion r : relaciones) {
                 Long cid = r.getCliente().getId();
                 Map<String, Object> c = new HashMap<>();
                 c.put("id", cid);
                 c.put("nombre", r.getCliente().getNombre() + " " + r.getCliente().getApellido());
+                c.put("esPagador", true);
                 vistos.put(cid, c);
             }
 
-            // 2. Cualquier usuario que haya enviado/recibido mensajes
+            // 2. Resto de usuarios con mensajes (sin relación activa)
             for (Long interlocutorId : mensajeRepo.findInterlocutorIds(yo.getId())) {
                 if (!vistos.containsKey(interlocutorId)) {
                     usuarioRepo.findById(interlocutorId).ifPresent(u -> {
                         Map<String, Object> c = new HashMap<>();
                         c.put("id", u.getId());
                         c.put("nombre", u.getNombre() + " " + u.getApellido());
+                        c.put("esPagador", false);
                         vistos.put(u.getId(), c);
                     });
                 }

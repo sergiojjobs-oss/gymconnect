@@ -326,10 +326,13 @@ async function cargarContactos() { // returns Promise
     const div = document.createElement('div');
     div.className = 'chat-item';
     div.dataset.id = c.id;
+    const badge = c.esPagador
+      ? '<span style="font-size:0.65rem;font-weight:800;background:rgba(22,163,74,0.15);color:var(--green);padding:0.1rem 0.45rem;border-radius:99px;flex-shrink:0;">✓ Cliente</span>'
+      : '';
     div.innerHTML = `
       <div class="chat-avatar">${c.nombre.charAt(0)}</div>
       <div class="chat-item-info">
-        <div class="chat-item-name">${c.nombre}</div>
+        <div class="chat-item-name" style="display:flex;align-items:center;gap:0.4rem;">${c.nombre}${badge}</div>
         <div class="chat-item-preview">${c.ultimoMensaje || 'Sin mensajes'}</div>
       </div>
     `;
