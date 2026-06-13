@@ -32,7 +32,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     "https://gymconnect-six.vercel.app",
                     "https://frontend-murex-five-21.vercel.app",
                     "https://gymconnect-app.vercel.app",
-                    "https://gymconnect-app-mu.vercel.app"
+                    "https://gymconnect-app-mu.vercel.app",
+                    "https://gymconnect-navy.vercel.app"
                 )
                 .withSockJS();
     }
