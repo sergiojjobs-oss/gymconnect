@@ -64,6 +64,9 @@ public class SecurityConfig {
         List<String> origins = new java.util.ArrayList<>(Arrays.asList(allowedOrigins.split(",")));
         origins.add("https://splendid-daffodil-79285f.netlify.app");
         origins.add("https://gymconnect-six.vercel.app");
+        origins.add("https://frontend-murex-five-21.vercel.app");
+        origins.add("https://gymconnect-app.vercel.app");
+        origins.add("https://gymconnect-app-mu.vercel.app");
         origins.add("http://localhost:3000");
         origins.add("http://localhost:5500");
         origins.add("http://127.0.0.1:5500");
