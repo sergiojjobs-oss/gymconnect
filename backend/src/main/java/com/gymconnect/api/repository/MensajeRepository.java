@@ -17,4 +17,14 @@ public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
     List<Mensaje> findConversacion(Long a, Long b);
 
     long countByDestinatarioIdAndLeidoFalse(Long destinatarioId);
+
+    @Query("""
+        SELECT DISTINCT CASE
+            WHEN m.remitenteId = :userId THEN m.destinatarioId
+            ELSE m.remitenteId
+        END
+        FROM Mensaje m
+        WHERE m.remitenteId = :userId OR m.destinatarioId = :userId
+        """)
+    List<Long> findInterlocutorIds(Long userId);
 }

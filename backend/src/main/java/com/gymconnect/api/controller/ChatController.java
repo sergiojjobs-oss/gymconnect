@@ -5,6 +5,7 @@ import com.gymconnect.api.dto.MensajeInput;
 import com.gymconnect.api.model.Mensaje;
 import com.gymconnect.api.model.Relacion;
 import com.gymconnect.api.model.Usuario;
+import com.gymconnect.api.repository.MensajeRepository;
 import com.gymconnect.api.repository.RelacionRepository;
 import com.gymconnect.api.repository.UsuarioRepository;
 import com.gymconnect.api.service.ChatService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,7 @@ public class ChatController {
     private final ChatService chatService;
     private final UsuarioRepository usuarioRepo;
     private final RelacionRepository relacionRepo;
+    private final MensajeRepository mensajeRepo;
     private final SimpMessagingTemplate broker;
 
     // WebSocket: cliente envía a /app/chat.enviar
@@ -83,14 +86,32 @@ public class ChatController {
         List<Map<String, Object>> resultado = new ArrayList<>();
 
         if (yo.getRol() == Usuario.Rol.ENTRENADOR) {
-            // Entrenador: ver sus clientes activos
+            // Entrenador: combinar relaciones activas + usuarios con mensajes
+            Map<Long, Map<String, Object>> vistos = new LinkedHashMap<>();
+
+            // 1. Relaciones activas (clientes que han pagado)
             var relaciones = relacionRepo.findByEntrenadorUsuarioIdAndEstado(yo.getId(), Relacion.Estado.ACTIVA);
             for (Relacion r : relaciones) {
+                Long cid = r.getCliente().getId();
                 Map<String, Object> c = new HashMap<>();
-                c.put("id", r.getCliente().getId());
+                c.put("id", cid);
                 c.put("nombre", r.getCliente().getNombre() + " " + r.getCliente().getApellido());
-                resultado.add(c);
+                vistos.put(cid, c);
             }
+
+            // 2. Cualquier usuario que haya enviado/recibido mensajes
+            for (Long interlocutorId : mensajeRepo.findInterlocutorIds(yo.getId())) {
+                if (!vistos.containsKey(interlocutorId)) {
+                    usuarioRepo.findById(interlocutorId).ifPresent(u -> {
+                        Map<String, Object> c = new HashMap<>();
+                        c.put("id", u.getId());
+                        c.put("nombre", u.getNombre() + " " + u.getApellido());
+                        vistos.put(u.getId(), c);
+                    });
+                }
+            }
+
+            resultado.addAll(vistos.values());
         } else {
             // Cliente: ver sus entrenadores activos
             var relaciones = relacionRepo.findByClienteIdAndEstado(yo.getId(), Relacion.Estado.ACTIVA);

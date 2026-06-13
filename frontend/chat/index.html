@@ -317,7 +317,8 @@ async function cargarContactos() { // returns Promise
   lista.innerHTML = '';
 
   if (contactos.length === 0) {
-    lista.innerHTML = '<p style="padding:1rem;color:var(--muted);font-size:0.85rem;">Sin contactos aún. Contrata un entrenador para chatear.</p>';
+    const esEntrenador = user && user.rol === 'ENTRENADOR';
+    lista.innerHTML = `<p style="padding:1rem;color:var(--muted);font-size:0.85rem;">${esEntrenador ? 'Sin clientes aún. Cuando un cliente te contrate, aparecerá aquí.' : 'Sin contactos aún. Contrata un entrenador para chatear.'}</p>`;
     return;
   }
 
