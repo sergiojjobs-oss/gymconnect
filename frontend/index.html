@@ -8,112 +8,182 @@
 </head>
 <body>
 
-  <!-- NAV -->
   <header>
-    <a href="index.html" class="logo">Gym<span>Connect</span></a>
-    <button class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('open')" aria-label="Menú">
-      <span></span><span></span><span></span>
-    </button>
-    <nav>
-      <a href="entrenador/perfil.html">Para entrenadores</a>
-      <a href="cliente/buscar.html">Buscar entrenador</a>
-      <a href="login.html">Iniciar sesión</a>
-      <a href="registro.html" class="btn-nav">Empezar gratis</a>
-    </nav>
+    <div class="container">
+      <a href="index.html" class="logo">Gym<span>Connect</span></a>
+      <button class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <nav>
+        <a href="entrenador/perfil.html">Para entrenadores</a>
+        <a href="cliente/buscar.html">Buscar entrenador</a>
+        <a href="login.html">Iniciar sesión</a>
+        <a href="registro.html" class="nav-cta">Empezar gratis</a>
+      </nav>
+    </div>
   </header>
 
-  <!-- HERO -->
+  <!-- ===== HERO ===== -->
   <section class="hero">
-    <div class="hero-inner">
-      <div class="hero-text">
-        <span class="hero-badge">🏋️ Plataforma #1 de entrenamiento personal</span>
-        <h1>Tu entrenador personal,<br><em>siempre contigo</em></h1>
-        <p>Conecta con los mejores profesionales del fitness. Rutinas personalizadas, seguimiento diario y comunicación directa desde cualquier dispositivo.</p>
-        <div class="hero-cta">
-          <a href="registro.html" class="btn btn-primary">Empezar gratis</a>
-          <a href="cliente/buscar.html" class="btn btn-outline">Ver entrenadores</a>
-        </div>
-        <div class="hero-stats">
-          <div class="hero-stat"><strong>+500</strong><span>Entrenadores</span></div>
-          <div class="hero-stat"><strong>+3.000</strong><span>Clientes activos</span></div>
-          <div class="hero-stat"><strong>4.9 ★</strong><span>Valoración media</span></div>
-        </div>
-      </div>
+    <div class="container">
+      <div class="hero-grid">
 
-      <!-- Tarjeta de ejemplo -->
-      <div class="hero-visual">
-        <div class="trainer-card">
-          <div class="trainer-card-header">
-            <div class="avatar">CR</div>
-            <div>
-              <h3>Carlos Ruiz</h3>
-              <p>Entrenador certificado · Madrid</p>
+        <div class="hero-text">
+          <span class="badge">🏆 Plataforma #1 de entrenamiento personal</span>
+          <h1>Tu entrenador personal,<br><em>siempre contigo</em></h1>
+          <p>Conecta con los mejores profesionales del fitness. Rutinas personalizadas, seguimiento diario y comunicación directa desde cualquier dispositivo.</p>
+          <div class="hero-cta">
+            <a href="registro.html" class="btn btn-primary">Empezar gratis →</a>
+            <a href="cliente/buscar.html" class="btn btn-ghost">Ver entrenadores</a>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat"><strong>+500</strong><small>Entrenadores</small></div>
+            <div class="hero-stat"><strong>+3.000</strong><small>Clientes activos</small></div>
+            <div class="hero-stat"><strong>4.9 ★</strong><small>Valoración media</small></div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="glow-ring"></div>
+          <div class="profile-card">
+            <div class="profile-card-head">
+              <div class="avatar" style="width:56px;height:56px;font-size:1.1rem;">CR</div>
+              <div>
+                <h3>Carlos Ruiz</h3>
+                <p>Entrenador · Madrid</p>
+              </div>
+              <span class="profile-verified">✓ Pro</span>
+            </div>
+            <div class="stars">★★★★★ <span>4.9 (128 reseñas)</span></div>
+            <div class="profile-tags">
+              <span class="tag">Musculación</span>
+              <span class="tag">Pérdida de peso</span>
+              <span class="tag">Nutrición</span>
+            </div>
+            <div class="profile-price-row">
+              <div class="profile-price">39€ <small>/ mes</small></div>
+              <a href="registro.html" class="btn btn-primary" style="padding:0.6rem 1.3rem;font-size:0.83rem;">Contratar</a>
             </div>
           </div>
-          <div class="rating">★★★★★ <span style="color:var(--text-muted)">(128 reseñas)</span></div>
-          <div class="tags">
-            <span class="tag">Musculación</span>
-            <span class="tag">Pérdida de peso</span>
-            <span class="tag">Nutrición</span>
+          <div class="floating-chip chip-1">
+            <span class="chip-dot" style="background:#22c55e;"></span>24 clientes activos
           </div>
-          <div class="price-row">
-            <div class="price">39€ <small>/ mes</small></div>
-            <a href="cliente/buscar.html" class="btn btn-primary" style="padding:0.55rem 1.2rem; font-size:0.85rem;">Contratar</a>
+          <div class="floating-chip chip-2">
+            💬 Mensaje nuevo de Ana
           </div>
         </div>
+
       </div>
     </div>
   </section>
 
-  <!-- FUNCIONALIDADES -->
-  <section style="background: var(--dark-2);">
-    <div class="section-inner">
+  <!-- ===== FEATURES ===== -->
+  <section class="features-section">
+    <div class="container">
       <span class="section-label">¿Qué ofrecemos?</span>
-      <h2 class="section-title">Todo lo que necesitas en un solo lugar</h2>
+      <h2 class="section-title">Todo lo que necesitas<br>en un solo lugar</h2>
       <p class="section-sub">GymConnect centraliza la gestión entre entrenadores y clientes, ahorrando tiempo y mejorando los resultados.</p>
 
-      <div class="grid-3">
-        <div class="card">
-          <div class="card-icon">💬</div>
+      <div class="features-grid">
+        <div class="card feature-card">
+          <div class="feature-icon">💬</div>
           <h3>Chat en tiempo real</h3>
-          <p>Comunicación directa entre entrenador y cliente sin intermediarios, disponible 24/7.</p>
+          <p>Comunicación directa entre entrenador y cliente sin intermediarios, disponible 24/7 desde cualquier dispositivo.</p>
         </div>
-        <div class="card">
-          <div class="card-icon">📋</div>
+        <div class="card feature-card">
+          <div class="feature-icon">📋</div>
           <h3>Rutinas personalizadas</h3>
-          <p>El entrenador publica y gestiona las rutinas semanales adaptadas a cada cliente.</p>
+          <p>El entrenador publica y gestiona las rutinas semanales adaptadas a los objetivos de cada cliente.</p>
         </div>
-        <div class="card">
-          <div class="card-icon">💳</div>
+        <div class="card feature-card">
+          <div class="feature-icon">💳</div>
           <h3>Pago seguro con PayPal</h3>
-          <p>Contrata a tu entrenador de forma segura. Sin complicaciones, pago mensual automatizado.</p>
+          <p>Contrata a tu entrenador de forma segura. Pago mensual automatizado sin complicaciones.</p>
         </div>
-        <div class="card">
-          <div class="card-icon">📊</div>
+        <div class="card feature-card">
+          <div class="feature-icon">📊</div>
           <h3>Seguimiento de progreso</h3>
-          <p>Registra métricas, fotos y avances para que el entrenador pueda ajustar tu plan.</p>
+          <p>Registra métricas y avances para que el entrenador pueda ajustar tu plan en tiempo real.</p>
         </div>
-        <div class="card">
-          <div class="card-icon">🔍</div>
+        <div class="card feature-card">
+          <div class="feature-icon">🔍</div>
           <h3>Búsqueda inteligente</h3>
-          <p>Filtra entrenadores por especialidad, precio, valoraciones y disponibilidad.</p>
+          <p>Filtra entrenadores por especialidad, precio, valoraciones y disponibilidad horaria.</p>
         </div>
-        <div class="card">
-          <div class="card-icon">📱</div>
-          <h3>Funciona en todos los dispositivos</h3>
-          <p>Accede desde el móvil, tablet o PC sin instalar nada. Siempre sincronizado.</p>
+        <div class="card feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Multidispositivo</h3>
+          <p>Accede desde el móvil, tablet o PC sin instalar nada. Todo sincronizado en tiempo real.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA FINAL -->
-  <section>
-    <div class="section-inner" style="text-align:center;">
-      <span class="section-label">Únete hoy</span>
-      <h2 class="section-title">¿Listo para transformar tu vida?</h2>
-      <p class="section-sub" style="margin:0 auto 2rem;">Más de 3.000 personas ya entrenan con sus profesionales en GymConnect. Empieza gratis hoy.</p>
-      <a href="registro.html" class="btn btn-primary">Crear mi cuenta gratuita</a>
+  <!-- ===== TRAINERS ===== -->
+  <section class="trainers-section">
+    <div class="container">
+      <span class="section-label">Entrenadores destacados</span>
+      <h2 class="section-title">Profesionales verificados</h2>
+      <p class="section-sub">Cada entrenador pasa por un proceso de verificación. Solo los mejores están en GymConnect.</p>
+
+      <div class="trainers-grid">
+        <div class="card trainer-card">
+          <div class="trainer-card-head">
+            <div class="avatar" style="width:50px;height:50px;font-size:0.95rem;">CR</div>
+            <div><h3>Carlos Ruiz</h3><p>Madrid</p></div>
+          </div>
+          <div class="stars">★★★★★ <span>(128)</span></div>
+          <div class="trainer-tags">
+            <span class="tag">Musculación</span><span class="tag">Nutrición</span>
+          </div>
+          <div class="trainer-bottom">
+            <div class="trainer-price">39€ <small>/mes</small></div>
+            <a href="login.html" class="btn btn-primary" style="padding:0.55rem 1.1rem;font-size:0.82rem;">Ver perfil</a>
+          </div>
+        </div>
+
+        <div class="card trainer-card">
+          <div class="trainer-card-head">
+            <div class="avatar" style="width:50px;height:50px;font-size:0.95rem;background:linear-gradient(135deg,#7c3aed,#4facfe);">AM</div>
+            <div><h3>Ana Martínez</h3><p>Barcelona</p></div>
+          </div>
+          <div class="stars">★★★★★ <span>(94)</span></div>
+          <div class="trainer-tags">
+            <span class="tag">Yoga</span><span class="tag">Pérdida de peso</span>
+          </div>
+          <div class="trainer-bottom">
+            <div class="trainer-price">29€ <small>/mes</small></div>
+            <a href="login.html" class="btn btn-primary" style="padding:0.55rem 1.1rem;font-size:0.82rem;">Ver perfil</a>
+          </div>
+        </div>
+
+        <div class="card trainer-card">
+          <div class="trainer-card-head">
+            <div class="avatar" style="width:50px;height:50px;font-size:0.95rem;background:linear-gradient(135deg,#059669,#34d399);">JL</div>
+            <div><h3>Jorge López</h3><p>Sevilla</p></div>
+          </div>
+          <div class="stars">★★★★☆ <span>(61)</span></div>
+          <div class="trainer-tags">
+            <span class="tag">Crossfit</span><span class="tag">Fuerza</span>
+          </div>
+          <div class="trainer-bottom">
+            <div class="trainer-price">49€ <small>/mes</small></div>
+            <a href="login.html" class="btn btn-primary" style="padding:0.55rem 1.1rem;font-size:0.82rem;">Ver perfil</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-inner">
+        <span class="badge">🚀 Únete hoy</span>
+        <h2 class="section-title">¿Listo para transformar<br>tu vida?</h2>
+        <p>Más de 3.000 personas ya entrenan con sus profesionales en GymConnect. Empieza gratis hoy mismo.</p>
+        <a href="registro.html" class="btn btn-primary" style="font-size:1rem;padding:1rem 2.5rem;">Crear mi cuenta gratuita →</a>
+      </div>
     </div>
   </section>
 
