@@ -396,6 +396,10 @@ function enviar() {
     body: JSON.stringify({ destinatarioId: contactoActivo.id, contenido: texto })
   });
 
+  // Mostrar inmediatamente sin esperar el eco del servidor
+  mostrarMensaje({ contenido: texto, remitenteId: user.id, fechaEnvio: new Date().toISOString() }, true);
+  scrollAbajo();
+
   input.value = '';
   input.style.height = 'auto';
 }
