@@ -511,7 +511,7 @@
         });
         if (!res.ok) return;
         const contactos = await res.json();
-        const n = contactos.length;
+        const n = contactos.filter(c => c.esPagador).length;
         const max = 3;
         const pct = Math.min(Math.round((n / max) * 100), 100);
         document.getElementById('barLabel').textContent = `${n} de ${max} clientes usados`;
