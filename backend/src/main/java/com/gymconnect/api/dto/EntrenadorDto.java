@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 public class EntrenadorDto {
     private Long id;
+    private Long usuarioId;
     private String nombre;
     private String apellido;
     private String ciudad;
@@ -25,6 +26,7 @@ public class EntrenadorDto {
     public static EntrenadorDto from(Entrenador e) {
         EntrenadorDto dto = new EntrenadorDto();
         dto.setId(e.getId());
+        dto.setUsuarioId(e.getUsuario().getId());
         dto.setNombre(e.getUsuario().getNombre());
         dto.setApellido(e.getUsuario().getApellido());
         dto.setCiudad(e.getCiudad());

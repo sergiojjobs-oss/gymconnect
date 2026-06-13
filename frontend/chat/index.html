@@ -300,7 +300,7 @@ function conectarWS() {
 }
 
 // ── Cargar lista de contactos ───────────────────────────────────
-async function cargarContactos() {
+async function cargarContactos() { // returns Promise
   let contactos = [];
   try {
     const res = await fetch(`${API}/api/chat/contactos`, {
@@ -464,7 +464,33 @@ function logout() {
 }
 
 // ── Iniciar ────────────────────────────────────────────────────
-cargarContactos();
+cargarContactos().then(() => {
+  // Si viene ?userId=X desde el perfil del entrenador, abrir ese chat
+  const params = new URLSearchParams(window.location.search);
+  const uid = params.get('userId');
+  const nombre = params.get('nombre');
+  if (uid && nombre) {
+    // Añadir a la lista si no está ya
+    const lista = document.getElementById('chatList');
+    let item = lista.querySelector(`[data-id="${uid}"]`);
+    if (!item) {
+      const div = document.createElement('div');
+      div.className = 'chat-item';
+      div.dataset.id = uid;
+      div.innerHTML = `
+        <div class="chat-avatar">${decodeURIComponent(nombre).charAt(0)}</div>
+        <div class="chat-item-info">
+          <div class="chat-item-name">${decodeURIComponent(nombre)}</div>
+          <div class="chat-item-preview">Sin mensajes aún</div>
+        </div>`;
+      div.addEventListener('click', () => abrirChat({ id: uid, nombre: decodeURIComponent(nombre) }));
+      lista.innerHTML = '';
+      lista.appendChild(div);
+      item = div;
+    }
+    abrirChat({ id: uid, nombre: decodeURIComponent(nombre) });
+  }
+});
 conectarWS();
 </script>
 </body>

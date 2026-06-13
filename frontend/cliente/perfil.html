@@ -115,7 +115,7 @@
         <div class="profile-hero-cta">
           <div class="profile-price-big" id="heroPrecio"></div>
           <button class="btn btn-primary" style="font-size:0.9rem;" onclick="abrirModalContratacion()">Contratar ahora →</button>
-          <button class="btn btn-light" onclick="window.location.href='../chat/index.html'">Enviar mensaje</button>
+          <button class="btn btn-light" onclick="irAlChat()">Enviar mensaje</button>
         </div>
       </div>
     </div>
@@ -157,7 +157,7 @@
             <div style="font-size:2rem;font-weight:900;color:var(--text);margin-bottom:0.25rem;" id="sidebarPrecio"></div>
             <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.25rem;">Pago mensual · Cancela cuando quieras</p>
             <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:0.75rem;" onclick="abrirModalContratacion()">Contratar ahora →</button>
-            <button class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;" onclick="window.location.href='../chat/index.html'">💬 Enviar mensaje</button>
+            <button class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;" onclick="irAlChat()">💬 Enviar mensaje</button>
             <div style="margin-top:1.25rem;font-size:0.78rem;color:var(--muted);text-align:center;">
               🔒 Pago seguro con PayPal<br>✅ Sin permanencia
             </div>
@@ -198,7 +198,7 @@
       <div style="font-size:3rem;margin-bottom:1rem;">🎉</div>
       <h2>¡Contratación completada!</h2>
       <p style="font-size:0.88rem;color:var(--muted);margin:0.75rem 0 2rem;">Ya puedes chatear con tu entrenador y empezar tu plan hoy mismo.</p>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="window.location.href='../chat/index.html'">💬 Ir al chat →</button>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="irAlChat()">💬 Ir al chat →</button>
     </div>
   </div>
 
@@ -213,6 +213,11 @@
     const token = localStorage.getItem('gc_token');
     let e = null;
     let hirePaypalRendered = false;
+
+    function irAlChat() {
+      if (!e) return;
+      window.location.href = `../chat/index.html?userId=${e.usuarioId}&nombre=${encodeURIComponent(e.nombre + ' ' + e.apellido)}`;
+    }
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -276,7 +281,7 @@
       document.getElementById('bigAvatar').style.background = color;
       document.getElementById('bigAvatar').textContent = iniciales;
       document.getElementById('heroNombre').textContent = e.nombre + ' ' + e.apellido;
-      document.getElementById('heroCiudad').textContent = '📍 ' + e.ciudad + ' · ' + (e.pro ? '✓ Entrenador Pro' : 'Entrenador verificado');
+      document.getElementById('heroCiudad').textContent = (e.ciudad ? '📍 ' + e.ciudad + ' · ' : '') + (e.pro ? '✓ Entrenador Pro' : 'Entrenador verificado');
       document.getElementById('heroStars').innerHTML = '★'.repeat(Math.floor(e.rating)) + ` <span>${e.rating} · ${e.totalResenas} reseñas</span>`;
       document.getElementById('heroPrecio').innerHTML = e.precioMensual + '€ <small>/mes</small>';
       document.getElementById('sidebarPrecio').innerHTML = e.precioMensual + '€ <small style="font-size:.75rem;color:var(--muted);font-weight:400">/mes</small>';
