@@ -259,7 +259,6 @@
     async function procesarFoto(input) {
       const file = input.files[0];
       if (!file) return;
-      const label = input.closest('label');
       const label = document.getElementById('fotoLabel');
       if (label) label.childNodes[0].textContent = '⏳ Subiendo… ';
       try {
