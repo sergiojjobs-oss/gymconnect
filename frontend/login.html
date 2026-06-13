@@ -3,73 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Iniciar sesión - GymConnect</title>
+  <title>Iniciar sesión — GymConnect</title>
   <link rel="stylesheet" href="css/main.css" />
-  <style>
-    .login-box {
-      max-width: 400px;
-      margin: 4rem auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-    }
-    .login-box h2 {
-      margin-bottom: 1.5rem;
-      color: #1a1a2e;
-    }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 0.4rem;
-      font-size: 0.9rem;
-      color: #444;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 0.6rem 0.8rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-    .form-group input:focus {
-      outline: none;
-      border-color: #e94560;
-    }
-    .login-box .btn {
-      width: 100%;
-      text-align: center;
-      margin-top: 0.5rem;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 0.8rem;
-    }
-    .login-box p {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #555;
-    }
-    .login-box p a {
-      color: #e94560;
-      text-decoration: none;
-    }
-  </style>
 </head>
 <body>
+
   <header>
-    <h1>GymConnect</h1>
+    <a href="index.html" class="logo">Gym<span>Connect</span></a>
     <nav>
-      <a href="index.html">Inicio</a>
+      <a href="registro.html">¿No tienes cuenta? <strong>Regístrate</strong></a>
     </nav>
   </header>
 
-  <main>
-    <div class="login-box">
-      <h2>Iniciar sesión</h2>
+  <main style="min-height: calc(100vh - 64px); display:flex; align-items:center; padding: 2rem;">
+    <div class="form-box">
+      <h2>Bienvenido de nuevo</h2>
+      <p class="sub">Inicia sesión para continuar en GymConnect</p>
+
       <form id="loginForm">
         <div class="form-group">
           <label for="email">Correo electrónico</label>
@@ -79,15 +29,23 @@
           <label for="password">Contraseña</label>
           <input type="password" id="password" placeholder="••••••••" required />
         </div>
-        <button type="submit" class="btn">Entrar</button>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:0.5rem;">
+          Iniciar sesión
+        </button>
       </form>
-      <p>¿No tienes cuenta? <a href="registro.html">Regístrate</a></p>
+
+      <div class="divider">o continúa con</div>
+
+      <button class="btn btn-outline" style="width:100%; justify-content:center;">
+        <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" width="18" alt="PayPal" />
+        Entrar con PayPal
+      </button>
+
+      <p class="form-footer">
+        ¿No tienes cuenta? <a href="registro.html">Regístrate gratis</a>
+      </p>
     </div>
   </main>
-
-  <footer>
-    <p>&copy; 2026 GymConnect</p>
-  </footer>
 
   <script src="js/login.js"></script>
 </body>

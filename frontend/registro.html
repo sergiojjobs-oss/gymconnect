@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crear cuenta — GymConnect</title>
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">Gym<span>Connect</span></a>
+    <nav>
+      <a href="login.html">¿Ya tienes cuenta? <strong>Inicia sesión</strong></a>
+    </nav>
+  </header>
+
+  <main style="min-height: calc(100vh - 64px); display:flex; align-items:center; padding: 2rem;">
+    <div class="form-box" style="max-width:480px;">
+      <h2>Crear cuenta</h2>
+      <p class="sub">Elige cómo quieres usar GymConnect</p>
+
+      <!-- Selector de rol -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1.5rem;">
+        <label class="role-option" id="rol-cliente">
+          <input type="radio" name="rol" value="cliente" checked hidden />
+          <div class="role-card active">
+            <span style="font-size:1.5rem;">🏃</span>
+            <strong>Soy cliente</strong>
+            <small>Busco un entrenador</small>
+          </div>
+        </label>
+        <label class="role-option" id="rol-entrenador">
+          <input type="radio" name="rol" value="entrenador" hidden />
+          <div class="role-card">
+            <span style="font-size:1.5rem;">💪</span>
+            <strong>Soy entrenador</strong>
+            <small>Quiero ofrecer mis servicios</small>
+          </div>
+        </label>
+      </div>
+
+      <form id="registroForm">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" placeholder="Ana" required />
+          </div>
+          <div class="form-group">
+            <label for="apellido">Apellido</label>
+            <input type="text" id="apellido" placeholder="García" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" placeholder="tu@email.com" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" placeholder="Mínimo 8 caracteres" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:0.5rem;">
+          Crear mi cuenta gratuita
+        </button>
+      </form>
+
+      <p class="form-footer" style="margin-top:1rem;">
+        ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
+      </p>
+    </div>
+  </main>
+
+  <style>
+    .role-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 1rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      text-align: center;
+    }
+    .role-card strong { font-size: 0.88rem; }
+    .role-card small  { font-size: 0.75rem; color: var(--text-muted); }
+    .role-card.active {
+      border-color: var(--primary);
+      background: rgba(233,69,96,0.08);
+    }
+  </style>
+
+  <script>
+    document.querySelectorAll('input[name="rol"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
+        radio.closest('label').querySelector('.role-card').classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
