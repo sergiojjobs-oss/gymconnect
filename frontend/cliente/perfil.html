@@ -154,6 +154,9 @@
             <ul id="servicios" style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;"></ul>
           </div>
 
+          <!-- Instagram -->
+          <div class="info-card" id="instagramCard" style="display:none;"></div>
+
           <!-- Reseñas -->
           <div class="info-card">
             <h2 id="reviewsTitle"></h2>
@@ -344,6 +347,28 @@
         `<li style="display:flex;align-items:flex-start;gap:.6rem;font-size:.88rem;color:var(--text-2);">
            <span style="color:var(--green);font-weight:700;margin-top:1px;">✓</span>${s}
          </li>`).join('') || '<li style="font-size:.83rem;color:var(--muted);">Sin servicios especificados aún.</li>';
+
+      // Instagram destacado
+      const igCard = document.getElementById('instagramCard');
+      if (igCard) {
+        if (e.instagram) {
+          igCard.style.display = 'block';
+          igCard.innerHTML = `
+            <div style="display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;">
+              <div style="font-size:2.5rem;">📸</div>
+              <div style="flex:1;">
+                <div style="font-weight:900;font-size:1rem;margin-bottom:0.2rem;">Fotos y vídeos de resultados</div>
+                <div style="font-size:0.85rem;color:var(--muted);">Mira el trabajo real de ${e.nombre} en Instagram</div>
+              </div>
+              <a href="https://instagram.com/${e.instagram}" target="_blank"
+                style="display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border-radius:10px;padding:0.65rem 1.25rem;font-weight:800;font-size:0.88rem;text-decoration:none;">
+                Ver @${e.instagram} →
+              </a>
+            </div>`;
+        } else {
+          igCard.style.display = 'none';
+        }
+      }
 
       document.getElementById('reviewsTitle').textContent = 'Reseñas (' + e.totalResenas + ')';
       document.getElementById('reviews').innerHTML =
