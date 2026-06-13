@@ -31,7 +31,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     "https://splendid-daffodil-79285f.netlify.app",
                     "https://gymconnect-six.vercel.app",
                     "https://frontend-murex-five-21.vercel.app",
-                    "https://gymconnect-app.vercel.app"
+                    "https://gymconnect-app.vercel.app",
+                    "https://gymconnect-app-mu.vercel.app"
                 )
                 .withSockJS();
     }
