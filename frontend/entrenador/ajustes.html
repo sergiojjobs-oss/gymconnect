@@ -106,25 +106,65 @@
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
           <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Especialidades</h3>
-
           <div class="form-group">
             <label>Especialidades (etiquetas)</label>
             <div class="tag-input-wrap" id="especWrap" onclick="document.getElementById('especInput').focus()">
-              <input type="text" id="especInput" placeholder="Escribe y pulsa Enter…" onkeydown="addTag(event,'espec')" />
+              <input type="text" id="especInput" placeholder="ej. Pérdida de grasa, Fuerza…" onkeydown="addTag(event,'espec')" />
             </div>
-            <p class="hint">Pulsa Enter o coma para añadir. Haz clic en × para eliminar.</p>
+            <p class="hint">Pulsa Enter o coma para añadir.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
+          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Certificaciones</h3>
+          <div class="form-group">
+            <label>Títulos y certificados</label>
+            <div class="tag-input-wrap" id="certWrap" onclick="document.getElementById('certInput').focus()">
+              <input type="text" id="certInput" placeholder="ej. NSCA-CPT, Máster Nutrición…" onkeydown="addTag(event,'cert')" />
+            </div>
+            <p class="hint">Pulsa Enter o coma para añadir.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
+          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Idiomas</h3>
+          <div class="form-group">
+            <label>Idiomas en los que puedes entrenar</label>
+            <div class="tag-input-wrap" id="idiomasWrap" onclick="document.getElementById('idiomasInput').focus()">
+              <input type="text" id="idiomasInput" placeholder="ej. Español, Inglés…" onkeydown="addTag(event,'idiomas')" />
+            </div>
+            <p class="hint">Pulsa Enter o coma para añadir.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
+          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Servicios incluidos</h3>
+          <div class="form-group">
+            <label>¿Qué incluye tu plan mensual?</label>
+            <div class="tag-input-wrap" id="servWrap" onclick="document.getElementById('servInput').focus()">
+              <input type="text" id="servInput" placeholder="ej. Rutina personalizada, Dieta…" onkeydown="addTag(event,'serv')" />
+            </div>
+            <p class="hint">Pulsa Enter o coma para añadir.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
+          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Metodología</h3>
+          <div class="form-group">
+            <label>¿Cómo trabajas con tus clientes?</label>
+            <textarea id="metodologia" placeholder="Describe tu metodología, cómo haces el seguimiento, qué diferencia tu enfoque…"></textarea>
           </div>
         </div>
 
         <div class="card" style="margin-bottom:2rem;padding:1.5rem;">
-          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Servicios incluidos</h3>
-
+          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Redes sociales</h3>
           <div class="form-group">
-            <label>Servicios que ofreces</label>
-            <div class="tag-input-wrap" id="servWrap" onclick="document.getElementById('servInput').focus()">
-              <input type="text" id="servInput" placeholder="ej. Planificación nutricional…" onkeydown="addTag(event,'serv')" />
-            </div>
-            <p class="hint">Pulsa Enter o coma para añadir. Haz clic en × para eliminar.</p>
+            <label>Instagram (usuario sin @)</label>
+            <input type="text" id="instagram" placeholder="ej. carlos.trainer" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>YouTube (URL del canal)</label>
+            <input type="url" id="youtube" placeholder="ej. https://youtube.com/@micanal" />
           </div>
         </div>
 
@@ -140,8 +180,10 @@
 
   <script>
     const token = localStorage.getItem('gc_token');
-    let especTags = [];
-    let servTags  = [];
+    let especTags  = [];
+    let servTags   = [];
+    let certTags   = [];
+    let idiomasTags = [];
 
     function logout() {
       localStorage.clear();
@@ -156,12 +198,19 @@
       setTimeout(() => t.classList.remove('show'), 3500);
     }
 
+    const tagMap = {
+      espec:   { arr: () => especTags,   setArr: v => especTags = v,   wrapId: 'especWrap',   inpId: 'especInput' },
+      serv:    { arr: () => servTags,    setArr: v => servTags = v,    wrapId: 'servWrap',    inpId: 'servInput' },
+      cert:    { arr: () => certTags,    setArr: v => certTags = v,    wrapId: 'certWrap',    inpId: 'certInput' },
+      idiomas: { arr: () => idiomasTags, setArr: v => idiomasTags = v, wrapId: 'idiomasWrap', inpId: 'idiomasInput' }
+    };
+
     function renderTags(type) {
-      const arr  = type === 'espec' ? especTags : servTags;
-      const wrap = document.getElementById(type === 'espec' ? 'especWrap' : 'servWrap');
-      const inp  = document.getElementById(type === 'espec' ? 'especInput' : 'servInput');
+      const m = tagMap[type];
+      const wrap = document.getElementById(m.wrapId);
+      const inp  = document.getElementById(m.inpId);
       wrap.querySelectorAll('.tag-chip').forEach(c => c.remove());
-      arr.forEach((tag, i) => {
+      m.arr().forEach((tag, i) => {
         const chip = document.createElement('span');
         chip.className = 'tag-chip';
         chip.innerHTML = `${tag} <button type="button" onclick="removeTag('${type}',${i})">×</button>`;
@@ -172,18 +221,21 @@
     function addTag(e, type) {
       if (e.key !== 'Enter' && e.key !== ',') return;
       e.preventDefault();
-      const inp = document.getElementById(type === 'espec' ? 'especInput' : 'servInput');
+      const m = tagMap[type];
+      const inp = document.getElementById(m.inpId);
       const val = inp.value.trim().replace(/,$/, '');
       if (!val) return;
-      const arr = type === 'espec' ? especTags : servTags;
-      if (!arr.includes(val)) arr.push(val);
+      const arr = m.arr();
+      if (!arr.includes(val)) { arr.push(val); m.setArr(arr); }
       inp.value = '';
       renderTags(type);
     }
 
     function removeTag(type, i) {
-      const arr = type === 'espec' ? especTags : servTags;
+      const m = tagMap[type];
+      const arr = m.arr();
       arr.splice(i, 1);
+      m.setArr(arr);
       renderTags(type);
     }
 
@@ -200,11 +252,18 @@
         document.getElementById('precio').value      = ent.precioMensual || '';
         document.getElementById('experiencia').value = ent.aniosExperiencia || '';
         document.getElementById('bio').value         = ent.bio || '';
+        document.getElementById('metodologia').value = ent.metodologia || '';
+        document.getElementById('instagram').value   = ent.instagram || '';
+        document.getElementById('youtube').value     = ent.youtube || '';
 
-        especTags = ent.especialidades || [];
-        servTags  = ent.servicios || [];
+        especTags   = ent.especialidades   || [];
+        servTags    = ent.servicios        || [];
+        certTags    = ent.certificaciones  || [];
+        idiomasTags = ent.idiomas          || [];
         renderTags('espec');
         renderTags('serv');
+        renderTags('cert');
+        renderTags('idiomas');
 
         document.getElementById('cargando').style.display = 'none';
         document.getElementById('form').style.display = 'block';
@@ -229,8 +288,13 @@
             precioMensual:    parseFloat(document.getElementById('precio').value) || 0,
             aniosExperiencia: parseInt(document.getElementById('experiencia').value) || 0,
             bio:              document.getElementById('bio').value.trim(),
+            metodologia:      document.getElementById('metodologia').value.trim(),
+            instagram:        document.getElementById('instagram').value.trim(),
+            youtube:          document.getElementById('youtube').value.trim(),
             especialidades:   especTags,
-            servicios:        servTags
+            servicios:        servTags,
+            certificaciones:  certTags,
+            idiomas:          idiomasTags
           })
         });
         if (!res.ok) throw new Error();

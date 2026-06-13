@@ -40,4 +40,18 @@ public class Entrenador {
     private Integer aniosExperiencia;
     private String avatarColor;
     private String paypalEmail;
+    private String fotoUrl;
+    private String metodologia;
+    private String instagram;
+    private String youtube;
+
+    @ElementCollection
+    @CollectionTable(name = "entrenador_certificaciones", joinColumns = @JoinColumn(name = "entrenador_id"))
+    @Column(name = "certificacion")
+    private List<String> certificaciones;
+
+    @ElementCollection
+    @CollectionTable(name = "entrenador_idiomas", joinColumns = @JoinColumn(name = "entrenador_id"))
+    @Column(name = "idioma")
+    private List<String> idiomas;
 }

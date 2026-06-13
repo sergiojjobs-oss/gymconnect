@@ -23,6 +23,12 @@ public class EntrenadorDto {
     private Integer aniosExperiencia;
     private String avatarColor;
     private String paypalEmail;
+    private String fotoUrl;
+    private String metodologia;
+    private String instagram;
+    private String youtube;
+    private List<String> certificaciones;
+    private List<String> idiomas;
 
     public static EntrenadorDto from(Entrenador e) {
         EntrenadorDto dto = new EntrenadorDto();
@@ -42,6 +48,12 @@ public class EntrenadorDto {
         dto.setAniosExperiencia(e.getAniosExperiencia());
         dto.setAvatarColor(e.getAvatarColor());
         dto.setPaypalEmail(e.getPaypalEmail());
+        dto.setFotoUrl(e.getFotoUrl());
+        dto.setMetodologia(e.getMetodologia());
+        dto.setInstagram(e.getInstagram());
+        dto.setYoutube(e.getYoutube());
+        dto.setCertificaciones(e.getCertificaciones());
+        dto.setIdiomas(e.getIdiomas());
         return dto;
     }
 }

@@ -106,11 +106,12 @@
   <div class="profile-hero" id="profileHero">
     <div class="container">
       <div class="profile-hero-inner">
-        <div class="profile-big-avatar" id="bigAvatar"></div>
+        <div class="profile-big-avatar" id="bigAvatar" style="overflow:hidden;"></div>
         <div class="profile-hero-info">
           <h1 id="heroNombre"></h1>
           <p id="heroCiudad"></p>
           <div class="stars" id="heroStars"></div>
+          <div id="heroExtras"></div>
         </div>
         <div class="profile-hero-cta">
           <div class="profile-price-big" id="heroPrecio"></div>
@@ -127,14 +128,24 @@
 
         <!-- Columna izquierda -->
         <div>
-          <!-- Stats -->
-          <div class="stat-row" id="statRow"></div>
+
+          <!-- Certificaciones -->
+          <div class="info-card" id="certsCard">
+            <h2>Certificaciones</h2>
+            <div id="certsBadges" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+          </div>
 
           <!-- Bio -->
           <div class="info-card">
             <h2>Sobre mí</h2>
             <p id="bioText" style="font-size:0.92rem;color:var(--text-2);line-height:1.8;"></p>
             <div id="bioTags" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.25rem;"></div>
+          </div>
+
+          <!-- Metodología -->
+          <div class="info-card" id="metodologiaCard">
+            <h2>Metodología de trabajo</h2>
+            <p id="metodologiaText" style="font-size:0.92rem;color:var(--text-2);line-height:1.8;white-space:pre-wrap;"></p>
           </div>
 
           <!-- Servicios -->
@@ -278,8 +289,15 @@
       const color = e.avatarColor || 'linear-gradient(135deg,#16a34a,#84cc16)';
       const iniciales = (e.nombre.charAt(0) + e.apellido.charAt(0)).toUpperCase();
 
-      document.getElementById('bigAvatar').style.background = color;
-      document.getElementById('bigAvatar').textContent = iniciales;
+      // Avatar o foto
+      const avatar = document.getElementById('bigAvatar');
+      if (e.fotoUrl) {
+        avatar.innerHTML = `<img src="${e.fotoUrl}" style="width:100%;height:100%;object-fit:cover;" />`;
+      } else {
+        avatar.style.background = color;
+        avatar.textContent = iniciales;
+      }
+
       document.getElementById('heroNombre').textContent = e.nombre + ' ' + e.apellido;
       document.getElementById('heroCiudad').textContent = (e.ciudad ? '📍 ' + e.ciudad + ' · ' : '') + (e.pro ? '✓ Entrenador Pro' : 'Entrenador verificado');
       document.getElementById('heroStars').innerHTML = '★'.repeat(Math.floor(e.rating)) + ` <span>${e.rating} · ${e.totalResenas} reseñas</span>`;
@@ -287,18 +305,45 @@
       document.getElementById('sidebarPrecio').innerHTML = e.precioMensual + '€ <small style="font-size:.75rem;color:var(--muted);font-weight:400">/mes</small>';
       document.title = e.nombre + ' ' + e.apellido + ' — GymConnect';
 
+      // Stats
       document.getElementById('statRow').innerHTML = `
         <div class="stat-box"><strong>${e.totalResenas}</strong><span>Reseñas</span></div>
         <div class="stat-box"><strong>${e.rating}★</strong><span>Valoración</span></div>
         <div class="stat-box"><strong>${e.aniosExperiencia || '—'} años</strong><span>Experiencia</span></div>`;
 
+      // Idiomas e Instagram/YouTube en hero
+      const extras = [];
+      if ((e.idiomas||[]).length) extras.push((e.idiomas).map(i=>`<span style="background:rgba(255,255,255,0.1);color:#fff;border-radius:20px;padding:.15rem .6rem;font-size:.75rem;font-weight:700;">🌐 ${i}</span>`).join(''));
+      if (e.instagram) extras.push(`<a href="https://instagram.com/${e.instagram}" target="_blank" style="color:var(--muted-light);font-size:.82rem;">📸 @${e.instagram}</a>`);
+      if (e.youtube)   extras.push(`<a href="${e.youtube}" target="_blank" style="color:var(--muted-light);font-size:.82rem;">▶ YouTube</a>`);
+      const extrasEl = document.getElementById('heroExtras');
+      if (extrasEl) extrasEl.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem;">${extras.join('')}</div>`;
+
+      // Certificaciones
+      const certs = e.certificaciones || [];
+      const certsEl = document.getElementById('certsBadges');
+      if (certsEl) {
+        certsEl.innerHTML = certs.length
+          ? certs.map(c => `<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(22,163,74,0.08);color:var(--green);border:1px solid rgba(22,163,74,0.2);border-radius:6px;padding:.3rem .75rem;font-size:.78rem;font-weight:800;">🏅 ${c}</span>`).join('')
+          : '<p style="font-size:.83rem;color:var(--muted);">Sin certificaciones añadidas aún.</p>';
+        document.getElementById('certsCard').style.display = certs.length ? 'block' : 'none';
+      }
+
+      // Bio y especialidades
       document.getElementById('bioText').textContent = e.bio || '';
       document.getElementById('bioTags').innerHTML = (e.especialidades || []).map(t => `<span class="tag">${t}</span>`).join('');
 
+      // Metodología
+      const metEl = document.getElementById('metodologiaText');
+      const metCard = document.getElementById('metodologiaCard');
+      if (metEl && e.metodologia) { metEl.textContent = e.metodologia; metCard.style.display = 'block'; }
+      else if (metCard) metCard.style.display = 'none';
+
+      // Servicios
       document.getElementById('servicios').innerHTML = (e.servicios || []).map(s =>
         `<li style="display:flex;align-items:flex-start;gap:.6rem;font-size:.88rem;color:var(--text-2);">
            <span style="color:var(--green);font-weight:700;margin-top:1px;">✓</span>${s}
-         </li>`).join('');
+         </li>`).join('') || '<li style="font-size:.83rem;color:var(--muted);">Sin servicios especificados aún.</li>';
 
       document.getElementById('reviewsTitle').textContent = 'Reseñas (' + e.totalResenas + ')';
       document.getElementById('reviews').innerHTML =

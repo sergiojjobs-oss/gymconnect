@@ -58,9 +58,15 @@ public class EntrenadorController {
         if (body.containsKey("ciudad"))           e.setCiudad((String) body.get("ciudad"));
         if (body.containsKey("precioMensual"))    e.setPrecioMensual(((Number) body.get("precioMensual")).doubleValue());
         if (body.containsKey("aniosExperiencia")) e.setAniosExperiencia(((Number) body.get("aniosExperiencia")).intValue());
-        if (body.containsKey("especialidades"))   e.setEspecialidades((List<String>) body.get("especialidades"));
-        if (body.containsKey("servicios"))        e.setServicios((List<String>) body.get("servicios"));
-        if (body.containsKey("paypalEmail"))      e.setPaypalEmail((String) body.get("paypalEmail"));
+        if (body.containsKey("especialidades"))    e.setEspecialidades((List<String>) body.get("especialidades"));
+        if (body.containsKey("servicios"))         e.setServicios((List<String>) body.get("servicios"));
+        if (body.containsKey("paypalEmail"))       e.setPaypalEmail((String) body.get("paypalEmail"));
+        if (body.containsKey("fotoUrl"))           e.setFotoUrl((String) body.get("fotoUrl"));
+        if (body.containsKey("metodologia"))       e.setMetodologia((String) body.get("metodologia"));
+        if (body.containsKey("instagram"))         e.setInstagram((String) body.get("instagram"));
+        if (body.containsKey("youtube"))           e.setYoutube((String) body.get("youtube"));
+        if (body.containsKey("certificaciones"))   e.setCertificaciones((List<String>) body.get("certificaciones"));
+        if (body.containsKey("idiomas"))           e.setIdiomas((List<String>) body.get("idiomas"));
 
         entrenadorRepo.save(e);
         return ResponseEntity.ok(EntrenadorDto.from(e));
