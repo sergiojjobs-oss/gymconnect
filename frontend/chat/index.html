@@ -328,9 +328,10 @@ async function cargarContactos() { // returns Promise
     div.dataset.id = c.id;
     const badge = c.esPagador
       ? '<span style="font-size:0.65rem;font-weight:800;background:rgba(22,163,74,0.15);color:var(--green);padding:0.1rem 0.45rem;border-radius:99px;flex-shrink:0;">✓ Cliente</span>'
-      : '';
+      : '<span style="font-size:0.65rem;font-weight:800;background:rgba(100,116,139,0.1);color:var(--muted);padding:0.1rem 0.45rem;border-radius:99px;flex-shrink:0;">Solo mensajes</span>';
+    div.style.borderLeft = c.esPagador ? '3px solid var(--green)' : '3px solid transparent';
     div.innerHTML = `
-      <div class="chat-avatar">${c.nombre.charAt(0)}</div>
+      <div class="chat-avatar" style="background:${c.esPagador ? 'var(--green)' : '#94a3b8'};">${c.nombre.charAt(0)}</div>
       <div class="chat-item-info">
         <div class="chat-item-name" style="display:flex;align-items:center;gap:0.4rem;">${c.nombre}${badge}</div>
         <div class="chat-item-preview">${c.ultimoMensaje || 'Sin mensajes'}</div>
