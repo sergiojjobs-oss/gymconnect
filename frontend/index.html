@@ -3,29 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GymConnect</title>
+  <title>GymConnect — Tu entrenador personal online</title>
   <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
+
+  <!-- NAV -->
   <header>
-    <h1>GymConnect</h1>
+    <a href="index.html" class="logo">Gym<span>Connect</span></a>
+    <button class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('open')" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
     <nav>
-      <a href="entrenador/perfil.html">Soy entrenador</a>
+      <a href="entrenador/perfil.html">Para entrenadores</a>
       <a href="cliente/buscar.html">Buscar entrenador</a>
       <a href="login.html">Iniciar sesión</a>
+      <a href="registro.html" class="btn-nav">Empezar gratis</a>
     </nav>
   </header>
 
-  <main>
-    <section class="hero">
-      <h2>Conecta con tu entrenador personal</h2>
-      <p>Encuentra al profesional que mejor se adapta a tus objetivos.</p>
-      <a href="cliente/buscar.html" class="btn">Empezar ahora</a>
-    </section>
-  </main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <span class="hero-badge">🏋️ Plataforma #1 de entrenamiento personal</span>
+        <h1>Tu entrenador personal,<br><em>siempre contigo</em></h1>
+        <p>Conecta con los mejores profesionales del fitness. Rutinas personalizadas, seguimiento diario y comunicación directa desde cualquier dispositivo.</p>
+        <div class="hero-cta">
+          <a href="registro.html" class="btn btn-primary">Empezar gratis</a>
+          <a href="cliente/buscar.html" class="btn btn-outline">Ver entrenadores</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><strong>+500</strong><span>Entrenadores</span></div>
+          <div class="hero-stat"><strong>+3.000</strong><span>Clientes activos</span></div>
+          <div class="hero-stat"><strong>4.9 ★</strong><span>Valoración media</span></div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de ejemplo -->
+      <div class="hero-visual">
+        <div class="trainer-card">
+          <div class="trainer-card-header">
+            <div class="avatar">CR</div>
+            <div>
+              <h3>Carlos Ruiz</h3>
+              <p>Entrenador certificado · Madrid</p>
+            </div>
+          </div>
+          <div class="rating">★★★★★ <span style="color:var(--text-muted)">(128 reseñas)</span></div>
+          <div class="tags">
+            <span class="tag">Musculación</span>
+            <span class="tag">Pérdida de peso</span>
+            <span class="tag">Nutrición</span>
+          </div>
+          <div class="price-row">
+            <div class="price">39€ <small>/ mes</small></div>
+            <a href="cliente/buscar.html" class="btn btn-primary" style="padding:0.55rem 1.2rem; font-size:0.85rem;">Contratar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUNCIONALIDADES -->
+  <section style="background: var(--dark-2);">
+    <div class="section-inner">
+      <span class="section-label">¿Qué ofrecemos?</span>
+      <h2 class="section-title">Todo lo que necesitas en un solo lugar</h2>
+      <p class="section-sub">GymConnect centraliza la gestión entre entrenadores y clientes, ahorrando tiempo y mejorando los resultados.</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">💬</div>
+          <h3>Chat en tiempo real</h3>
+          <p>Comunicación directa entre entrenador y cliente sin intermediarios, disponible 24/7.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📋</div>
+          <h3>Rutinas personalizadas</h3>
+          <p>El entrenador publica y gestiona las rutinas semanales adaptadas a cada cliente.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">💳</div>
+          <h3>Pago seguro con PayPal</h3>
+          <p>Contrata a tu entrenador de forma segura. Sin complicaciones, pago mensual automatizado.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3>Seguimiento de progreso</h3>
+          <p>Registra métricas, fotos y avances para que el entrenador pueda ajustar tu plan.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔍</div>
+          <h3>Búsqueda inteligente</h3>
+          <p>Filtra entrenadores por especialidad, precio, valoraciones y disponibilidad.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📱</div>
+          <h3>Funciona en todos los dispositivos</h3>
+          <p>Accede desde el móvil, tablet o PC sin instalar nada. Siempre sincronizado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section>
+    <div class="section-inner" style="text-align:center;">
+      <span class="section-label">Únete hoy</span>
+      <h2 class="section-title">¿Listo para transformar tu vida?</h2>
+      <p class="section-sub" style="margin:0 auto 2rem;">Más de 3.000 personas ya entrenan con sus profesionales en GymConnect. Empieza gratis hoy.</p>
+      <a href="registro.html" class="btn btn-primary">Crear mi cuenta gratuita</a>
+    </div>
+  </section>
 
   <footer>
-    <p>&copy; 2026 GymConnect</p>
+    <p>&copy; 2026 <strong>GymConnect</strong> · Todos los derechos reservados</p>
   </footer>
+
 </body>
 </html>

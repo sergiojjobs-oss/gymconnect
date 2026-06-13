@@ -3,21 +3,82 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Perfil del entrenador - GymConnect</title>
+  <title>Mi perfil — GymConnect</title>
   <link rel="stylesheet" href="../css/main.css" />
 </head>
 <body>
+
   <header>
-    <h1>GymConnect</h1>
+    <a href="../index.html" class="logo">Gym<span>Connect</span></a>
     <nav>
-      <a href="../index.html">Inicio</a>
+      <a href="#">Mis clientes</a>
+      <a href="#">Rutinas</a>
+      <a href="#">Chat</a>
+      <a href="../login.html" class="btn-nav">Cerrar sesión</a>
     </nav>
   </header>
 
-  <main style="max-width:700px; margin:3rem auto; padding:0 1rem;">
-    <h2>Mi perfil de entrenador</h2>
-    <p style="color:#555; margin-top:0.5rem;">Aquí el entrenador podrá editar su bio, servicios y precio.</p>
-    <!-- Formulario de perfil - próximamente -->
+  <main style="max-width:900px; margin:3rem auto; padding:0 1.5rem;">
+
+    <!-- Cabecera del perfil -->
+    <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:2.5rem; flex-wrap:wrap;">
+      <div class="avatar" style="width:80px; height:80px; font-size:2rem;">CR</div>
+      <div>
+        <h1 style="font-size:1.6rem; font-weight:800;">Carlos Ruiz</h1>
+        <p style="color:var(--text-muted); margin-top:0.2rem;">Entrenador certificado · Madrid</p>
+        <div class="rating" style="margin-top:0.5rem;">★★★★★ <span style="color:var(--text-muted)">4.9 · 128 reseñas</span></div>
+      </div>
+      <button class="btn btn-outline" style="margin-left:auto;">Editar perfil</button>
+    </div>
+
+    <!-- Grid de stats -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2.5rem;">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:1.8rem; font-weight:800; color:var(--primary);">24</div>
+        <div style="font-size:0.85rem; color:var(--text-muted);">Clientes activos</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:1.8rem; font-weight:800; color:var(--primary);">39€</div>
+        <div style="font-size:0.85rem; color:var(--text-muted);">Precio mensual</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:1.8rem; font-weight:800; color:var(--primary);">5 años</div>
+        <div style="font-size:0.85rem; color:var(--text-muted);">Experiencia</div>
+      </div>
+    </div>
+
+    <!-- Bio y especialidades -->
+    <div style="display:grid; grid-template-columns:2fr 1fr; gap:1.5rem; align-items:start;">
+      <div class="card">
+        <h3 style="margin-bottom:0.75rem;">Sobre mí</h3>
+        <p style="color:var(--text-muted); font-size:0.92rem; line-height:1.8;">
+          Soy entrenador personal certificado por el INEF con más de 5 años de experiencia.
+          Me especializo en hipertrofia, pérdida de grasa y nutrición deportiva.
+          Trabajo contigo de forma personalizada para que alcances tus objetivos reales.
+        </p>
+        <div class="tags" style="margin-top:1.25rem;">
+          <span class="tag">Musculación</span>
+          <span class="tag">Pérdida de peso</span>
+          <span class="tag">Nutrición</span>
+          <span class="tag">Crossfit</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:0.75rem;">Próximas tareas</h3>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:0.6rem;">
+          <li style="font-size:0.85rem; color:var(--text-muted); padding:0.5rem; background:rgba(255,255,255,0.04); border-radius:6px;">📋 Publicar rutina semana 24</li>
+          <li style="font-size:0.85rem; color:var(--text-muted); padding:0.5rem; background:rgba(255,255,255,0.04); border-radius:6px;">💬 Responder 3 mensajes</li>
+          <li style="font-size:0.85rem; color:var(--text-muted); padding:0.5rem; background:rgba(255,255,255,0.04); border-radius:6px;">📊 Revisar progreso de Ana</li>
+        </ul>
+      </div>
+    </div>
+
   </main>
+
+  <footer>
+    <p>&copy; 2026 <strong>GymConnect</strong></p>
+  </footer>
+
 </body>
 </html>
