@@ -31,4 +31,12 @@ public class Entrenador {
     @CollectionTable(name = "entrenador_especialidades", joinColumns = @JoinColumn(name = "entrenador_id"))
     @Column(name = "especialidad")
     private List<String> especialidades;
+
+    @ElementCollection
+    @CollectionTable(name = "entrenador_servicios", joinColumns = @JoinColumn(name = "entrenador_id"))
+    @Column(name = "servicio")
+    private List<String> servicios;
+
+    private Integer aniosExperiencia;
+    private String avatarColor;
 }

@@ -210,89 +210,8 @@
     white-space:nowrap;pointer-events:none;"></div>
 
   <script>
-    const entrenadores = [
-      { id:1, nombre:'Carlos Ruiz',     ciudad:'Madrid',    avatar:'CR', avatarColor:'linear-gradient(135deg,#16a34a,#84cc16)',
-        rating:4.9, reviews:128, precio:39, clientes:24, experiencia:'5 años',
-        tags:['Musculación','Nutrición','Pérdida de grasa'],
-        bio:'Soy entrenador personal y nutricionista deportivo certificado con más de 5 años de experiencia. Me especializo en combinar entrenamiento de hipertrofia con planes nutricionales integrales para conseguir resultados duraderos. He trabajado con más de 200 clientes, desde principiantes hasta atletas de competición.',
-        servicios:['Plan de entrenamiento semanal personalizado','Dieta y seguimiento de macros','Chat directo ilimitado','Revisión mensual de progreso','Ajustes del plan cada 4 semanas','Material de vídeo explicativo'],
-        reseñas:[
-          { nombre:'María G.', ini:'MG', stars:5, texto:'Carlos cambió mi cuerpo y mi relación con la comida. En 3 meses bajé 8kg sin pasar hambre. ¡Totalmente recomendado!' },
-          { nombre:'Javier R.', ini:'JR', stars:5, texto:'El mejor entrenador que he tenido. Muy atento, responde rápido y los planes son muy bien explicados.' },
-          { nombre:'Alba S.',   ini:'AS', stars:5, texto:'Increíble profesional. La dieta que me hizo es deliciosa y he ganado mucha masa muscular en poco tiempo.' },
-        ]},
-      { id:2, nombre:'Ana Martínez',    ciudad:'Barcelona', avatar:'AM', avatarColor:'linear-gradient(135deg,#059669,#34d399)',
-        rating:4.9, reviews:94, precio:29, clientes:18, experiencia:'4 años',
-        tags:['Yoga','Pérdida de grasa','Nutrición'],
-        bio:'Soy dietista y coach de bienestar. Mi metodología combina yoga, pilates y nutrición equilibrada para una transformación física y mental completa. Creo que el bienestar sostenible viene de hábitos saludables y no de dietas extremas.',
-        servicios:['Rutina de yoga y pilates personalizada','Plan nutricional equilibrado','Seguimiento semanal por chat','Meditación y gestión del estrés','Recetas saludables semanales'],
-        reseñas:[
-          { nombre:'Lucía P.', ini:'LP', stars:5, texto:'Ana me ayudó a recuperar el equilibrio después de años de dietas restrictivas. Su enfoque es diferente y funciona.' },
-          { nombre:'Clara M.', ini:'CM', stars:5, texto:'Muy profesional y empática. Las rutinas son asequibles y la dieta se adapta perfectamente a mi vida.' },
-        ]},
-      { id:3, nombre:'Jorge López',     ciudad:'Sevilla',   avatar:'JL', avatarColor:'linear-gradient(135deg,#d97706,#f59e0b)',
-        rating:4.7, reviews:61, precio:49, clientes:12, experiencia:'7 años',
-        tags:['Fuerza','Crossfit','Musculación'],
-        bio:'Preparador físico especializado en fuerza funcional y Crossfit con 7 años de experiencia. He preparado atletas para competiciones regionales y nacionales. Mi metodología se basa en la progresión controlada y la técnica perfecta.',
-        servicios:['Programación de fuerza y WODs','Análisis de técnica en vídeo','Chat directo con respuesta en 24h','Seguimiento de marcas y récords','Planificación de competición'],
-        reseñas:[
-          { nombre:'Pablo T.', ini:'PT', stars:5, texto:'Jorge me llevó de no hacer deporte a competir en Crossfit en menos de un año. Es un crack.' },
-          { nombre:'Daniel F.', ini:'DF', stars:4, texto:'Muy buen entrenador, exigente pero justo. Los progresos son notorios.' },
-        ]},
-      { id:4, nombre:'Laura Sánchez',   ciudad:'Valencia',  avatar:'LS', avatarColor:'linear-gradient(135deg,#7c3aed,#a78bfa)',
-        rating:5.0, reviews:47, precio:55, clientes:15, experiencia:'6 años',
-        tags:['Nutrición','Pérdida de grasa','Musculación'],
-        bio:'Nutricionista deportiva y entrenadora personal con doble titulación. Me especializo en diseñar planes de alimentación personalizados integrados con el entrenamiento para maximizar resultados. Enfoque 100% basado en evidencia científica.',
-        servicios:['Análisis metabólico inicial','Plan nutricional con seguimiento de macros','Entrenamiento complementario','Control de composición corporal','Soporte por chat ilimitado'],
-        reseñas:[
-          { nombre:'Irene V.', ini:'IV', stars:5, texto:'Laura es la mejor inversión que he hecho. La nutrición que me diseñó me cambió el cuerpo completamente.' },
-        ]},
-      { id:5, nombre:'Marcos Fernández',ciudad:'Bilbao',    avatar:'MF', avatarColor:'linear-gradient(135deg,#0ea5e9,#38bdf8)',
-        rating:4.6, reviews:39, precio:35, clientes:10, experiencia:'3 años',
-        tags:['Fuerza','Musculación'],
-        bio:'Preparador físico especializado en fuerza máxima y powerlifting. Metodología de progresión lineal y ondulada adaptada a cada atleta. Creo en el entrenamiento inteligente por encima del volumen excesivo.',
-        servicios:['Programa de fuerza periodizado','Técnica de levantamientos básicos','Chat de seguimiento semanal','Revisión de vídeos de entrenamiento'],
-        reseñas:[
-          { nombre:'Adrián Q.', ini:'AQ', stars:5, texto:'Marcos triplicó mis marcas en sentadilla y peso muerto en 6 meses. Metodología muy sólida.' },
-        ]},
-      { id:6, nombre:'Sofía Morales',   ciudad:'Málaga',    avatar:'SM', avatarColor:'linear-gradient(135deg,#ec4899,#f9a8d4)',
-        rating:4.8, reviews:83, precio:25, clientes:22, experiencia:'5 años',
-        tags:['Yoga','Pérdida de grasa'],
-        bio:'Instructora de yoga certificada y coach de hábitos saludables. Mi enfoque holístico combina movimiento consciente, nutrición intuitiva y técnicas de mindfulness para conseguir bienestar a largo plazo.',
-        servicios:['Clases de yoga personalizadas','Plan de hábitos saludables','Técnicas de mindfulness y respiración','Nutrición intuitiva','Comunidad de apoyo online'],
-        reseñas:[
-          { nombre:'Elena R.', ini:'ER', stars:5, texto:'Sofía me enseñó a escuchar a mi cuerpo. Perdí 6kg sin contar calorías y me siento mejor que nunca.' },
-          { nombre:'Marta L.', ini:'ML', stars:5, texto:'Muy profesional y cercana. Las clases de yoga online son geniales.' },
-        ]},
-      { id:7, nombre:'Rubén Torres',    ciudad:'Madrid',    avatar:'RT', avatarColor:'linear-gradient(135deg,#16a34a,#065f46)',
-        rating:4.5, reviews:55, precio:60, clientes:8, experiencia:'8 años',
-        tags:['Crossfit','Fuerza','Musculación'],
-        bio:'Coach de Crossfit con certificación L2 y 8 años de experiencia. He entrenado a atletas de nivel regional y nacional. Programación avanzada para mejorar rendimiento en WODs, fuerza y condición física general.',
-        servicios:['Programación Crossfit L2','Análisis de movimiento','Preparación para competición','Seguimiento de rendimiento','Nutrición para el rendimiento'],
-        reseñas:[
-          { nombre:'Sergio B.', ini:'SB', stars:4, texto:'Rubén es muy exigente pero los resultados hablan por sí solos. He mejorado mucho mi rendimiento.' },
-        ]},
-      { id:8, nombre:'Elena Castro',    ciudad:'Zaragoza',  avatar:'EC', avatarColor:'linear-gradient(135deg,#f59e0b,#fde68a)',
-        rating:4.9, reviews:71, precio:32, clientes:20, experiencia:'6 años',
-        tags:['Nutrición','Pérdida de grasa','Musculación'],
-        bio:'Bioquímica y nutricionista deportiva con 6 años de experiencia. Diseño planes de alimentación basados en tu perfil genético y metabólico, integrados con el entrenamiento para maximizar la pérdida de grasa y la ganancia muscular.',
-        servicios:['Análisis metabólico y genético','Plan nutricional personalizado','Entrenamiento de recomposición','Suplementación basada en evidencia','Seguimiento mensual detallado'],
-        reseñas:[
-          { nombre:'Nuria A.', ini:'NA', stars:5, texto:'Elena sabe exactamente qué necesita tu cuerpo. La dieta es deliciosa y los resultados son increíbles.' },
-          { nombre:'Roberto M.', ini:'RM', stars:5, texto:'La mejor nutricionista que he conocido. Muy rigurosa y los planes son fáciles de seguir.' },
-        ]},
-      { id:9, nombre:'Iván Romero',     ciudad:'Alicante',  avatar:'IR', avatarColor:'linear-gradient(135deg,#06b6d4,#67e8f9)',
-        rating:4.3, reviews:28, precio:20, clientes:30, experiencia:'2 años',
-        tags:['Pérdida de grasa','Musculación'],
-        bio:'Entrenador personal online con tarifas accesibles para que el fitness sea para todos. Me especializo en principiantes que quieren empezar con buen pie, con metodología sencilla y resultados reales.',
-        servicios:['Plan de entrenamiento para principiantes','Guía nutricional básica','Chat de soporte','Ajustes mensuales del plan'],
-        reseñas:[
-          { nombre:'Carlos H.', ini:'CH', stars:4, texto:'Perfecto para empezar. Iván explica todo muy bien y el precio es muy razonable.' },
-        ]},
-    ];
-
-    // API definida en config.js
     const token = localStorage.getItem('gc_token');
+    let e = null;
     let hirePaypalRendered = false;
 
     function showToast(msg) {
@@ -304,15 +223,12 @@
     }
 
     function abrirModalContratacion() {
-      document.getElementById('mNombre').textContent = e.nombre;
-      document.getElementById('mPrecio').textContent = e.precio + '€/mes';
-      document.getElementById('mTotal').textContent  = e.precio + '€';
+      if (!e) return;
+      document.getElementById('mNombre').textContent = e.nombre + ' ' + e.apellido;
+      document.getElementById('mPrecio').textContent = e.precioMensual + '€/mes';
+      document.getElementById('mTotal').textContent  = e.precioMensual + '€';
       document.getElementById('hireModal').classList.add('open');
-
-      if (!hirePaypalRendered) {
-        renderHirePaypal();
-        hirePaypalRendered = true;
-      }
+      if (!hirePaypalRendered) { renderHirePaypal(); hirePaypalRendered = true; }
     }
 
     function cerrarModalContratacion() {
@@ -322,96 +238,81 @@
     function renderHirePaypal() {
       if (typeof paypal === 'undefined') {
         document.getElementById('hire-paypal-container').innerHTML =
-          '<p style="color:#dc2626;font-size:0.82rem;font-weight:700;">⚠️ Configura tu Client ID de PayPal en perfil.html</p>';
+          '<p style="color:#dc2626;font-size:0.82rem;font-weight:700;">⚠️ PayPal no disponible</p>';
         return;
       }
-
       paypal.Buttons({
         style: { layout:'vertical', color:'gold', shape:'rect', label:'pay' },
-
         createOrder: async () => {
           const res = await fetch(`${API}/api/paypal/contratacion/crear`, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + token
-            },
-            body: JSON.stringify({
-              entrenadorNombre: e.nombre,
-              entrenadorId: String(e.id),
-              importe: e.precio.toFixed(2)
-            })
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ entrenadorNombre: e.nombre + ' ' + e.apellido, entrenadorId: String(e.id), importe: e.precioMensual.toFixed(2) })
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || 'Error al crear el pago');
           return data.orderId;
         },
-
         onApprove: async (data) => {
           const res = await fetch(`${API}/api/paypal/contratacion/capturar`, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + token
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
             body: JSON.stringify({ orderId: data.orderID, entrenadorId: String(e.id) })
           });
           const result = await res.json();
-          if (result.ok) {
-            cerrarModalContratacion();
-            document.getElementById('hireSuccessModal').classList.add('open');
-          } else {
-            showToast('Error al confirmar el pago: ' + (result.error || ''));
-          }
+          if (result.ok) { cerrarModalContratacion(); document.getElementById('hireSuccessModal').classList.add('open'); }
+          else showToast('Error al confirmar el pago: ' + (result.error || ''));
         },
-
         onError: () => showToast('Error en el pago. Inténtalo de nuevo.'),
         onCancel: () => { showToast('Pago cancelado.'); cerrarModalContratacion(); }
       }).render('#hire-paypal-container');
     }
 
-    // Cargar perfil según ?id=
-    const params = new URLSearchParams(location.search);
-    const id = parseInt(params.get('id')) || 1;
-    const e = entrenadores.find(x => x.id === id) || entrenadores[0];
+    function renderPerfil(ent) {
+      e = ent;
+      const color = e.avatarColor || 'linear-gradient(135deg,#16a34a,#84cc16)';
+      const iniciales = (e.nombre.charAt(0) + e.apellido.charAt(0)).toUpperCase();
 
-    // Hero
-    document.getElementById('bigAvatar').style.background = e.avatarColor;
-    document.getElementById('bigAvatar').textContent = e.avatar;
-    document.getElementById('heroNombre').textContent = e.nombre;
-    document.getElementById('heroCiudad').textContent = '📍 ' + e.ciudad + ' · ' + (e.pro ? '✓ Entrenador Pro' : 'Entrenador verificado');
-    document.getElementById('heroStars').innerHTML = '★'.repeat(Math.floor(e.rating)) + ` <span>${e.rating} · ${e.reviews} reseñas</span>`;
-    document.getElementById('heroPrecio').innerHTML = e.precio + '€ <small>/mes</small>';
-    document.getElementById('sidebarPrecio').innerHTML = e.precio + '€ <small style="font-size:.75rem;color:var(--muted);font-weight:400">/mes</small>';
-    document.title = e.nombre + ' — GymConnect';
+      document.getElementById('bigAvatar').style.background = color;
+      document.getElementById('bigAvatar').textContent = iniciales;
+      document.getElementById('heroNombre').textContent = e.nombre + ' ' + e.apellido;
+      document.getElementById('heroCiudad').textContent = '📍 ' + e.ciudad + ' · ' + (e.pro ? '✓ Entrenador Pro' : 'Entrenador verificado');
+      document.getElementById('heroStars').innerHTML = '★'.repeat(Math.floor(e.rating)) + ` <span>${e.rating} · ${e.totalResenas} reseñas</span>`;
+      document.getElementById('heroPrecio').innerHTML = e.precioMensual + '€ <small>/mes</small>';
+      document.getElementById('sidebarPrecio').innerHTML = e.precioMensual + '€ <small style="font-size:.75rem;color:var(--muted);font-weight:400">/mes</small>';
+      document.title = e.nombre + ' ' + e.apellido + ' — GymConnect';
 
-    // Stats
-    document.getElementById('statRow').innerHTML = `
-      <div class="stat-box"><strong>${e.clientes}</strong><span>Clientes activos</span></div>
-      <div class="stat-box"><strong>${e.rating}★</strong><span>Valoración</span></div>
-      <div class="stat-box"><strong>${e.experiencia}</strong><span>Experiencia</span></div>`;
+      document.getElementById('statRow').innerHTML = `
+        <div class="stat-box"><strong>${e.totalResenas}</strong><span>Reseñas</span></div>
+        <div class="stat-box"><strong>${e.rating}★</strong><span>Valoración</span></div>
+        <div class="stat-box"><strong>${e.aniosExperiencia || '—'} años</strong><span>Experiencia</span></div>`;
 
-    // Bio
-    document.getElementById('bioText').textContent = e.bio;
-    document.getElementById('bioTags').innerHTML = e.tags.map(t => `<span class="tag">${t}</span>`).join('');
+      document.getElementById('bioText').textContent = e.bio || '';
+      document.getElementById('bioTags').innerHTML = (e.especialidades || []).map(t => `<span class="tag">${t}</span>`).join('');
 
-    // Servicios
-    document.getElementById('servicios').innerHTML = e.servicios.map(s =>
-      `<li style="display:flex;align-items:flex-start;gap:.6rem;font-size:.88rem;color:var(--text-2);">
-         <span style="color:var(--green);font-weight:700;margin-top:1px;">✓</span>${s}
-       </li>`).join('');
+      document.getElementById('servicios').innerHTML = (e.servicios || []).map(s =>
+        `<li style="display:flex;align-items:flex-start;gap:.6rem;font-size:.88rem;color:var(--text-2);">
+           <span style="color:var(--green);font-weight:700;margin-top:1px;">✓</span>${s}
+         </li>`).join('');
 
-    // Reseñas
-    document.getElementById('reviewsTitle').textContent = `Reseñas (${e.reseñas.length})`;
-    document.getElementById('reviews').innerHTML = e.reseñas.map(r => `
-      <div class="review-item">
-        <div class="review-header">
-          <div class="review-avatar">${r.ini}</div>
-          <span class="review-name">${r.nombre}</span>
-          <span class="review-stars">${'★'.repeat(r.stars)}</span>
-        </div>
-        <p class="review-text">${r.texto}</p>
-      </div>`).join('');
+      document.getElementById('reviewsTitle').textContent = 'Reseñas (' + e.totalResenas + ')';
+      document.getElementById('reviews').innerHTML =
+        '<p style="font-size:0.83rem;color:var(--muted);">Las reseñas estarán disponibles próximamente.</p>';
+    }
+
+    async function cargarPerfil() {
+      const params = new URLSearchParams(location.search);
+      const id = parseInt(params.get('id')) || 1;
+      try {
+        const res = await fetch(`${API}/api/entrenadores/${id}`);
+        if (!res.ok) throw new Error('No encontrado');
+        renderPerfil(await res.json());
+      } catch {
+        document.body.innerHTML = '<p style="padding:2rem;color:#dc2626;">No se pudo cargar el perfil del entrenador.</p>';
+      }
+    }
+
+    cargarPerfil();
   </script>
 </body>
 </html>
