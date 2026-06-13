@@ -3,7 +3,9 @@ package com.gymconnect.api.controller;
 import com.gymconnect.api.dto.MensajeDto;
 import com.gymconnect.api.dto.MensajeInput;
 import com.gymconnect.api.model.Mensaje;
+import com.gymconnect.api.model.Relacion;
 import com.gymconnect.api.model.Usuario;
+import com.gymconnect.api.repository.RelacionRepository;
 import com.gymconnect.api.repository.UsuarioRepository;
 import com.gymconnect.api.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +28,7 @@ public class ChatController {
 
     private final ChatService chatService;
     private final UsuarioRepository usuarioRepo;
+    private final RelacionRepository relacionRepo;
     private final SimpMessagingTemplate broker;
 
     // WebSocket: cliente envía a /app/chat.enviar
@@ -62,6 +67,39 @@ public class ChatController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         return ResponseEntity.ok(chatService.getConversacion(yo.getId(), otroId));
+    }
+
+    // REST: lista de contactos del usuario (relaciones activas)
+    @GetMapping("/api/chat/contactos")
+    public ResponseEntity<List<Map<String, Object>>> contactos(
+            @AuthenticationPrincipal UserDetails ud) {
+
+        Usuario yo = usuarioRepo.findByEmail(ud.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        List<Map<String, Object>> resultado = new ArrayList<>();
+
+        if (yo.getRol() == Usuario.Rol.ENTRENADOR) {
+            // Entrenador: ver sus clientes activos
+            var relaciones = relacionRepo.findByEntrenadorUsuarioIdAndEstado(yo.getId(), Relacion.Estado.ACTIVA);
+            for (Relacion r : relaciones) {
+                Map<String, Object> c = new HashMap<>();
+                c.put("id", r.getCliente().getId());
+                c.put("nombre", r.getCliente().getNombre() + " " + r.getCliente().getApellido());
+                resultado.add(c);
+            }
+        } else {
+            // Cliente: ver sus entrenadores activos
+            var relaciones = relacionRepo.findByClienteIdAndEstado(yo.getId(), Relacion.Estado.ACTIVA);
+            for (Relacion r : relaciones) {
+                Map<String, Object> c = new HashMap<>();
+                c.put("id", r.getEntrenador().getUsuario().getId());
+                c.put("nombre", r.getEntrenador().getUsuario().getNombre() + " " + r.getEntrenador().getUsuario().getApellido());
+                resultado.add(c);
+            }
+        }
+
+        return ResponseEntity.ok(resultado);
     }
 
     // REST: mensajes no leídos

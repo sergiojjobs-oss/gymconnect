@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../css/main.css" />
   <!-- SockJS + STOMP para WebSocket -->
   <script src="../js/config.js"></script>
+  <script src="../js/auth-guard.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
   <style>
@@ -268,9 +269,8 @@ let contactoActivo = null;
 
 // ── Conexión WebSocket ──────────────────────────────────────────
 function conectarWS() {
-  const socket = new SockJS(`${API}/ws`);
   stompClient = new StompJs.Client({
-    webSocketFactory: () => socket,
+    webSocketFactory: () => new SockJS(`${API}/ws`),
     connectHeaders: { Authorization: 'Bearer ' + token },
     reconnectDelay: 5000,
 
@@ -278,7 +278,6 @@ function conectarWS() {
       document.getElementById('ws-status').textContent = '● Conectado';
       document.getElementById('ws-status').className = 'ws-status connected';
 
-      // Escuchar mensajes entrantes en mi cola privada
       stompClient.subscribe(`/user/${user.id}/queue/mensajes`, (frame) => {
         const msg = JSON.parse(frame.body);
         recibirMensaje(msg);
@@ -288,6 +287,12 @@ function conectarWS() {
     onDisconnect: () => {
       document.getElementById('ws-status').textContent = '● Desconectado';
       document.getElementById('ws-status').className = 'ws-status disconnected';
+    },
+
+    onStompError: (frame) => {
+      console.error('STOMP error:', frame.headers['message']);
+      document.getElementById('ws-status').textContent = '● Error de conexión';
+      document.getElementById('ws-status').className = 'ws-status disconnected';
     }
   });
 
@@ -295,24 +300,26 @@ function conectarWS() {
 }
 
 // ── Cargar lista de contactos ───────────────────────────────────
-// En producción vendrían del backend. Por ahora los cargamos de la localStorage
-// (se añaden al contratar un entrenador / ser contratado)
-function cargarContactos() {
-  const contactos = JSON.parse(localStorage.getItem('gc_contactos') || '[]');
-
-  if (contactos.length === 0) {
-    // Demo: añadir un contacto de ejemplo
-    const ejemplo = {
-      id: user.rol === 'ENTRENADOR' ? 999 : 1,
-      nombre: user.rol === 'ENTRENADOR' ? 'Cliente Demo' : 'Entrenador Demo',
-      ultimoMensaje: 'Pulsa para iniciar el chat'
-    };
-    contactos.push(ejemplo);
-    localStorage.setItem('gc_contactos', JSON.stringify(contactos));
+async function cargarContactos() {
+  let contactos = [];
+  try {
+    const res = await fetch(`${API}/api/chat/contactos`, {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (res.ok) {
+      contactos = await res.json();
+    }
+  } catch (e) {
+    console.warn('No se pudieron cargar contactos:', e.message);
   }
 
   const lista = document.getElementById('chatList');
   lista.innerHTML = '';
+
+  if (contactos.length === 0) {
+    lista.innerHTML = '<p style="padding:1rem;color:var(--muted);font-size:0.85rem;">Sin contactos aún. Contrata un entrenador para chatear.</p>';
+    return;
+  }
 
   contactos.forEach(c => {
     const div = document.createElement('div');
@@ -450,8 +457,10 @@ function escapeHtml(str) {
 }
 
 function logout() {
+  if (stompClient) stompClient.deactivate();
   localStorage.removeItem('gc_token');
   localStorage.removeItem('gc_user');
+  window.location.href = '../login.html';
 }
 
 // ── Iniciar ────────────────────────────────────────────────────

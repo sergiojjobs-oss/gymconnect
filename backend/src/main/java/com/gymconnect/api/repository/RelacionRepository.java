@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface RelacionRepository extends JpaRepository<Relacion, Long> {
     List<Relacion> findByEntrenadorIdAndEstado(Long entrenadorId, Relacion.Estado estado);
+    List<Relacion> findByEntrenadorUsuarioIdAndEstado(Long usuarioId, Relacion.Estado estado);
+    List<Relacion> findByClienteIdAndEstado(Long clienteId, Relacion.Estado estado);
     long countByEntrenadorIdAndEstado(Long entrenadorId, Relacion.Estado estado);
     boolean existsByClienteIdAndEntrenadorIdAndEstado(Long clienteId, Long entrenadorId, Relacion.Estado estado);
 }
