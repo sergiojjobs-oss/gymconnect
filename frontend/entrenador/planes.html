@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planes — GymConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <style>
+    .dashboard-layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 70px); }
+    .sidebar { background: var(--dark-hero); border-right: 1px solid rgba(255,255,255,0.06); padding: 2rem 1rem; display: flex; flex-direction: column; gap: 0.25rem; }
+    .sidebar-label { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: var(--muted-light); padding: 0 0.75rem; margin: 1rem 0 0.4rem; }
+    .sidebar a { display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.75rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: var(--muted-light); transition: background var(--t), color var(--t); }
+    .sidebar a:hover { background: rgba(255,255,255,0.06); color: var(--text-light); }
+    .sidebar a.active { background: rgba(22,163,74,0.15); color: var(--green-l); font-weight: 700; }
+    .main-content { padding: 2.5rem; overflow-y: auto; }
+
+    /* Banner estado actual */
+    .status-banner {
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .status-banner.free {
+      background: linear-gradient(135deg, rgba(217,119,6,0.08), rgba(245,158,11,0.04));
+      border: 1px solid rgba(217,119,6,0.25);
+    }
+    .status-banner.pro {
+      background: linear-gradient(135deg, rgba(22,163,74,0.08), rgba(132,204,22,0.04));
+      border: 1px solid rgba(22,163,74,0.25);
+    }
+    .status-icon { font-size: 2.5rem; flex-shrink: 0; }
+    .status-info h2 { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; margin-bottom: 0.25rem; }
+    .status-info p  { font-size: 0.85rem; color: var(--text-2); }
+    .status-cta { margin-left: auto; }
+
+    /* Barra de clientes usados */
+    .client-bar-wrap { margin-top: 0.75rem; }
+    .client-bar-label { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .client-bar { height: 8px; background: var(--bg-2); border-radius: 99px; overflow: hidden; }
+    .client-bar-fill { height: 100%; border-radius: 99px; background: var(--grad-gold); transition: width 0.5s; }
+    .client-bar-fill.full { background: linear-gradient(90deg, #dc2626, #ef4444); }
+
+    /* Cards de planes */
+    .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+
+    .plan-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+    }
+    .plan-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.08); }
+    .plan-card.highlighted {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+    }
+    .plan-card.highlighted::before {
+      content: '⭐ MÁS POPULAR';
+      position: absolute;
+      top: 1rem; right: -2.5rem;
+      background: var(--grad-main);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      padding: 0.3rem 3rem;
+      transform: rotate(45deg);
+      transform-origin: right top;
+    }
+
+    .plan-badge { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem; display: inline-block; padding: 0.25rem 0.75rem; border-radius: 99px; }
+    .badge-free  { background: rgba(217,119,6,0.1);  color: var(--gold);  border: 1px solid rgba(217,119,6,0.2); }
+    .badge-pro   { background: rgba(22,163,74,0.1);  color: var(--green); border: 1px solid rgba(22,163,74,0.2); }
+    .badge-elite { background: rgba(124,58,237,0.1); color: #7c3aed;      border: 1px solid rgba(124,58,237,0.2); }
+
+    .plan-name { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.3px; margin-bottom: 0.25rem; }
+    .plan-price { font-size: 2.8rem; font-weight: 900; line-height: 1; letter-spacing: -2px; margin: 1rem 0 0.25rem; }
+    .plan-price small { font-size: 1rem; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+    .plan-desc { font-size: 0.83rem; color: var(--muted); margin-bottom: 1.5rem; min-height: 40px; }
+
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
+    .plan-features li { font-size: 0.85rem; color: var(--text-2); display: flex; align-items: flex-start; gap: 0.6rem; }
+    .plan-features li::before { content: '✓'; color: var(--green); font-weight: 900; flex-shrink: 0; }
+    .plan-features li.no { color: var(--muted); }
+    .plan-features li.no::before { content: '✕'; color: var(--muted); }
+
+    /* FAQ */
+    .faq { margin-top: 1rem; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q {
+      width: 100%; text-align: left; background: none; border: none;
+      padding: 1.1rem 0; font-size: 0.92rem; font-weight: 700;
+      color: var(--text); cursor: pointer; display: flex;
+      align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .faq-q:hover { color: var(--green); }
+    .faq-icon { font-size: 1.1rem; transition: transform 0.2s; flex-shrink: 0; }
+    .faq-a { display: none; padding: 0 0 1.1rem; font-size: 0.85rem; color: var(--text-2); line-height: 1.75; }
+    .faq-item.open .faq-a { display: block; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    /* Modal pago */
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-bg.open { display: flex; }
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--green);
+      border-radius: 14px;
+      padding: 2.5rem;
+      max-width: 440px;
+      width: 90%;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+    }
+    .modal-box h2 { font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 0.35rem; }
+    .modal-box .sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+    .modal-summary {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.88rem;
+    }
+    .modal-summary-row { display: flex; justify-content: space-between; padding: 0.3rem 0; }
+    .modal-summary-row:last-child { font-weight: 900; font-size: 1rem; border-top: 1px solid var(--border); margin-top: 0.4rem; padding-top: 0.7rem; color: var(--green); }
+    .paypal-btn {
+      width: 100%; padding: 1rem; border-radius: 8px;
+      background: #ffc439; color: #003087;
+      border: none; cursor: pointer; font-size: 1rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      transition: background 0.2s;
+    }
+    .paypal-btn:hover { background: #f0b429; }
+    .modal-cancel { width: 100%; text-align: center; margin-top: 0.75rem; font-size: 0.82rem; color: var(--muted); cursor: pointer; background: none; border: none; font-weight: 600; }
+    .modal-cancel:hover { color: var(--text); }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--text-light); padding: .85rem 1.5rem; border-radius: 8px; font-size: .88rem; font-weight: 600; box-shadow: 0 8px 32px rgba(0,0,0,.2); opacity: 0; transition: opacity .3s, transform .3s; z-index: 1100; border-left: 4px solid var(--green); white-space: nowrap; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 900px) { .plans-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .dashboard-layout { grid-template-columns: 1fr; } .sidebar { display: none; } .main-content { padding: 1.5rem; } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+      <nav>
+        <a href="perfil.html">Mi perfil</a>
+        <a href="../login.html" class="nav-cta">Cerrar sesión</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <span class="sidebar-label">Panel</span>
+      <a href="perfil.html">👤 Mi perfil</a>
+      <a href="#">📋 Rutinas</a>
+      <a href="#">💬 Mensajes <span style="background:var(--green);color:#fff;border-radius:99px;font-size:0.65rem;padding:0.1rem 0.45rem;margin-left:auto;">3</span></a>
+      <a href="#">📊 Clientes</a>
+      <a href="resultados.html">🏆 Resultados</a>
+      <span class="sidebar-label">Cuenta</span>
+      <a href="planes.html" class="active">💳 Mi suscripción</a>
+      <a href="#">⚙️ Ajustes</a>
+      <a href="../login.html">🚪 Salir</a>
+    </aside>
+
+    <main class="main-content">
+      <div style="margin-bottom:2rem;">
+        <span class="section-label">Suscripción</span>
+        <h1 style="font-size:1.6rem;font-weight:900;text-transform:uppercase;letter-spacing:-0.5px;">Tu plan en GymConnect</h1>
+        <p style="font-size:0.88rem;color:var(--muted);margin-top:0.3rem;">Gestiona tu suscripción y los clientes disponibles.</p>
+      </div>
+
+      <!-- Banner estado actual -->
+      <div class="status-banner free" id="statusBanner">
+        <div class="status-icon">🎁</div>
+        <div class="status-info" style="flex:1;">
+          <h2>Plan gratuito — Prueba de 3 clientes</h2>
+          <p>Estás en el período de prueba. Puedes gestionar hasta <strong>3 clientes</strong> sin coste. Pasa a Pro para tener clientes ilimitados.</p>
+          <div class="client-bar-wrap">
+            <div class="client-bar-label">
+              <span id="barLabel">2 de 3 clientes usados</span>
+              <span style="color:var(--gold);font-weight:800;" id="barPct">67%</span>
+            </div>
+            <div class="client-bar">
+              <div class="client-bar-fill" id="barFill" style="width:67%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="status-cta">
+          <button class="btn btn-primary" onclick="openModal('pro')">Activar Pro →</button>
+        </div>
+      </div>
+
+      <!-- Cards de planes -->
+      <div class="plans-grid">
+
+        <!-- GRATIS -->
+        <div class="plan-card" id="card-free">
+          <span class="plan-badge badge-free">🎁 Prueba gratuita</span>
+          <div class="plan-name">Free</div>
+          <div class="plan-price">0€ <small>/mes</small></div>
+          <p class="plan-desc">Para probar la plataforma sin compromiso.</p>
+          <ul class="plan-features">
+            <li>Hasta <strong>3 clientes</strong> simultáneos</li>
+            <li>Perfil público visible</li>
+            <li>Chat con clientes</li>
+            <li>Publicar rutinas</li>
+            <li class="no">Subir fotos y vídeos de resultados</li>
+            <li class="no">Aparición destacada en búsquedas</li>
+            <li class="no">Soporte prioritario</li>
+            <li class="no">Estadísticas avanzadas</li>
+          </ul>
+          <button class="btn btn-outline" style="width:100%;justify-content:center;" disabled>Plan actual</button>
+        </div>
+
+        <!-- PRO -->
+        <div class="plan-card highlighted" id="card-pro">
+          <span class="plan-badge badge-pro">⚡ Recomendado</span>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">10€ <small>/mes</small></div>
+          <p class="plan-desc">Para entrenadores que quieren crecer sin límites.</p>
+          <ul class="plan-features">
+            <li><strong>Clientes ilimitados</strong></li>
+            <li>Perfil público visible</li>
+            <li>Chat con clientes</li>
+            <li>Publicar rutinas y planes de nutrición</li>
+            <li>Subir fotos y vídeos de resultados</li>
+            <li>Aparición destacada en búsquedas</li>
+            <li>Soporte prioritario</li>
+            <li class="no">Estadísticas avanzadas</li>
+          </ul>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="openModal('pro')">Activar por 10€/mes</button>
+        </div>
+
+        <!-- ELITE -->
+        <div class="plan-card" id="card-elite">
+          <span class="plan-badge badge-elite">👑 Elite</span>
+          <div class="plan-name">Elite</div>
+          <div class="plan-price">25€ <small>/mes</small></div>
+          <p class="plan-desc">Para profesionales que buscan máxima visibilidad y herramientas.</p>
+          <ul class="plan-features">
+            <li><strong>Clientes ilimitados</strong></li>
+            <li>Perfil público verificado con sello Elite</li>
+            <li>Chat con clientes</li>
+            <li>Publicar rutinas y planes de nutrición</li>
+            <li>Subir fotos y vídeos de resultados</li>
+            <li><strong>Posición #1</strong> en búsquedas</li>
+            <li>Soporte prioritario 24h</li>
+            <li><strong>Estadísticas avanzadas</strong> de clientes</li>
+          </ul>
+          <button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="openModal('elite')">Activar por 25€/mes</button>
+        </div>
+
+      </div>
+
+      <!-- FAQ -->
+      <div style="max-width:720px;">
+        <h2 style="font-size:1rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;">Preguntas frecuentes</h2>
+        <div class="faq">
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">¿Cómo funciona la prueba gratuita? <span class="faq-icon">+</span></button>
+            <div class="faq-a">Al registrarte como entrenador tienes acceso completo con hasta 3 clientes simultáneos. No necesitas tarjeta. Cuando quieras añadir un 4.º cliente, necesitarás activar el plan Pro o Elite.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">¿Puedo cancelar cuando quiera? <span class="faq-icon">+</span></button>
+            <div class="faq-a">Sí. Puedes cancelar tu suscripción en cualquier momento desde esta página. Seguirás teniendo acceso hasta el final del período pagado y luego volverás al plan Free (máximo 3 clientes).</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">¿Cómo se realiza el pago? <span class="faq-icon">+</span></button>
+            <div class="faq-a">El pago se realiza de forma segura a través de PayPal. Puedes pagar con tu cuenta PayPal o con tarjeta de crédito/débito. El cargo se realiza mensualmente de forma automática.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">¿Qué pasa con mis clientes si cancelo? <span class="faq-icon">+</span></button>
+            <div class="faq-a">Si cancelas y tienes más de 3 clientes activos, no perderás los datos pero no podrás aceptar nuevos clientes hasta volver a suscribirte. Tus clientes existentes serán notificados.</div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">¿GymConnect cobra alguna comisión por cliente? <span class="faq-icon">+</span></button>
+            <div class="faq-a">No. GymConnect solo cobra la suscripción mensual fija (10€ Pro / 25€ Elite). El dinero que cobres a tus clientes es 100% tuyo, sin comisiones adicionales.</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal de pago -->
+  <div class="modal-bg" id="payModal">
+    <div class="modal-box">
+      <h2 id="modalTitle">Activar Plan Pro</h2>
+      <p class="sub" id="modalSub">Acceso ilimitado a todas las funciones profesionales.</p>
+
+      <div class="modal-summary" id="modalSummary">
+        <div class="modal-summary-row"><span>Plan</span><span id="mPlan">Pro</span></div>
+        <div class="modal-summary-row"><span>Facturación</span><span>Mensual</span></div>
+        <div class="modal-summary-row"><span>Período de prueba</span><span style="color:var(--green);">Primer mes gratis</span></div>
+        <div class="modal-summary-row"><span>Total hoy</span><span id="mTotal">0€</span></div>
+        <div class="modal-summary-row"><span>A partir del 2.º mes</span><span id="mRecurring">10€/mes</span></div>
+      </div>
+
+      <button class="paypal-btn" onclick="simularPago()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#003087"><path d="M20.067 8.478c.492.315.844.825.983 1.39.393 1.618-.57 3.28-2.138 4.026-.36.17-.75.28-1.153.322l-.09.008c-.257.019-.516.024-.776.014l-.28-.014-.177.966-.07.38-.005.024h-1.494l.005-.024.748-4.09c.044-.24.195-.433.397-.519a.58.58 0 01.23-.046h.38c.35 0 .68-.022.977-.074 1.082-.192 1.84-.81 2.018-1.638.063-.293.044-.573-.044-.822l-.01-.025.499-.025.001.002zM7.708 4.5H12.5c.623 0 1.227.05 1.795.147 1.664.28 2.79 1.054 3.26 2.232.14.354.206.733.2 1.128l-.005.22-.01.16c-.033.375-.109.736-.23 1.07-.612 1.688-2.134 2.645-4.298 2.777l-.275.013-.28.006H11.1l-.56 3.047h-1.985L7.708 4.5z"/></svg>
+        Pagar con PayPal
+      </button>
+      <button class="modal-cancel" onclick="closePayModal()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Modal éxito -->
+  <div class="modal-bg" id="successModal">
+    <div class="modal-box" style="text-align:center;">
+      <div style="font-size:3rem;margin-bottom:1rem;">🎉</div>
+      <h2 id="successTitle">¡Plan Pro activado!</h2>
+      <p style="font-size:0.88rem;color:var(--muted);margin:0.75rem 0 2rem;">Ya tienes clientes ilimitados y todas las funciones profesionales disponibles.</p>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="afterSuccess()">Empezar a usar →</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    let selectedPlan = 'pro';
+
+    /* ===== FAQ ===== */
+    function toggleFaq(btn) {
+      btn.closest('.faq-item').classList.toggle('open');
+    }
+
+    /* ===== MODAL ===== */
+    function openModal(plan) {
+      selectedPlan = plan;
+      const isPro = plan === 'pro';
+      document.getElementById('modalTitle').textContent  = isPro ? 'Activar Plan Pro' : 'Activar Plan Elite';
+      document.getElementById('modalSub').textContent    = isPro ? 'Acceso ilimitado a todas las funciones profesionales.' : 'Máxima visibilidad y herramientas avanzadas.';
+      document.getElementById('mPlan').textContent       = isPro ? 'Pro' : 'Elite';
+      document.getElementById('mTotal').textContent      = '0€ (primer mes gratis)';
+      document.getElementById('mRecurring').textContent  = isPro ? '10€/mes' : '25€/mes';
+      document.getElementById('payModal').classList.add('open');
+    }
+
+    function closePayModal() {
+      document.getElementById('payModal').classList.remove('open');
+    }
+
+    /* ===== SIMULAR PAGO PAYPAL ===== */
+    function simularPago() {
+      closePayModal();
+      // Simula carga breve y muestra éxito
+      setTimeout(() => {
+        document.getElementById('successTitle').textContent = selectedPlan === 'pro' ? '¡Plan Pro activado!' : '¡Plan Elite activado!';
+        document.getElementById('successModal').classList.add('open');
+        actualizarBanner(selectedPlan);
+      }, 600);
+    }
+
+    function afterSuccess() {
+      document.getElementById('successModal').classList.remove('open');
+    }
+
+    /* ===== ACTUALIZAR BANNER ===== */
+    function actualizarBanner(plan) {
+      const banner = document.getElementById('statusBanner');
+      banner.className = 'status-banner pro';
+      const isPro = plan === 'pro';
+      banner.innerHTML = `
+        <div class="status-icon">${isPro ? '⚡' : '👑'}</div>
+        <div class="status-info" style="flex:1;">
+          <h2>Plan ${isPro ? 'Pro' : 'Elite'} activo</h2>
+          <p>Tienes <strong>clientes ilimitados</strong> y acceso a todas las funciones ${isPro ? 'profesionales' : 'Elite'}. Tu suscripción se renueva el <strong>13 de julio de 2026</strong>.</p>
+        </div>
+        <div class="status-cta">
+          <button class="btn btn-outline" onclick="cancelarSuscripcion()" style="font-size:0.82rem;">Cancelar suscripción</button>
+        </div>`;
+
+      // Deshabilitar botón del plan activo
+      document.querySelectorAll('.plan-card button').forEach(b => b.disabled = false);
+      document.getElementById('card-free').querySelector('button').disabled = true;
+      document.getElementById('card-' + plan).querySelector('button').textContent = '✓ Plan actual';
+      document.getElementById('card-' + plan).querySelector('button').disabled = true;
+    }
+
+    function cancelarSuscripcion() {
+      if (confirm('¿Seguro que quieres cancelar? Volverás al plan gratuito (máx. 3 clientes) al final del período.')) {
+        document.getElementById('statusBanner').className = 'status-banner free';
+        document.getElementById('statusBanner').innerHTML = `
+          <div class="status-icon">🎁</div>
+          <div class="status-info" style="flex:1;">
+            <h2>Plan gratuito — Prueba de 3 clientes</h2>
+            <p>Suscripción cancelada. Tendrás acceso Pro hasta el <strong>13 de julio de 2026</strong>, luego volverás al plan Free.</p>
+          </div>
+          <div class="status-cta">
+            <button class="btn btn-primary" onclick="openModal('pro')">Reactivar Pro →</button>
+          </div>`;
+        showToast('Suscripción cancelada. Acceso hasta el 13/07/2026.');
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+  </script>
+</body>
+</html>
