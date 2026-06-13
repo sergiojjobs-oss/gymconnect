@@ -351,10 +351,15 @@
             idiomas:          idiomasTags
           })
         });
-        if (!res.ok) throw new Error();
+        if (!res.ok) {
+          const txt = await res.text();
+          console.error('Error guardando:', res.status, txt);
+          throw new Error(res.status + ': ' + txt);
+        }
         showToast('✓ Perfil actualizado correctamente');
-      } catch {
-        showToast('Error al guardar. Inténtalo de nuevo.', true);
+      } catch (err) {
+        console.error(err);
+        showToast('Error al guardar: ' + err.message, true);
       } finally {
         btn.disabled = false;
         btn.textContent = 'Guardar cambios';
