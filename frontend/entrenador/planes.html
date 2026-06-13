@@ -503,6 +503,25 @@
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 3500);
     }
+
+    async function actualizarContadorClientes() {
+      try {
+        const res = await fetch(`${API}/api/chat/contactos`, {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (!res.ok) return;
+        const contactos = await res.json();
+        const n = contactos.length;
+        const max = 3;
+        const pct = Math.min(Math.round((n / max) * 100), 100);
+        document.getElementById('barLabel').textContent = `${n} de ${max} clientes usados`;
+        document.getElementById('barPct').textContent = pct + '%';
+        document.getElementById('barFill').style.width = pct + '%';
+        if (n >= max) document.getElementById('barFill').classList.add('full');
+      } catch {}
+    }
+
+    actualizarContadorClientes();
   </script>
 </body>
 </html>
