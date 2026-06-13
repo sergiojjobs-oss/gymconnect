@@ -40,7 +40,9 @@ public class Entrenador {
     private Integer aniosExperiencia;
     private String avatarColor;
     private String paypalEmail;
+    @Column(columnDefinition = "TEXT")
     private String fotoUrl;
+    @Column(columnDefinition = "TEXT")
     private String metodologia;
     private String instagram;
     private String youtube;
