@@ -30,7 +30,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     "http://127.0.0.1:5500",
                     "https://splendid-daffodil-79285f.netlify.app",
                     "https://gymconnect-six.vercel.app",
-                    "https://frontend-murex-five-21.vercel.app"
+                    "https://frontend-murex-five-21.vercel.app",
+                    "https://gymconnect-app.vercel.app"
                 )
                 .withSockJS();
     }
