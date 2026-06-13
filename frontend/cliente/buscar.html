@@ -293,10 +293,13 @@
       const stars = '★'.repeat(Math.floor(e.rating)) + (e.rating % 1 >= 0.5 ? '½' : '');
       const tagsHtml = (e.especialidades || []).map(t => `<span class="tag">${labelTag(t)}</span>`).join('');
       const color = e.avatarColor || 'linear-gradient(135deg,#16a34a,#84cc16)';
+      const avatarHtml = e.fotoUrl
+        ? `<div class="card-avatar" style="overflow:hidden;"><img src="${e.fotoUrl}" style="width:100%;height:100%;object-fit:cover;" /></div>`
+        : `<div class="card-avatar" style="background:${color}">${iniciales(e.nombre, e.apellido)}</div>`;
       return `
         <div class="trainer-card" onclick="window.location.href='perfil.html?id=${e.id}'">
           <div class="card-header">
-            <div class="card-avatar" style="background:${color}">${iniciales(e.nombre, e.apellido)}</div>
+            ${avatarHtml}
             <div class="card-info">
               <h3>${e.nombre} ${e.apellido}</h3>
               <p>📍 ${e.ciudad}</p>

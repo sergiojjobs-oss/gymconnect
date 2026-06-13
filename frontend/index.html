@@ -184,7 +184,10 @@
         return `
           <div class="trainer-card">
             <div class="trainer-head">
-              <div class="avatar" style="width:48px;height:48px;font-size:0.9rem;background:${e.avatarColor||'linear-gradient(135deg,#16a34a,#84cc16)'};">${iniciales}</div>
+              ${e.fotoUrl
+                ? `<div class="avatar" style="width:48px;height:48px;overflow:hidden;"><img src="${e.fotoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>`
+                : `<div class="avatar" style="width:48px;height:48px;font-size:0.9rem;background:${e.avatarColor||'linear-gradient(135deg,#16a34a,#84cc16)'};">${iniciales}</div>`
+              }
               <div><h3>${e.nombre} ${e.apellido}</h3><p>${e.ciudad || 'España'}</p></div>
             </div>
             <div class="stars" style="padding-left:0.75rem;">${estrellas} <span>(${e.totalResenas || 0})</span></div>
