@@ -10,7 +10,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ORIGINS
-        value: "*"
+        value: "https://splendid-daffodil-79285f.netlify.app,http://localhost:3000"
       - key: DB_URL
         sync: false
       - key: DB_USER
