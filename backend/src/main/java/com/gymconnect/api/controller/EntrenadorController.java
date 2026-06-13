@@ -40,6 +40,20 @@ public class EntrenadorController {
         }
     }
 
+    @GetMapping("/stats")
+    public ResponseEntity<Map<String, Object>> stats() {
+        long totalEntrenadores = entrenadorRepo.count();
+        long totalClientes = relacionRepo.countByEstado(com.gymconnect.api.model.Relacion.Estado.ACTIVA);
+        double avgRating = entrenadorRepo.findAll().stream()
+                .mapToDouble(e -> e.getRating() != null ? e.getRating() : 5.0)
+                .average().orElse(5.0);
+        return ResponseEntity.ok(Map.of(
+                "entrenadores", totalEntrenadores,
+                "clientesActivos", totalClientes,
+                "valoracionMedia", Math.round(avgRating * 10.0) / 10.0
+        ));
+    }
+
     @GetMapping("/mi-perfil")
     public ResponseEntity<?> miPerfil(@AuthenticationPrincipal UserDetails ud) {
         return entrenadorRepo.findByUsuarioEmail(ud.getUsername())

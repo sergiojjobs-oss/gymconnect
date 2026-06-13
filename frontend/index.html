@@ -38,9 +38,9 @@
             <a href="cliente/buscar.html" class="btn btn-light">Ver entrenadores</a>
           </div>
           <div class="hero-stats">
-            <div class="hero-stat"><strong>+500</strong><small>Entrenadores</small></div>
-            <div class="hero-stat"><strong>3.200</strong><small>Clientes activos</small></div>
-            <div class="hero-stat"><strong>4.9★</strong><small>Valoración</small></div>
+            <div class="hero-stat"><strong id="statEntrenadores">…</strong><small>Entrenadores</small></div>
+            <div class="hero-stat"><strong id="statClientes">…</strong><small>Clientes activos</small></div>
+            <div class="hero-stat"><strong id="statValoracion">…</strong><small>Valoración</small></div>
           </div>
         </div>
 
@@ -211,5 +211,20 @@
     <p>&copy; 2026 <strong>GymConnect</strong> · Todos los derechos reservados</p>
   </footer>
 
+<script src="js/config.js"></script>
+<script>
+  fetch(`${API}/api/entrenadores/stats`)
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('statEntrenadores').textContent = d.entrenadores;
+      document.getElementById('statClientes').textContent = d.clientesActivos;
+      document.getElementById('statValoracion').textContent = d.valoracionMedia + '★';
+    })
+    .catch(() => {
+      document.getElementById('statEntrenadores').textContent = '—';
+      document.getElementById('statClientes').textContent = '—';
+      document.getElementById('statValoracion').textContent = '—';
+    });
+</script>
 </body>
 </html>
