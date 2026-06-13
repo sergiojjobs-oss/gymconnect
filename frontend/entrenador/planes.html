@@ -6,6 +6,7 @@
   <title>Planes — GymConnect</title>
   <link rel="stylesheet" href="../css/main.css" />
   <!-- PayPal JS SDK sandbox — sustituye TU_CLIENT_ID por tu Client ID de sandbox -->
+  <script src="../js/config.js"></script>
   <script src="https://www.paypal.com/sdk/js?client-id=TU_CLIENT_ID_SANDBOX&currency=EUR&intent=capture" data-sdk-integration-source="button-factory"></script>
   <style>
     .dashboard-layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 70px); }
@@ -331,7 +332,7 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    const API = 'http://localhost:8080';
+    // API definida en config.js
     const token = localStorage.getItem('gc_token');
     let selectedPlan = 'pro';
     let paypalButtonsRendered = false;

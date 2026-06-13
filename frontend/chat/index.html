@@ -6,6 +6,7 @@
   <title>Chat — GymConnect</title>
   <link rel="stylesheet" href="../css/main.css" />
   <!-- SockJS + STOMP para WebSocket -->
+  <script src="../js/config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
   <style>
@@ -254,7 +255,7 @@
 </div>
 
 <script>
-const API = 'http://localhost:8080';
+// API definida en config.js (cargado antes)
 const user = JSON.parse(localStorage.getItem('gc_user') || 'null');
 const token = localStorage.getItem('gc_token');
 

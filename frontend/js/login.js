@@ -1,4 +1,4 @@
-const API = 'http://localhost:8080';
+// API definida en js/config.js
 
 function showToast(msg, type) {
   const t = document.getElementById('toast');

@@ -284,6 +284,7 @@
 
   <div id="toast" class="toast"></div>
 
+  <script src="js/config.js"></script>
   <script>
     /* ---- Selector de rol ---- */
     document.querySelectorAll('input[name="rol"]').forEach(radio => {
@@ -386,7 +387,7 @@
       const rol = document.querySelector('input[name="rol"]:checked').value.toUpperCase();
 
       try {
-        const res = await fetch('http://localhost:8080/api/auth/registro', {
+        const res = await fetch(`${API}/api/auth/registro`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

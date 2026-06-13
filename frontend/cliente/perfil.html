@@ -6,6 +6,7 @@
   <title>Perfil — GymConnect</title>
   <link rel="stylesheet" href="../css/main.css" />
   <!-- PayPal JS SDK sandbox — sustituye TU_CLIENT_ID por tu Client ID de sandbox -->
+  <script src="../js/config.js"></script>
   <script src="https://www.paypal.com/sdk/js?client-id=TU_CLIENT_ID_SANDBOX&currency=EUR&intent=capture"></script>
   <style>
     /* Modal de contratación */
@@ -290,7 +291,7 @@
         ]},
     ];
 
-    const API = 'http://localhost:8080';
+    // API definida en config.js
     const token = localStorage.getItem('gc_token');
     let hirePaypalRendered = false;
 
