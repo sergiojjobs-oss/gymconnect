@@ -43,15 +43,18 @@ public class ChatController {
 
         MensajeDto dto = chatService.toDto(guardado);
 
-        // Enviar al destinatario en su cola privada
+        Usuario destinatario = usuarioRepo.findById(input.getDestinatarioId())
+                .orElseThrow(() -> new RuntimeException("Destinatario no encontrado"));
+
+        // Enviar al destinatario usando su email (Principal.name en WebSocket)
         broker.convertAndSendToUser(
-                input.getDestinatarioId().toString(),
+                destinatario.getEmail(),
                 "/queue/mensajes",
                 dto
         );
-        // También al remitente para confirmar recepción
+        // Confirmar al remitente también
         broker.convertAndSendToUser(
-                remitente.getId().toString(),
+                remitente.getEmail(),
                 "/queue/mensajes",
                 dto
         );

@@ -278,7 +278,7 @@ function conectarWS() {
       document.getElementById('ws-status').textContent = '● Conectado';
       document.getElementById('ws-status').className = 'ws-status connected';
 
-      stompClient.subscribe(`/user/${user.id}/queue/mensajes`, (frame) => {
+      stompClient.subscribe(`/user/${user.email}/queue/mensajes`, (frame) => {
         const msg = JSON.parse(frame.body);
         recibirMensaje(msg);
       });
