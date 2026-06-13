@@ -332,11 +332,13 @@
       btn.textContent = 'Guardando…';
 
       try {
+        const fotoVal = document.getElementById('fotoUrl').value || null;
+        alert('v2 · fotoUrl: ' + (fotoVal ? fotoVal.substring(0,30)+'...' : 'null'));
         const res = await fetch(`${API}/api/entrenadores/mi-perfil`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
           body: JSON.stringify({
-            fotoUrl:          document.getElementById('fotoUrl').value || null,
+            fotoUrl:          fotoVal,
             ciudad:           document.getElementById('ciudad').value.trim(),
             paypalEmail:      document.getElementById('paypalEmail').value.trim(),
             precioMensual:    parseFloat(document.getElementById('precio').value) || 0,
