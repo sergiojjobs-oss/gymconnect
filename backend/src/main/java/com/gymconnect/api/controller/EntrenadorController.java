@@ -2,7 +2,9 @@ package com.gymconnect.api.controller;
 
 import com.gymconnect.api.dto.EntrenadorDto;
 import com.gymconnect.api.model.Entrenador;
+import com.gymconnect.api.model.Relacion;
 import com.gymconnect.api.repository.EntrenadorRepository;
+import com.gymconnect.api.repository.RelacionRepository;
 import com.gymconnect.api.service.EntrenadorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ public class EntrenadorController {
 
     private final EntrenadorService service;
     private final EntrenadorRepository entrenadorRepo;
+    private final RelacionRepository relacionRepo;
 
     @GetMapping
     public ResponseEntity<List<EntrenadorDto>> buscar(
