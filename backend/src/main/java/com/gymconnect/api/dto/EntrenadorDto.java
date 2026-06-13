@@ -55,7 +55,7 @@ public class EntrenadorDto {
         dto.setYoutube(e.getYoutube());
         dto.setCertificaciones(e.getCertificaciones());
         dto.setIdiomas(e.getIdiomas());
-        dto.setEsEjemplo(e.getEsEjemplo() != null && e.getEsEjemplo());
+        dto.setEsEjemplo(e.getUsuario().getEmail().endsWith("@gymconnect.es"));
         return dto;
     }
 }

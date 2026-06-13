@@ -45,8 +45,6 @@ public class Entrenador {
     private String instagram;
     private String youtube;
 
-    private Boolean esEjemplo = false;
-
     @ElementCollection
     @CollectionTable(name = "entrenador_certificaciones", joinColumns = @JoinColumn(name = "entrenador_id"))
     @Column(name = "certificacion")

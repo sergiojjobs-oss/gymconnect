@@ -114,7 +114,6 @@ public class DataSeeder implements ApplicationRunner {
         e.setEspecialidades(especialidades);
         e.setServicios(servicios);
         e.setAvatarColor(avatarColor);
-        e.setEsEjemplo(true);
         entrenadorRepo.save(e);
     }
 }
