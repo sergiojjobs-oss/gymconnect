@@ -19,7 +19,7 @@ public class SuscripcionController {
     private final SuscripcionService suscripcionService;
     private final UsuarioRepository usuarioRepo;
 
-    @GetMapping
+    @GetMapping("/estado")
     public ResponseEntity<?> miPlan(@AuthenticationPrincipal UserDetails ud) {
         Usuario u = usuarioRepo.findByEmail(ud.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
