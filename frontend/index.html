@@ -144,51 +144,8 @@
       <h2 class="section-title">Profesionales<br>verificados</h2>
       <p class="section-sub">Cada entrenador está certificado en entrenamiento y nutrición. Solo los mejores están en GymConnect.</p>
 
-      <div class="trainers-grid">
-        <div class="trainer-card">
-          <div class="trainer-head">
-            <div class="avatar" style="width:48px;height:48px;font-size:0.9rem;">CR</div>
-            <div><h3>Carlos Ruiz</h3><p>Entrenador & Nutricionista · Madrid</p></div>
-          </div>
-          <div class="stars" style="padding-left:0.75rem;">★★★★★ <span>(128)</span></div>
-          <div class="trainer-tags">
-            <span class="tag">Musculación</span><span class="tag">Nutrición</span>
-          </div>
-          <div class="trainer-bottom">
-            <div class="trainer-price">39€ <small>/mes</small></div>
-            <a href="login.html" class="btn btn-primary" style="padding:0.5rem 1.1rem;font-size:0.78rem;">Ver perfil</a>
-          </div>
-        </div>
-
-        <div class="trainer-card">
-          <div class="trainer-head">
-            <div class="avatar" style="width:48px;height:48px;font-size:0.9rem;background:linear-gradient(135deg,#059669,#34d399);">AM</div>
-            <div><h3>Ana Martínez</h3><p>Dietista & Coach · Barcelona</p></div>
-          </div>
-          <div class="stars" style="padding-left:0.75rem;">★★★★★ <span>(94)</span></div>
-          <div class="trainer-tags">
-            <span class="tag">Dieta</span><span class="tag">Pérdida de grasa</span>
-          </div>
-          <div class="trainer-bottom">
-            <div class="trainer-price">29€ <small>/mes</small></div>
-            <a href="login.html" class="btn btn-primary" style="padding:0.5rem 1.1rem;font-size:0.78rem;">Ver perfil</a>
-          </div>
-        </div>
-
-        <div class="trainer-card">
-          <div class="trainer-head">
-            <div class="avatar" style="width:48px;height:48px;font-size:0.9rem;background:linear-gradient(135deg,#d97706,#f59e0b);">JL</div>
-            <div><h3>Jorge López</h3><p>Fuerza & Rendimiento · Sevilla</p></div>
-          </div>
-          <div class="stars" style="padding-left:0.75rem;">★★★★☆ <span>(61)</span></div>
-          <div class="trainer-tags">
-            <span class="tag">Fuerza</span><span class="tag">Suplementación</span>
-          </div>
-          <div class="trainer-bottom">
-            <div class="trainer-price">49€ <small>/mes</small></div>
-            <a href="login.html" class="btn btn-primary" style="padding:0.5rem 1.1rem;font-size:0.78rem;">Ver perfil</a>
-          </div>
-        </div>
+      <div class="trainers-grid" id="trainersGrid">
+        <div style="color:var(--muted);font-size:0.9rem;padding:2rem;">Cargando entrenadores…</div>
       </div>
     </div>
   </section>
@@ -213,6 +170,34 @@
 
 <script src="js/config.js"></script>
 <script>
+  // Entrenadores destacados
+  fetch(`${API}/api/entrenadores`)
+    .then(r => r.json())
+    .then(lista => {
+      const grid = document.getElementById('trainersGrid');
+      const top = lista.slice(0, 3);
+      if (!top.length) { grid.innerHTML = '<p style="color:var(--muted);padding:2rem;">No hay entrenadores aún.</p>'; return; }
+      grid.innerHTML = top.map(e => {
+        const iniciales = (e.nombre.charAt(0) + e.apellido.charAt(0)).toUpperCase();
+        const estrellas = '★'.repeat(Math.floor(e.rating || 5)) + '☆'.repeat(5 - Math.floor(e.rating || 5));
+        const tags = (e.especialidades || []).slice(0, 2).map(t => `<span class="tag">${t}</span>`).join('');
+        return `
+          <div class="trainer-card">
+            <div class="trainer-head">
+              <div class="avatar" style="width:48px;height:48px;font-size:0.9rem;background:${e.avatarColor||'linear-gradient(135deg,#16a34a,#84cc16)'};">${iniciales}</div>
+              <div><h3>${e.nombre} ${e.apellido}</h3><p>${e.ciudad || 'España'}</p></div>
+            </div>
+            <div class="stars" style="padding-left:0.75rem;">${estrellas} <span>(${e.totalResenas || 0})</span></div>
+            <div class="trainer-tags">${tags || '<span class="tag">Entrenamiento</span>'}</div>
+            <div class="trainer-bottom">
+              <div class="trainer-price">${e.precioMensual || '—'}€ <small>/mes</small></div>
+              <a href="cliente/perfil.html?id=${e.id}" class="btn btn-primary" style="padding:0.5rem 1.1rem;font-size:0.78rem;">Ver perfil</a>
+            </div>
+          </div>`;
+      }).join('');
+    })
+    .catch(() => {});
+
   fetch(`${API}/api/entrenadores/stats`)
     .then(r => r.json())
     .then(d => {
