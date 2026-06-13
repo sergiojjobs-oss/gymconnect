@@ -5,6 +5,129 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crear cuenta — GymConnect</title>
   <link rel="stylesheet" href="css/main.css" />
+  <style>
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text);
+      color: var(--text-light);
+      padding: 0.85rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 999;
+      border-left: 4px solid var(--green);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast-error { border-left-color: #dc2626; }
+
+    /* Input con estado de error */
+    .form-group input.error { border-color: #dc2626; background: rgba(220,38,38,0.04); }
+    .form-group .error-msg {
+      display: none;
+      font-size: 0.74rem;
+      color: #dc2626;
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+    .form-group input.error + .error-msg { display: block; }
+
+    /* Input válido */
+    .form-group input.valid { border-color: var(--green); }
+
+    /* Barra de fuerza de contraseña */
+    .strength-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: var(--bg-2);
+      margin-top: 0.4rem;
+      overflow: hidden;
+    }
+    .strength-fill {
+      height: 100%;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s, background 0.3s;
+    }
+    .strength-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 0.25rem;
+      color: var(--muted);
+    }
+
+    /* Paso activo del stepper */
+    .steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 2rem;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+    }
+    .step-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--bg-2);
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 900;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .step.active .step-num {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    .step.done .step-num {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    .step.active { color: var(--text); }
+    .step-line { flex: 1; height: 2px; background: var(--border); margin: 0 0.5rem; }
+    .step-line.done { background: var(--green); }
+
+    /* Panel de paso */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    /* Checkbox de términos */
+    .check-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.83rem;
+      color: var(--text-2);
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    .check-label input[type="checkbox"] {
+      width: 16px; height: 16px;
+      flex-shrink: 0;
+      accent-color: var(--green);
+      margin-top: 2px;
+    }
+    .check-label a { color: var(--green); font-weight: 700; }
+  </style>
 </head>
 <body>
 
@@ -18,62 +141,247 @@
   </header>
 
   <div class="form-page">
-    <div class="form-box" style="max-width:480px;">
-      <h2>Crear cuenta</h2>
-      <p class="sub">Elige cómo quieres usar GymConnect</p>
+    <div class="form-box" style="max-width:500px;">
 
-      <div class="role-grid">
-        <label>
-          <input type="radio" name="rol" value="cliente" checked hidden />
-          <div class="role-card active" id="card-cliente">
-            <span>🏃</span>
-            <strong>Soy cliente</strong>
-            <small>Busco un entrenador</small>
-          </div>
-        </label>
-        <label>
-          <input type="radio" name="rol" value="entrenador" hidden />
-          <div class="role-card" id="card-entrenador">
-            <span>💪</span>
-            <strong>Soy entrenador</strong>
-            <small>Ofrezco mis servicios</small>
-          </div>
-        </label>
+      <!-- Stepper -->
+      <div class="steps">
+        <div class="step active" id="s1">
+          <div class="step-num">1</div>
+          <span>Tu rol</span>
+        </div>
+        <div class="step-line" id="line-1"></div>
+        <div class="step" id="s2">
+          <div class="step-num">2</div>
+          <span>Tus datos</span>
+        </div>
+        <div class="step-line" id="line-2"></div>
+        <div class="step" id="s3">
+          <div class="step-num">3</div>
+          <span>Confirmar</span>
+        </div>
       </div>
 
-      <form id="registroForm">
+      <!-- PASO 1: Rol -->
+      <div class="step-panel active" id="panel-1">
+        <h2>Crear cuenta</h2>
+        <p class="sub">¿Cómo vas a usar GymConnect?</p>
+
+        <div class="role-grid">
+          <label>
+            <input type="radio" name="rol" value="cliente" checked hidden />
+            <div class="role-card active" id="card-cliente">
+              <span>🏃</span>
+              <strong>Soy cliente</strong>
+              <small>Busco un entrenador personal</small>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="rol" value="entrenador" hidden />
+            <div class="role-card" id="card-entrenador">
+              <span>💪</span>
+              <strong>Soy entrenador</strong>
+              <small>Quiero ofrecer mis servicios</small>
+            </div>
+          </label>
+        </div>
+
+        <!-- Info según rol -->
+        <div id="info-cliente" style="background:rgba(22,163,74,0.06);border:1px solid var(--border);border-radius:8px;padding:1rem;font-size:0.83rem;color:var(--text-2);margin-bottom:1.5rem;">
+          ✅ Acceso a +500 entrenadores verificados<br>
+          ✅ Plan de entrenamiento y nutrición personalizado<br>
+          ✅ Chat directo con tu entrenador
+        </div>
+        <div id="info-entrenador" style="display:none;background:rgba(22,163,74,0.06);border:1px solid var(--border);border-radius:8px;padding:1rem;font-size:0.83rem;color:var(--text-2);margin-bottom:1.5rem;">
+          ✅ Publica tu perfil y llega a miles de clientes<br>
+          ✅ Gestiona rutinas, dietas y mensajes<br>
+          ✅ Cobra de forma segura con PayPal
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="irPaso(2)">
+          Continuar →
+        </button>
+      </div>
+
+      <!-- PASO 2: Datos personales -->
+      <div class="step-panel" id="panel-2">
+        <h2>Tus datos</h2>
+        <p class="sub">Rellena tu información personal</p>
+
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
           <div class="form-group">
             <label>Nombre</label>
-            <input type="text" placeholder="Ana" required />
+            <input type="text" id="nombre" placeholder="Ana" />
+            <span class="error-msg">Introduce tu nombre</span>
           </div>
           <div class="form-group">
             <label>Apellido</label>
-            <input type="text" placeholder="García" required />
+            <input type="text" id="apellido" placeholder="García" />
+            <span class="error-msg">Introduce tu apellido</span>
           </div>
         </div>
+
         <div class="form-group">
           <label>Correo electrónico</label>
-          <input type="email" placeholder="tu@email.com" required />
+          <input type="email" id="email" placeholder="tu@email.com" />
+          <span class="error-msg">Introduce un email válido</span>
         </div>
+
         <div class="form-group">
           <label>Contraseña</label>
-          <input type="password" placeholder="Mínimo 8 caracteres" required />
+          <input type="password" id="password" placeholder="Mínimo 8 caracteres" oninput="checkStrength(this.value)" />
+          <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+          <div class="strength-label" id="strengthLabel">Escribe una contraseña</div>
+          <span class="error-msg">Mínimo 8 caracteres</span>
         </div>
-        <button type="submit" class="btn btn-primary form-submit">Crear cuenta gratis →</button>
-      </form>
 
-      <p class="form-footer">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
-    </div>
+        <div class="form-group">
+          <label>Confirmar contraseña</label>
+          <input type="password" id="password2" placeholder="Repite la contraseña" />
+          <span class="error-msg">Las contraseñas no coinciden</span>
+        </div>
+
+        <div style="display:flex;gap:0.75rem;margin-top:0.5rem;">
+          <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="irPaso(1)">← Atrás</button>
+          <button class="btn btn-primary" style="flex:2;justify-content:center;" onclick="validarPaso2()">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- PASO 3: Confirmación -->
+      <div class="step-panel" id="panel-3">
+        <h2>Casi listo</h2>
+        <p class="sub">Revisa tus datos antes de crear la cuenta</p>
+
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-bottom:1.5rem;font-size:0.88rem;display:flex;flex-direction:column;gap:0.6rem;">
+          <div style="display:flex;justify-content:space-between;">
+            <span style="color:var(--muted);font-weight:700;text-transform:uppercase;font-size:0.73rem;">Rol</span>
+            <span id="res-rol" style="font-weight:700;color:var(--green);">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span style="color:var(--muted);font-weight:700;text-transform:uppercase;font-size:0.73rem;">Nombre</span>
+            <span id="res-nombre" style="font-weight:600;">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span style="color:var(--muted);font-weight:700;text-transform:uppercase;font-size:0.73rem;">Email</span>
+            <span id="res-email" style="font-weight:600;">—</span>
+          </div>
+        </div>
+
+        <label class="check-label" style="margin-bottom:1.5rem;">
+          <input type="checkbox" id="terminos" />
+          Acepto los <a href="#">términos de uso</a> y la <a href="#">política de privacidad</a>
+        </label>
+
+        <div style="display:flex;gap:0.75rem;">
+          <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="irPaso(2)">← Atrás</button>
+          <button class="btn btn-primary" style="flex:2;justify-content:center;" onclick="registrar()">Crear cuenta ✓</button>
+        </div>
+
+        <p class="form-footer">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+      </div>
+
+    </div><!-- /form-box -->
   </div>
 
+  <div id="toast" class="toast"></div>
+
   <script>
+    /* ---- Selector de rol ---- */
     document.querySelectorAll('input[name="rol"]').forEach(radio => {
       radio.addEventListener('change', () => {
         document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
         radio.closest('label').querySelector('.role-card').classList.add('active');
+        document.getElementById('info-cliente').style.display    = radio.value === 'cliente'    ? 'block' : 'none';
+        document.getElementById('info-entrenador').style.display = radio.value === 'entrenador' ? 'block' : 'none';
       });
     });
+
+    /* ---- Toast ---- */
+    function showToast(msg, type = 'info') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast toast-' + type + ' show';
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    /* ---- Stepper ---- */
+    function irPaso(n) {
+      [1,2,3].forEach(i => {
+        document.getElementById('panel-' + i).classList.toggle('active', i === n);
+        document.getElementById('s' + i).classList.remove('active','done');
+      });
+      // Marcar pasos completados
+      for (let i = 1; i < n; i++) document.getElementById('s' + i).classList.add('done');
+      document.getElementById('s' + n).classList.add('active');
+      // Líneas
+      [1,2].forEach(i => {
+        const l = document.getElementById('line-' + i);
+        if (l) l.classList.toggle('done', i < n);
+      });
+
+      // Rellenar resumen en paso 3
+      if (n === 3) {
+        const rol = document.querySelector('input[name="rol"]:checked').value;
+        document.getElementById('res-rol').textContent    = rol === 'cliente' ? '🏃 Cliente' : '💪 Entrenador';
+        document.getElementById('res-nombre').textContent = document.getElementById('nombre').value + ' ' + document.getElementById('apellido').value;
+        document.getElementById('res-email').textContent  = document.getElementById('email').value;
+      }
+    }
+
+    /* ---- Fuerza de contraseña ---- */
+    function checkStrength(val) {
+      const fill  = document.getElementById('strengthFill');
+      const label = document.getElementById('strengthLabel');
+      let score = 0;
+      if (val.length >= 8) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+
+      const levels = [
+        { pct: '0%',   color: 'transparent', text: 'Escribe una contraseña' },
+        { pct: '25%',  color: '#dc2626',      text: 'Débil' },
+        { pct: '50%',  color: '#d97706',      text: 'Aceptable' },
+        { pct: '75%',  color: '#16a34a',      text: 'Buena' },
+        { pct: '100%', color: '#22c55e',      text: 'Muy segura ✓' },
+      ];
+      const l = levels[score];
+      fill.style.width = l.pct;
+      fill.style.background = l.color;
+      label.textContent = l.text;
+      label.style.color = l.color;
+    }
+
+    /* ---- Validación paso 2 ---- */
+    function validarPaso2() {
+      let ok = true;
+
+      function check(id, cond) {
+        const el = document.getElementById(id);
+        el.classList.toggle('error', !cond);
+        el.classList.toggle('valid',  cond);
+        if (!cond) ok = false;
+      }
+
+      check('nombre',    document.getElementById('nombre').value.trim().length > 0);
+      check('apellido',  document.getElementById('apellido').value.trim().length > 0);
+      check('email',     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value));
+      check('password',  document.getElementById('password').value.length >= 8);
+      check('password2', document.getElementById('password2').value === document.getElementById('password').value && document.getElementById('password').value.length >= 8);
+
+      if (!ok) { showToast('Corrige los campos marcados en rojo', 'error'); return; }
+      irPaso(3);
+    }
+
+    /* ---- Registro final ---- */
+    function registrar() {
+      if (!document.getElementById('terminos').checked) {
+        showToast('Acepta los términos para continuar', 'error');
+        return;
+      }
+      // TODO: POST /api/auth/registro
+      showToast('Cuenta creada. ¡Bienvenido a GymConnect! 🎉');
+      setTimeout(() => window.location.href = 'login.html', 2000);
+    }
   </script>
 </body>
 </html>
