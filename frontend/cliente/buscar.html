@@ -346,7 +346,20 @@
       });
 
       const grid = document.getElementById('grid');
-      grid.innerHTML = lista.map(renderCard).join('');
+      const reales   = lista.filter(e => !e.esEjemplo);
+      const ejemplos = lista.filter(e => e.esEjemplo);
+      let html = '';
+      if (reales.length) {
+        html += reales.map(renderCard).join('');
+      }
+      if (ejemplos.length) {
+        html += `<div style="grid-column:1/-1;margin-top:${reales.length?'2rem':'0'};padding-bottom:0.5rem;border-bottom:1px dashed var(--border);">
+          <p style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);">
+            ${reales.length ? '— Perfiles de ejemplo —' : 'Perfiles de ejemplo (aún no hay entrenadores reales)'}
+          </p></div>`;
+        html += ejemplos.map(renderCard).join('');
+      }
+      grid.innerHTML = html || '';
       document.getElementById('noResults').style.display = lista.length === 0 ? 'block' : 'none';
       document.getElementById('countLabel').textContent =
         lista.length === todosEntrenadores.length

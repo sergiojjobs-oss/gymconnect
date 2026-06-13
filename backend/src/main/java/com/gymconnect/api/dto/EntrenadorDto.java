@@ -29,6 +29,7 @@ public class EntrenadorDto {
     private String youtube;
     private List<String> certificaciones;
     private List<String> idiomas;
+    private Boolean esEjemplo;
 
     public static EntrenadorDto from(Entrenador e) {
         EntrenadorDto dto = new EntrenadorDto();
@@ -54,6 +55,7 @@ public class EntrenadorDto {
         dto.setYoutube(e.getYoutube());
         dto.setCertificaciones(e.getCertificaciones());
         dto.setIdiomas(e.getIdiomas());
+        dto.setEsEjemplo(e.getEsEjemplo() != null && e.getEsEjemplo());
         return dto;
     }
 }
