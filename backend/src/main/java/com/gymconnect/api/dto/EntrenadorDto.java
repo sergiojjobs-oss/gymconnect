@@ -22,6 +22,7 @@ public class EntrenadorDto {
     private List<String> servicios;
     private Integer aniosExperiencia;
     private String avatarColor;
+    private String paypalEmail;
 
     public static EntrenadorDto from(Entrenador e) {
         EntrenadorDto dto = new EntrenadorDto();
@@ -40,6 +41,7 @@ public class EntrenadorDto {
         dto.setServicios(e.getServicios());
         dto.setAniosExperiencia(e.getAniosExperiencia());
         dto.setAvatarColor(e.getAvatarColor());
+        dto.setPaypalEmail(e.getPaypalEmail());
         return dto;
     }
 }

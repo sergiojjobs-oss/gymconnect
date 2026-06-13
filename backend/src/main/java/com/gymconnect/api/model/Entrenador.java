@@ -39,4 +39,5 @@ public class Entrenador {
 
     private Integer aniosExperiencia;
     private String avatarColor;
+    private String paypalEmail;
 }

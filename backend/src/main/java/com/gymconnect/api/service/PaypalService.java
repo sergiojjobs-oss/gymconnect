@@ -50,6 +50,34 @@ public class PaypalService {
         return h;
     }
 
+    // Crear orden de pago con payee opcional (para pagos directos al entrenador)
+    public JsonNode crearOrdenConPayee(String descripcion, String importe, String moneda, String payeeEmail) throws Exception {
+        Map<String, Object> purchaseUnit = payeeEmail != null && !payeeEmail.isBlank()
+                ? Map.of(
+                    "description", descripcion,
+                    "amount", Map.of("currency_code", moneda, "value", importe),
+                    "payee", Map.of("email_address", payeeEmail))
+                : Map.of(
+                    "description", descripcion,
+                    "amount", Map.of("currency_code", moneda, "value", importe));
+
+        Map<String, Object> body = Map.of(
+                "intent", "CAPTURE",
+                "purchase_units", new Object[]{purchaseUnit},
+                "application_context", Map.of(
+                        "return_url", "http://localhost:3000/paypal-ok.html",
+                        "cancel_url", "http://localhost:3000/paypal-cancel.html",
+                        "brand_name", "GymConnect",
+                        "user_action", "PAY_NOW"
+                )
+        );
+
+        HttpEntity<String> entity = new HttpEntity<>(mapper.writeValueAsString(body), authHeaders());
+        ResponseEntity<JsonNode> resp = rest.exchange(
+                baseUrl + "/v2/checkout/orders", HttpMethod.POST, entity, JsonNode.class);
+        return resp.getBody();
+    }
+
     // Crear orden de pago
     public JsonNode crearOrden(String descripcion, String importe, String moneda) throws Exception {
         Map<String, Object> body = Map.of(

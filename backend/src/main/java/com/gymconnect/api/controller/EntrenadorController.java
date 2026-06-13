@@ -60,6 +60,7 @@ public class EntrenadorController {
         if (body.containsKey("aniosExperiencia")) e.setAniosExperiencia(((Number) body.get("aniosExperiencia")).intValue());
         if (body.containsKey("especialidades"))   e.setEspecialidades((List<String>) body.get("especialidades"));
         if (body.containsKey("servicios"))        e.setServicios((List<String>) body.get("servicios"));
+        if (body.containsKey("paypalEmail"))      e.setPaypalEmail((String) body.get("paypalEmail"));
 
         entrenadorRepo.save(e);
         return ResponseEntity.ok(EntrenadorDto.from(e));

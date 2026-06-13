@@ -86,10 +86,19 @@ public class PaypalController {
             @AuthenticationPrincipal UserDetails ud) {
         try {
             String entrenadorNombre = body.get("entrenadorNombre");
+            String entrenadorId     = body.get("entrenadorId");
             String importe          = body.get("importe");
             String descripcion      = "GymConnect — Entrenador: " + entrenadorNombre;
 
-            JsonNode orden = paypalService.crearOrden(descripcion, importe, "EUR");
+            // Buscar PayPal del entrenador para que el dinero vaya a su cuenta
+            String payeeEmail = null;
+            if (entrenadorId != null) {
+                payeeEmail = entrenadorRepo.findById(Long.parseLong(entrenadorId))
+                        .map(e -> e.getPaypalEmail())
+                        .orElse(null);
+            }
+
+            JsonNode orden = paypalService.crearOrdenConPayee(descripcion, importe, "EUR", payeeEmail);
             String orderId = orden.get("id").asText();
 
             String approveUrl = null;
