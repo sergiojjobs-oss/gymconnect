@@ -1,0 +1,77 @@
+package com.gymconnect.api.controller;
+
+import com.gymconnect.api.dto.MensajeDto;
+import com.gymconnect.api.dto.MensajeInput;
+import com.gymconnect.api.model.Mensaje;
+import com.gymconnect.api.model.Usuario;
+import com.gymconnect.api.repository.UsuarioRepository;
+import com.gymconnect.api.service.ChatService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequiredArgsConstructor
+public class ChatController {
+
+    private final ChatService chatService;
+    private final UsuarioRepository usuarioRepo;
+    private final SimpMessagingTemplate broker;
+
+    // WebSocket: cliente envía a /app/chat.enviar
+    @MessageMapping("/chat.enviar")
+    public void enviarMensaje(@Payload MensajeInput input,
+                               java.security.Principal principal) {
+        Usuario remitente = usuarioRepo.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Mensaje guardado = chatService.guardar(
+                remitente.getId(), input.getDestinatarioId(), input.getContenido());
+
+        MensajeDto dto = chatService.toDto(guardado);
+
+        // Enviar al destinatario en su cola privada
+        broker.convertAndSendToUser(
+                input.getDestinatarioId().toString(),
+                "/queue/mensajes",
+                dto
+        );
+        // También al remitente para confirmar recepción
+        broker.convertAndSendToUser(
+                remitente.getId().toString(),
+                "/queue/mensajes",
+                dto
+        );
+    }
+
+    // REST: historial de conversación
+    @GetMapping("/api/chat/{otroId}")
+    public ResponseEntity<List<MensajeDto>> historial(
+            @PathVariable Long otroId,
+            @AuthenticationPrincipal UserDetails ud) {
+
+        Usuario yo = usuarioRepo.findByEmail(ud.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        return ResponseEntity.ok(chatService.getConversacion(yo.getId(), otroId));
+    }
+
+    // REST: mensajes no leídos
+    @GetMapping("/api/chat/no-leidos")
+    public ResponseEntity<Map<String, Long>> noLeidos(
+            @AuthenticationPrincipal UserDetails ud) {
+
+        Usuario yo = usuarioRepo.findByEmail(ud.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        return ResponseEntity.ok(Map.of("total", chatService.noLeidos(yo.getId())));
+    }
+}

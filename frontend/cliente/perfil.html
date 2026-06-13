@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Perfil — GymConnect</title>
   <link rel="stylesheet" href="../css/main.css" />
+  <!-- PayPal JS SDK sandbox — sustituye TU_CLIENT_ID por tu Client ID de sandbox -->
+  <script src="https://www.paypal.com/sdk/js?client-id=TU_CLIENT_ID_SANDBOX&currency=EUR&intent=capture"></script>
+  <style>
+    /* Modal de contratación */
+    .modal-bg { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center; }
+    .modal-bg.open { display:flex; }
+    .modal-box { background:#fff;border-radius:16px;padding:2rem;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.25); }
+    .modal-box h2 { font-size:1.2rem;font-weight:900;text-transform:uppercase;margin-bottom:0.35rem; }
+    .modal-box .sub { font-size:0.83rem;color:var(--muted);margin-bottom:1.5rem; }
+    .modal-summary { background:var(--bg);border-radius:8px;padding:1rem;margin-bottom:1.5rem;font-size:0.85rem; }
+    .modal-summary-row { display:flex;justify-content:space-between;padding:0.3rem 0; }
+    .modal-summary-row:last-child { font-weight:900;border-top:1px solid var(--border);margin-top:0.4rem;padding-top:0.7rem;color:var(--green); }
+    .modal-cancel-btn { width:100%;text-align:center;margin-top:0.75rem;font-size:0.82rem;color:var(--muted);cursor:pointer;background:none;border:none;font-weight:600; }
+    .modal-cancel-btn:hover { color:var(--text); }
+  </style>
   <style>
     .profile-hero {
       background: var(--dark-hero);
@@ -98,8 +113,8 @@
         </div>
         <div class="profile-hero-cta">
           <div class="profile-price-big" id="heroPrecio"></div>
-          <a href="../registro.html" class="btn btn-primary" style="font-size:0.9rem;">Contratar ahora →</a>
-          <button class="btn btn-light" onclick="showToast('Mensaje enviado ✓')">Enviar mensaje</button>
+          <button class="btn btn-primary" style="font-size:0.9rem;" onclick="abrirModalContratacion()">Contratar ahora →</button>
+          <button class="btn btn-light" onclick="window.location.href='../chat/index.html'">Enviar mensaje</button>
         </div>
       </div>
     </div>
@@ -140,8 +155,8 @@
             <h2>Contratar plan</h2>
             <div style="font-size:2rem;font-weight:900;color:var(--text);margin-bottom:0.25rem;" id="sidebarPrecio"></div>
             <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.25rem;">Pago mensual · Cancela cuando quieras</p>
-            <a href="../registro.html" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:0.75rem;">Empezar ahora →</a>
-            <button class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;" onclick="showToast('Abriendo chat… próximamente')">💬 Enviar mensaje</button>
+            <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:0.75rem;" onclick="abrirModalContratacion()">Contratar ahora →</button>
+            <button class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;" onclick="window.location.href='../chat/index.html'">💬 Enviar mensaje</button>
             <div style="margin-top:1.25rem;font-size:0.78rem;color:var(--muted);text-align:center;">
               🔒 Pago seguro con PayPal<br>✅ Sin permanencia
             </div>
@@ -159,6 +174,32 @@
   </div>
 
   <footer><p>&copy; 2026 <strong>GymConnect</strong></p></footer>
+
+  <!-- Modal de contratación con PayPal -->
+  <div class="modal-bg" id="hireModal">
+    <div class="modal-box">
+      <h2>Contratar entrenador</h2>
+      <p class="sub">Pago mensual · Sin permanencia · Cancela cuando quieras</p>
+      <div class="modal-summary">
+        <div class="modal-summary-row"><span>Entrenador</span><span id="mNombre">—</span></div>
+        <div class="modal-summary-row"><span>Precio</span><span id="mPrecio">—</span></div>
+        <div class="modal-summary-row"><span>Facturación</span><span>Mensual</span></div>
+        <div class="modal-summary-row"><span>Total hoy</span><span id="mTotal">—</span></div>
+      </div>
+      <div id="hire-paypal-container"></div>
+      <button class="modal-cancel-btn" onclick="cerrarModalContratacion()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Modal éxito contratación -->
+  <div class="modal-bg" id="hireSuccessModal">
+    <div class="modal-box" style="text-align:center;">
+      <div style="font-size:3rem;margin-bottom:1rem;">🎉</div>
+      <h2>¡Contratación completada!</h2>
+      <p style="font-size:0.88rem;color:var(--muted);margin:0.75rem 0 2rem;">Ya puedes chatear con tu entrenador y empezar tu plan hoy mismo.</p>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="window.location.href='../chat/index.html'">💬 Ir al chat →</button>
+    </div>
+  </div>
 
   <div id="toast" class="toast" style="
     position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
@@ -249,12 +290,83 @@
         ]},
     ];
 
+    const API = 'http://localhost:8080';
+    const token = localStorage.getItem('gc_token');
+    let hirePaypalRendered = false;
+
     function showToast(msg) {
       const t = document.getElementById('toast');
       t.textContent = msg;
       t.style.opacity = '1';
       t.style.transform = 'translateX(-50%) translateY(0)';
       setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, 3000);
+    }
+
+    function abrirModalContratacion() {
+      document.getElementById('mNombre').textContent = e.nombre;
+      document.getElementById('mPrecio').textContent = e.precio + '€/mes';
+      document.getElementById('mTotal').textContent  = e.precio + '€';
+      document.getElementById('hireModal').classList.add('open');
+
+      if (!hirePaypalRendered) {
+        renderHirePaypal();
+        hirePaypalRendered = true;
+      }
+    }
+
+    function cerrarModalContratacion() {
+      document.getElementById('hireModal').classList.remove('open');
+    }
+
+    function renderHirePaypal() {
+      if (typeof paypal === 'undefined') {
+        document.getElementById('hire-paypal-container').innerHTML =
+          '<p style="color:#dc2626;font-size:0.82rem;font-weight:700;">⚠️ Configura tu Client ID de PayPal en perfil.html</p>';
+        return;
+      }
+
+      paypal.Buttons({
+        style: { layout:'vertical', color:'gold', shape:'rect', label:'pay' },
+
+        createOrder: async () => {
+          const res = await fetch(`${API}/api/paypal/contratacion/crear`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({
+              entrenadorNombre: e.nombre,
+              entrenadorId: String(e.id),
+              importe: e.precio.toFixed(2)
+            })
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Error al crear el pago');
+          return data.orderId;
+        },
+
+        onApprove: async (data) => {
+          const res = await fetch(`${API}/api/paypal/contratacion/capturar`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ orderId: data.orderID, entrenadorId: String(e.id) })
+          });
+          const result = await res.json();
+          if (result.ok) {
+            cerrarModalContratacion();
+            document.getElementById('hireSuccessModal').classList.add('open');
+          } else {
+            showToast('Error al confirmar el pago: ' + (result.error || ''));
+          }
+        },
+
+        onError: () => showToast('Error en el pago. Inténtalo de nuevo.'),
+        onCancel: () => { showToast('Pago cancelado.'); cerrarModalContratacion(); }
+      }).render('#hire-paypal-container');
     }
 
     // Cargar perfil según ?id=

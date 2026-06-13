@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat — GymConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <!-- SockJS + STOMP para WebSocket -->
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+  <style>
+    body { background: var(--bg); }
+
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      height: calc(100vh - 64px);
+      max-width: 1100px;
+      margin: 0 auto;
+      box-shadow: 0 0 40px rgba(0,0,0,0.08);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    /* Panel izquierdo — lista de conversaciones */
+    .chat-sidebar {
+      background: #fff;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-sidebar-header {
+      padding: 1.25rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-weight: 900;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text);
+    }
+    .chat-list { overflow-y: auto; flex: 1; }
+    .chat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem;
+      cursor: pointer;
+      border-bottom: 1px solid var(--bg);
+      transition: background 0.15s;
+    }
+    .chat-item:hover { background: var(--bg); }
+    .chat-item.active { background: rgba(22,163,74,0.06); border-left: 3px solid var(--green); }
+    .chat-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .chat-item-info { flex: 1; min-width: 0; }
+    .chat-item-name { font-weight: 700; font-size: 0.88rem; color: var(--text); }
+    .chat-item-preview { font-size: 0.78rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chat-badge {
+      background: var(--green);
+      color: #fff;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 900;
+      padding: 0.15rem 0.45rem;
+      flex-shrink: 0;
+    }
+
+    /* Panel derecho — conversación */
+    .chat-main {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+    .chat-header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .chat-header-name { font-weight: 900; font-size: 1rem; color: var(--text); }
+    .chat-status { font-size: 0.75rem; color: var(--green); font-weight: 700; }
+    .chat-status.offline { color: var(--muted); }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .msg {
+      display: flex;
+      flex-direction: column;
+      max-width: 68%;
+    }
+    .msg.mine { align-self: flex-end; align-items: flex-end; }
+    .msg.theirs { align-self: flex-start; align-items: flex-start; }
+
+    .msg-bubble {
+      padding: 0.65rem 1rem;
+      border-radius: 16px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+    .msg.mine .msg-bubble {
+      background: var(--green);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .msg.theirs .msg-bubble {
+      background: #fff;
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .msg-time {
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    .chat-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      gap: 0.5rem;
+    }
+    .chat-empty span { font-size: 3rem; }
+    .chat-empty p { font-size: 0.9rem; font-weight: 600; }
+
+    /* Barra de escritura */
+    .chat-input-bar {
+      background: #fff;
+      border-top: 1px solid var(--border);
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+    .chat-input-bar textarea {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.88rem;
+      font-family: inherit;
+      resize: none;
+      max-height: 120px;
+      min-height: 42px;
+      line-height: 1.5;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-input-bar textarea:focus { border-color: var(--green); }
+    .send-btn {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.65rem 1rem;
+      font-weight: 900;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .send-btn:hover { background: var(--green-l); }
+    .send-btn:active { transform: scale(0.96); }
+    .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Conexión status */
+    .ws-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      margin-left: auto;
+    }
+    .ws-status.connected { background: rgba(22,163,74,0.1); color: var(--green); }
+    .ws-status.disconnected { background: rgba(220,38,38,0.1); color: #dc2626; }
+
+    /* Placeholder sin conversación seleccionada */
+    .no-chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      gap: 0.75rem;
+    }
+    .no-chat span { font-size: 4rem; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .chat-layout { grid-template-columns: 1fr; height: auto; margin-top: 0; border-radius: 0; }
+      .chat-sidebar { height: 220px; border-right: none; border-bottom: 1px solid var(--border); }
+      .chat-main { height: calc(100vh - 220px - 64px); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+    <nav>
+      <span id="ws-status" class="ws-status disconnected">● Desconectado</span>
+      <a href="../login.html" onclick="logout()">Cerrar sesión</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container" style="padding-top:0;">
+  <div class="chat-layout">
+
+    <!-- Lista de conversaciones -->
+    <div class="chat-sidebar">
+      <div class="chat-sidebar-header">💬 Conversaciones</div>
+      <div class="chat-list" id="chatList">
+        <div style="padding:1.5rem;text-align:center;color:var(--muted);font-size:0.83rem;">
+          Cargando…
+        </div>
+      </div>
+    </div>
+
+    <!-- Conversación activa -->
+    <div class="chat-main" id="chatMain">
+      <div class="no-chat">
+        <span>💬</span>
+        <p>Selecciona una conversación</p>
+        <small style="font-size:0.78rem;">Los mensajes son en tiempo real</small>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8080';
+const user = JSON.parse(localStorage.getItem('gc_user') || 'null');
+const token = localStorage.getItem('gc_token');
+
+if (!user || !token) {
+  window.location.href = '../login.html';
+}
+
+let stompClient = null;
+let contactoActivo = null;
+
+// ── Conexión WebSocket ──────────────────────────────────────────
+function conectarWS() {
+  const socket = new SockJS(`${API}/ws`);
+  stompClient = new StompJs.Client({
+    webSocketFactory: () => socket,
+    connectHeaders: { Authorization: 'Bearer ' + token },
+    reconnectDelay: 5000,
+
+    onConnect: () => {
+      document.getElementById('ws-status').textContent = '● Conectado';
+      document.getElementById('ws-status').className = 'ws-status connected';
+
+      // Escuchar mensajes entrantes en mi cola privada
+      stompClient.subscribe(`/user/${user.id}/queue/mensajes`, (frame) => {
+        const msg = JSON.parse(frame.body);
+        recibirMensaje(msg);
+      });
+    },
+
+    onDisconnect: () => {
+      document.getElementById('ws-status').textContent = '● Desconectado';
+      document.getElementById('ws-status').className = 'ws-status disconnected';
+    }
+  });
+
+  stompClient.activate();
+}
+
+// ── Cargar lista de contactos ───────────────────────────────────
+// En producción vendrían del backend. Por ahora los cargamos de la localStorage
+// (se añaden al contratar un entrenador / ser contratado)
+function cargarContactos() {
+  const contactos = JSON.parse(localStorage.getItem('gc_contactos') || '[]');
+
+  if (contactos.length === 0) {
+    // Demo: añadir un contacto de ejemplo
+    const ejemplo = {
+      id: user.rol === 'ENTRENADOR' ? 999 : 1,
+      nombre: user.rol === 'ENTRENADOR' ? 'Cliente Demo' : 'Entrenador Demo',
+      ultimoMensaje: 'Pulsa para iniciar el chat'
+    };
+    contactos.push(ejemplo);
+    localStorage.setItem('gc_contactos', JSON.stringify(contactos));
+  }
+
+  const lista = document.getElementById('chatList');
+  lista.innerHTML = '';
+
+  contactos.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'chat-item';
+    div.dataset.id = c.id;
+    div.innerHTML = `
+      <div class="chat-avatar">${c.nombre.charAt(0)}</div>
+      <div class="chat-item-info">
+        <div class="chat-item-name">${c.nombre}</div>
+        <div class="chat-item-preview">${c.ultimoMensaje || 'Sin mensajes'}</div>
+      </div>
+    `;
+    div.addEventListener('click', () => abrirChat(c));
+    lista.appendChild(div);
+  });
+}
+
+// ── Abrir conversación ──────────────────────────────────────────
+async function abrirChat(contacto) {
+  contactoActivo = contacto;
+
+  document.querySelectorAll('.chat-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.id == contacto.id);
+  });
+
+  const main = document.getElementById('chatMain');
+  main.innerHTML = `
+    <div class="chat-header">
+      <div class="chat-avatar" style="width:36px;height:36px;font-size:0.8rem;">${contacto.nombre.charAt(0)}</div>
+      <div>
+        <div class="chat-header-name">${contacto.nombre}</div>
+        <div class="chat-status">En línea</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="messages"></div>
+    <div class="chat-input-bar">
+      <textarea id="msgInput" placeholder="Escribe un mensaje…" rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviar();}"></textarea>
+      <button class="send-btn" onclick="enviar()">Enviar ↑</button>
+    </div>
+  `;
+
+  // Cargar historial
+  try {
+    const res = await fetch(`${API}/api/chat/${contacto.id}`, {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (res.ok) {
+      const msgs = await res.json();
+      msgs.forEach(m => mostrarMensaje(m, m.remitenteId === user.id));
+    }
+  } catch (e) {
+    console.warn('Sin historial (backend no iniciado):', e.message);
+    mostrarMensajeSistema('Inicia el servidor para cargar el historial');
+  }
+
+  scrollAbajo();
+  document.getElementById('msgInput').focus();
+}
+
+// ── Enviar mensaje ──────────────────────────────────────────────
+function enviar() {
+  const input = document.getElementById('msgInput');
+  const texto = input.value.trim();
+  if (!texto || !contactoActivo) return;
+
+  if (!stompClient || !stompClient.connected) {
+    mostrarMensajeSistema('Sin conexión — ¿está el servidor iniciado?');
+    return;
+  }
+
+  stompClient.publish({
+    destination: '/app/chat.enviar',
+    body: JSON.stringify({ destinatarioId: contactoActivo.id, contenido: texto })
+  });
+
+  input.value = '';
+  input.style.height = 'auto';
+}
+
+// ── Recibir mensaje via WebSocket ───────────────────────────────
+function recibirMensaje(msg) {
+  // Si es de la conversación activa, añadirlo
+  if (contactoActivo &&
+      (msg.remitenteId == contactoActivo.id || msg.destinatarioId == contactoActivo.id)) {
+    mostrarMensaje(msg, msg.remitenteId === user.id);
+    scrollAbajo();
+  }
+
+  // Actualizar preview en la lista de contactos
+  actualizarPreview(msg);
+}
+
+// ── Renderizar un mensaje ───────────────────────────────────────
+function mostrarMensaje(msg, esMio) {
+  const msgs = document.getElementById('messages');
+  if (!msgs) return;
+
+  const div = document.createElement('div');
+  div.className = 'msg ' + (esMio ? 'mine' : 'theirs');
+
+  const hora = msg.fechaEnvio
+    ? new Date(msg.fechaEnvio).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+    : new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+  div.innerHTML = `
+    <div class="msg-bubble">${escapeHtml(msg.contenido)}</div>
+    <span class="msg-time">${hora}</span>
+  `;
+  msgs.appendChild(div);
+}
+
+function mostrarMensajeSistema(texto) {
+  const msgs = document.getElementById('messages');
+  if (!msgs) return;
+  const div = document.createElement('div');
+  div.style.cssText = 'text-align:center;font-size:0.75rem;color:var(--muted);padding:0.5rem;';
+  div.textContent = texto;
+  msgs.appendChild(div);
+}
+
+function actualizarPreview(msg) {
+  const id = msg.remitenteId === user.id ? msg.destinatarioId : msg.remitenteId;
+  const item = document.querySelector(`.chat-item[data-id="${id}"] .chat-item-preview`);
+  if (item) item.textContent = msg.contenido;
+}
+
+function scrollAbajo() {
+  const msgs = document.getElementById('messages');
+  if (msgs) msgs.scrollTop = msgs.scrollHeight;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function logout() {
+  localStorage.removeItem('gc_token');
+  localStorage.removeItem('gc_user');
+}
+
+// ── Iniciar ────────────────────────────────────────────────────
+cargarContactos();
+conectarWS();
+</script>
+</body>
+</html>

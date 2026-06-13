@@ -373,14 +373,47 @@
     }
 
     /* ---- Registro final ---- */
-    function registrar() {
+    async function registrar() {
       if (!document.getElementById('terminos').checked) {
         showToast('Acepta los términos para continuar', 'error');
         return;
       }
-      // TODO: POST /api/auth/registro
-      showToast('Cuenta creada. ¡Bienvenido a GymConnect! 🎉');
-      setTimeout(() => window.location.href = 'login.html', 2000);
+
+      const btn = document.querySelector('#panel-3 .btn-primary');
+      btn.disabled = true;
+      btn.textContent = 'Creando cuenta…';
+
+      const rol = document.querySelector('input[name="rol"]:checked').value.toUpperCase();
+
+      try {
+        const res = await fetch('http://localhost:8080/api/auth/registro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombre:   document.getElementById('nombre').value.trim(),
+            apellido: document.getElementById('apellido').value.trim(),
+            email:    document.getElementById('email').value.trim(),
+            password: document.getElementById('password').value,
+            rol:      rol
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.error || 'Error al crear la cuenta', 'error');
+          return;
+        }
+
+        showToast('¡Cuenta creada! Bienvenido a GymConnect 🎉', 'success');
+        setTimeout(() => window.location.href = 'login.html', 2000);
+
+      } catch (err) {
+        showToast('No se puede conectar con el servidor', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Crear cuenta ✓';
+      }
     }
   </script>
 </body>

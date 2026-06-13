@@ -1,8 +1,16 @@
 # Java / Spring Boot
-target/
+backend/target/
 *.class
 *.jar
 *.war
+
+# Maven wrapper JAR (se descarga automáticamente)
+.mvn/wrapper/maven-wrapper.jar
+
+# Variables de entorno — NUNCA subir secretos al repo
+.env
+.env.local
+*.env
 
 # IDEs
 .idea/
@@ -12,3 +20,7 @@ target/
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+logs/
