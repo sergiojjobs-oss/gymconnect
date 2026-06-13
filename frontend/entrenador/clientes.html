@@ -76,7 +76,8 @@
         const res = await fetch(`${API}/api/chat/contactos`, {
           headers: { Authorization: 'Bearer ' + token }
         });
-        const clientes = res.ok ? await res.json() : [];
+        const todos = res.ok ? await res.json() : [];
+        const clientes = todos.filter(c => c.esPagador);
         document.getElementById('cargando').style.display = 'none';
 
         if (clientes.length === 0) {
