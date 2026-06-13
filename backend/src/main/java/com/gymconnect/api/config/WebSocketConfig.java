@@ -28,7 +28,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     "http://localhost:3000",
                     "http://localhost:5500",
                     "http://127.0.0.1:5500",
-                    "https://splendid-daffodil-79285f.netlify.app"
+                    "https://splendid-daffodil-79285f.netlify.app",
+                    "https://gymconnect-six.vercel.app"
                 )
                 .withSockJS();
     }

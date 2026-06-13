@@ -63,6 +63,7 @@ public class SecurityConfig {
         // Permitir orígenes configurados + siempre incluir Netlify y localhost
         List<String> origins = new java.util.ArrayList<>(Arrays.asList(allowedOrigins.split(",")));
         origins.add("https://splendid-daffodil-79285f.netlify.app");
+        origins.add("https://gymconnect-six.vercel.app");
         origins.add("http://localhost:3000");
         origins.add("http://localhost:5500");
         origins.add("http://127.0.0.1:5500");
