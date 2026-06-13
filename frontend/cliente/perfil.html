@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfil — GymConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <style>
+    .profile-hero {
+      background: var(--dark-hero);
+      padding: 3rem 0 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(22,163,74,0.12), transparent 65%);
+      pointer-events: none;
+    }
+    .profile-hero-inner {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+    }
+    .profile-big-avatar {
+      width: 100px; height: 100px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 900; color: #fff;
+      border: 4px solid rgba(255,255,255,0.15);
+      flex-shrink: 0;
+    }
+    .profile-hero-info h1 { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; color: var(--text-light); margin-bottom: 0.25rem; }
+    .profile-hero-info p  { color: var(--muted-light); font-size: 0.9rem; }
+    .profile-hero-info .stars { color: var(--gold-l); margin-top: 0.5rem; font-size: 0.9rem; }
+    .profile-hero-info .stars span { color: var(--muted-light); }
+    .profile-hero-cta { margin-left: auto; display: flex; flex-direction: column; gap: 0.75rem; align-items: flex-end; }
+    .profile-price-big { font-size: 2.2rem; font-weight: 900; color: var(--text-light); line-height: 1; }
+    .profile-price-big small { font-size: 0.8rem; color: var(--muted-light); font-weight: 400; }
+
+    .profile-body { padding: 3rem 0 5rem; }
+    .profile-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start; }
+
+    .info-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .info-card h2 { font-size: 0.85rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 1rem; }
+
+    .stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1.25rem; }
+    .stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; }
+    .stat-box strong { display: block; font-size: 1.5rem; font-weight: 900; color: var(--green); }
+    .stat-box span   { font-size: 0.73rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+
+    .review-item { padding: 1rem 0; border-bottom: 1px solid var(--border); }
+    .review-item:last-child { border-bottom: none; }
+    .review-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem; }
+    .review-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--grad-main); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; color: #fff; }
+    .review-name { font-size: 0.85rem; font-weight: 700; }
+    .review-stars { color: var(--gold-l); font-size: 0.78rem; margin-left: auto; }
+    .review-text { font-size: 0.83rem; color: var(--text-2); line-height: 1.65; }
+
+    .sticky-cta {
+      position: sticky;
+      top: 90px;
+    }
+
+    @media (max-width: 768px) {
+      .profile-grid { grid-template-columns: 1fr; }
+      .profile-hero-cta { margin-left: 0; align-items: flex-start; }
+      .sticky-cta { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+      <nav>
+        <a href="buscar.html">← Volver</a>
+        <a href="../registro.html" class="nav-cta">Contratar</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero del perfil -->
+  <div class="profile-hero" id="profileHero">
+    <div class="container">
+      <div class="profile-hero-inner">
+        <div class="profile-big-avatar" id="bigAvatar"></div>
+        <div class="profile-hero-info">
+          <h1 id="heroNombre"></h1>
+          <p id="heroCiudad"></p>
+          <div class="stars" id="heroStars"></div>
+        </div>
+        <div class="profile-hero-cta">
+          <div class="profile-price-big" id="heroPrecio"></div>
+          <a href="../registro.html" class="btn btn-primary" style="font-size:0.9rem;">Contratar ahora →</a>
+          <button class="btn btn-light" onclick="showToast('Mensaje enviado ✓')">Enviar mensaje</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-body">
+    <div class="container">
+      <div class="profile-grid">
+
+        <!-- Columna izquierda -->
+        <div>
+          <!-- Stats -->
+          <div class="stat-row" id="statRow"></div>
+
+          <!-- Bio -->
+          <div class="info-card">
+            <h2>Sobre mí</h2>
+            <p id="bioText" style="font-size:0.92rem;color:var(--text-2);line-height:1.8;"></p>
+            <div id="bioTags" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.25rem;"></div>
+          </div>
+
+          <!-- Servicios -->
+          <div class="info-card">
+            <h2>¿Qué incluye el plan?</h2>
+            <ul id="servicios" style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;"></ul>
+          </div>
+
+          <!-- Reseñas -->
+          <div class="info-card">
+            <h2 id="reviewsTitle"></h2>
+            <div id="reviews"></div>
+          </div>
+        </div>
+
+        <!-- Columna derecha (sticky) -->
+        <div class="sticky-cta">
+          <div class="info-card">
+            <h2>Contratar plan</h2>
+            <div style="font-size:2rem;font-weight:900;color:var(--text);margin-bottom:0.25rem;" id="sidebarPrecio"></div>
+            <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.25rem;">Pago mensual · Cancela cuando quieras</p>
+            <a href="../registro.html" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:0.75rem;">Empezar ahora →</a>
+            <button class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;" onclick="showToast('Abriendo chat… próximamente')">💬 Enviar mensaje</button>
+            <div style="margin-top:1.25rem;font-size:0.78rem;color:var(--muted);text-align:center;">
+              🔒 Pago seguro con PayPal<br>✅ Sin permanencia
+            </div>
+          </div>
+
+          <div class="info-card" style="margin-top:0;">
+            <h2>Disponibilidad</h2>
+            <p style="font-size:0.83rem;color:var(--text-2);">🟢 Acepta nuevos clientes</p>
+            <p style="font-size:0.83rem;color:var(--muted);margin-top:0.4rem;">Responde en menos de 24h</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer><p>&copy; 2026 <strong>GymConnect</strong></p></footer>
+
+  <div id="toast" class="toast" style="
+    position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--text);color:var(--text-light);padding:.85rem 1.5rem;border-radius:8px;
+    font-size:.88rem;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.2);opacity:0;
+    transition:opacity .3s,transform .3s;z-index:999;border-left:4px solid var(--green);
+    white-space:nowrap;pointer-events:none;"></div>
+
+  <script>
+    const entrenadores = [
+      { id:1, nombre:'Carlos Ruiz',     ciudad:'Madrid',    avatar:'CR', avatarColor:'linear-gradient(135deg,#16a34a,#84cc16)',
+        rating:4.9, reviews:128, precio:39, clientes:24, experiencia:'5 años',
+        tags:['Musculación','Nutrición','Pérdida de grasa'],
+        bio:'Soy entrenador personal y nutricionista deportivo certificado con más de 5 años de experiencia. Me especializo en combinar entrenamiento de hipertrofia con planes nutricionales integrales para conseguir resultados duraderos. He trabajado con más de 200 clientes, desde principiantes hasta atletas de competición.',
+        servicios:['Plan de entrenamiento semanal personalizado','Dieta y seguimiento de macros','Chat directo ilimitado','Revisión mensual de progreso','Ajustes del plan cada 4 semanas','Material de vídeo explicativo'],
+        reseñas:[
+          { nombre:'María G.', ini:'MG', stars:5, texto:'Carlos cambió mi cuerpo y mi relación con la comida. En 3 meses bajé 8kg sin pasar hambre. ¡Totalmente recomendado!' },
+          { nombre:'Javier R.', ini:'JR', stars:5, texto:'El mejor entrenador que he tenido. Muy atento, responde rápido y los planes son muy bien explicados.' },
+          { nombre:'Alba S.',   ini:'AS', stars:5, texto:'Increíble profesional. La dieta que me hizo es deliciosa y he ganado mucha masa muscular en poco tiempo.' },
+        ]},
+      { id:2, nombre:'Ana Martínez',    ciudad:'Barcelona', avatar:'AM', avatarColor:'linear-gradient(135deg,#059669,#34d399)',
+        rating:4.9, reviews:94, precio:29, clientes:18, experiencia:'4 años',
+        tags:['Yoga','Pérdida de grasa','Nutrición'],
+        bio:'Soy dietista y coach de bienestar. Mi metodología combina yoga, pilates y nutrición equilibrada para una transformación física y mental completa. Creo que el bienestar sostenible viene de hábitos saludables y no de dietas extremas.',
+        servicios:['Rutina de yoga y pilates personalizada','Plan nutricional equilibrado','Seguimiento semanal por chat','Meditación y gestión del estrés','Recetas saludables semanales'],
+        reseñas:[
+          { nombre:'Lucía P.', ini:'LP', stars:5, texto:'Ana me ayudó a recuperar el equilibrio después de años de dietas restrictivas. Su enfoque es diferente y funciona.' },
+          { nombre:'Clara M.', ini:'CM', stars:5, texto:'Muy profesional y empática. Las rutinas son asequibles y la dieta se adapta perfectamente a mi vida.' },
+        ]},
+      { id:3, nombre:'Jorge López',     ciudad:'Sevilla',   avatar:'JL', avatarColor:'linear-gradient(135deg,#d97706,#f59e0b)',
+        rating:4.7, reviews:61, precio:49, clientes:12, experiencia:'7 años',
+        tags:['Fuerza','Crossfit','Musculación'],
+        bio:'Preparador físico especializado en fuerza funcional y Crossfit con 7 años de experiencia. He preparado atletas para competiciones regionales y nacionales. Mi metodología se basa en la progresión controlada y la técnica perfecta.',
+        servicios:['Programación de fuerza y WODs','Análisis de técnica en vídeo','Chat directo con respuesta en 24h','Seguimiento de marcas y récords','Planificación de competición'],
+        reseñas:[
+          { nombre:'Pablo T.', ini:'PT', stars:5, texto:'Jorge me llevó de no hacer deporte a competir en Crossfit en menos de un año. Es un crack.' },
+          { nombre:'Daniel F.', ini:'DF', stars:4, texto:'Muy buen entrenador, exigente pero justo. Los progresos son notorios.' },
+        ]},
+      { id:4, nombre:'Laura Sánchez',   ciudad:'Valencia',  avatar:'LS', avatarColor:'linear-gradient(135deg,#7c3aed,#a78bfa)',
+        rating:5.0, reviews:47, precio:55, clientes:15, experiencia:'6 años',
+        tags:['Nutrición','Pérdida de grasa','Musculación'],
+        bio:'Nutricionista deportiva y entrenadora personal con doble titulación. Me especializo en diseñar planes de alimentación personalizados integrados con el entrenamiento para maximizar resultados. Enfoque 100% basado en evidencia científica.',
+        servicios:['Análisis metabólico inicial','Plan nutricional con seguimiento de macros','Entrenamiento complementario','Control de composición corporal','Soporte por chat ilimitado'],
+        reseñas:[
+          { nombre:'Irene V.', ini:'IV', stars:5, texto:'Laura es la mejor inversión que he hecho. La nutrición que me diseñó me cambió el cuerpo completamente.' },
+        ]},
+      { id:5, nombre:'Marcos Fernández',ciudad:'Bilbao',    avatar:'MF', avatarColor:'linear-gradient(135deg,#0ea5e9,#38bdf8)',
+        rating:4.6, reviews:39, precio:35, clientes:10, experiencia:'3 años',
+        tags:['Fuerza','Musculación'],
+        bio:'Preparador físico especializado en fuerza máxima y powerlifting. Metodología de progresión lineal y ondulada adaptada a cada atleta. Creo en el entrenamiento inteligente por encima del volumen excesivo.',
+        servicios:['Programa de fuerza periodizado','Técnica de levantamientos básicos','Chat de seguimiento semanal','Revisión de vídeos de entrenamiento'],
+        reseñas:[
+          { nombre:'Adrián Q.', ini:'AQ', stars:5, texto:'Marcos triplicó mis marcas en sentadilla y peso muerto en 6 meses. Metodología muy sólida.' },
+        ]},
+      { id:6, nombre:'Sofía Morales',   ciudad:'Málaga',    avatar:'SM', avatarColor:'linear-gradient(135deg,#ec4899,#f9a8d4)',
+        rating:4.8, reviews:83, precio:25, clientes:22, experiencia:'5 años',
+        tags:['Yoga','Pérdida de grasa'],
+        bio:'Instructora de yoga certificada y coach de hábitos saludables. Mi enfoque holístico combina movimiento consciente, nutrición intuitiva y técnicas de mindfulness para conseguir bienestar a largo plazo.',
+        servicios:['Clases de yoga personalizadas','Plan de hábitos saludables','Técnicas de mindfulness y respiración','Nutrición intuitiva','Comunidad de apoyo online'],
+        reseñas:[
+          { nombre:'Elena R.', ini:'ER', stars:5, texto:'Sofía me enseñó a escuchar a mi cuerpo. Perdí 6kg sin contar calorías y me siento mejor que nunca.' },
+          { nombre:'Marta L.', ini:'ML', stars:5, texto:'Muy profesional y cercana. Las clases de yoga online son geniales.' },
+        ]},
+      { id:7, nombre:'Rubén Torres',    ciudad:'Madrid',    avatar:'RT', avatarColor:'linear-gradient(135deg,#16a34a,#065f46)',
+        rating:4.5, reviews:55, precio:60, clientes:8, experiencia:'8 años',
+        tags:['Crossfit','Fuerza','Musculación'],
+        bio:'Coach de Crossfit con certificación L2 y 8 años de experiencia. He entrenado a atletas de nivel regional y nacional. Programación avanzada para mejorar rendimiento en WODs, fuerza y condición física general.',
+        servicios:['Programación Crossfit L2','Análisis de movimiento','Preparación para competición','Seguimiento de rendimiento','Nutrición para el rendimiento'],
+        reseñas:[
+          { nombre:'Sergio B.', ini:'SB', stars:4, texto:'Rubén es muy exigente pero los resultados hablan por sí solos. He mejorado mucho mi rendimiento.' },
+        ]},
+      { id:8, nombre:'Elena Castro',    ciudad:'Zaragoza',  avatar:'EC', avatarColor:'linear-gradient(135deg,#f59e0b,#fde68a)',
+        rating:4.9, reviews:71, precio:32, clientes:20, experiencia:'6 años',
+        tags:['Nutrición','Pérdida de grasa','Musculación'],
+        bio:'Bioquímica y nutricionista deportiva con 6 años de experiencia. Diseño planes de alimentación basados en tu perfil genético y metabólico, integrados con el entrenamiento para maximizar la pérdida de grasa y la ganancia muscular.',
+        servicios:['Análisis metabólico y genético','Plan nutricional personalizado','Entrenamiento de recomposición','Suplementación basada en evidencia','Seguimiento mensual detallado'],
+        reseñas:[
+          { nombre:'Nuria A.', ini:'NA', stars:5, texto:'Elena sabe exactamente qué necesita tu cuerpo. La dieta es deliciosa y los resultados son increíbles.' },
+          { nombre:'Roberto M.', ini:'RM', stars:5, texto:'La mejor nutricionista que he conocido. Muy rigurosa y los planes son fáciles de seguir.' },
+        ]},
+      { id:9, nombre:'Iván Romero',     ciudad:'Alicante',  avatar:'IR', avatarColor:'linear-gradient(135deg,#06b6d4,#67e8f9)',
+        rating:4.3, reviews:28, precio:20, clientes:30, experiencia:'2 años',
+        tags:['Pérdida de grasa','Musculación'],
+        bio:'Entrenador personal online con tarifas accesibles para que el fitness sea para todos. Me especializo en principiantes que quieren empezar con buen pie, con metodología sencilla y resultados reales.',
+        servicios:['Plan de entrenamiento para principiantes','Guía nutricional básica','Chat de soporte','Ajustes mensuales del plan'],
+        reseñas:[
+          { nombre:'Carlos H.', ini:'CH', stars:4, texto:'Perfecto para empezar. Iván explica todo muy bien y el precio es muy razonable.' },
+        ]},
+    ];
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.opacity = '1';
+      t.style.transform = 'translateX(-50%) translateY(0)';
+      setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, 3000);
+    }
+
+    // Cargar perfil según ?id=
+    const params = new URLSearchParams(location.search);
+    const id = parseInt(params.get('id')) || 1;
+    const e = entrenadores.find(x => x.id === id) || entrenadores[0];
+
+    // Hero
+    document.getElementById('bigAvatar').style.background = e.avatarColor;
+    document.getElementById('bigAvatar').textContent = e.avatar;
+    document.getElementById('heroNombre').textContent = e.nombre;
+    document.getElementById('heroCiudad').textContent = '📍 ' + e.ciudad + ' · ' + (e.pro ? '✓ Entrenador Pro' : 'Entrenador verificado');
+    document.getElementById('heroStars').innerHTML = '★'.repeat(Math.floor(e.rating)) + ` <span>${e.rating} · ${e.reviews} reseñas</span>`;
+    document.getElementById('heroPrecio').innerHTML = e.precio + '€ <small>/mes</small>';
+    document.getElementById('sidebarPrecio').innerHTML = e.precio + '€ <small style="font-size:.75rem;color:var(--muted);font-weight:400">/mes</small>';
+    document.title = e.nombre + ' — GymConnect';
+
+    // Stats
+    document.getElementById('statRow').innerHTML = `
+      <div class="stat-box"><strong>${e.clientes}</strong><span>Clientes activos</span></div>
+      <div class="stat-box"><strong>${e.rating}★</strong><span>Valoración</span></div>
+      <div class="stat-box"><strong>${e.experiencia}</strong><span>Experiencia</span></div>`;
+
+    // Bio
+    document.getElementById('bioText').textContent = e.bio;
+    document.getElementById('bioTags').innerHTML = e.tags.map(t => `<span class="tag">${t}</span>`).join('');
+
+    // Servicios
+    document.getElementById('servicios').innerHTML = e.servicios.map(s =>
+      `<li style="display:flex;align-items:flex-start;gap:.6rem;font-size:.88rem;color:var(--text-2);">
+         <span style="color:var(--green);font-weight:700;margin-top:1px;">✓</span>${s}
+       </li>`).join('');
+
+    // Reseñas
+    document.getElementById('reviewsTitle').textContent = `Reseñas (${e.reseñas.length})`;
+    document.getElementById('reviews').innerHTML = e.reseñas.map(r => `
+      <div class="review-item">
+        <div class="review-header">
+          <div class="review-avatar">${r.ini}</div>
+          <span class="review-name">${r.nombre}</span>
+          <span class="review-stars">${'★'.repeat(r.stars)}</span>
+        </div>
+        <p class="review-text">${r.texto}</p>
+      </div>`).join('');
+  </script>
+</body>
+</html>

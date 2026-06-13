@@ -5,110 +5,413 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Buscar entrenador — GymConnect</title>
   <link rel="stylesheet" href="../css/main.css" />
+  <style>
+    /* Barra de filtros */
+    .filters {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+    .filter-input {
+      flex: 1;
+      min-width: 220px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.7rem 1rem 0.7rem 2.6rem;
+      color: var(--text);
+      font-size: 0.9rem;
+      position: relative;
+    }
+    .filter-input:focus { outline: none; border-color: var(--green); }
+    .search-wrap { position: relative; flex: 1; min-width: 220px; }
+    .search-wrap::before {
+      content: '🔍';
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem;
+      pointer-events: none;
+    }
+    .filter-select {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .filter-select:focus { outline: none; border-color: var(--green); }
+
+    /* Chips de filtro activo */
+    .filter-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; min-height: 28px; }
+    .chip-active {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(22,163,74,0.1);
+      border: 1px solid rgba(22,163,74,0.25);
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--green);
+      cursor: pointer;
+    }
+    .chip-active:hover { background: rgba(22,163,74,0.18); }
+
+    /* Contador de resultados */
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .results-count { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+
+    /* Orden */
+    .sort-select {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.45rem 0.75rem;
+      color: var(--text-2);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Grid de tarjetas */
+    .trainers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* Tarjeta */
+    .trainer-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+      cursor: pointer;
+    }
+    .trainer-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(22,163,74,0.12);
+      border-color: rgba(22,163,74,0.3);
+    }
+
+    /* Cabecera coloreada */
+    .card-header {
+      padding: 1.5rem 1.5rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .card-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--grad-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #fff;
+      flex-shrink: 0;
+      border: 3px solid var(--bg);
+    }
+    .card-info { flex: 1; }
+    .card-info h3 {
+      font-size: 0.95rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--text);
+      margin-bottom: 0.15rem;
+    }
+    .card-info p { font-size: 0.78rem; color: var(--muted); }
+    .card-badge-pro {
+      background: rgba(22,163,74,0.1);
+      border: 1px solid rgba(22,163,74,0.3);
+      color: var(--green);
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .card-body { padding: 1rem 1.5rem; }
+
+    .card-stars { color: #d97706; font-size: 0.82rem; margin-bottom: 0.6rem; }
+    .card-stars span { color: var(--muted); font-size: 0.76rem; }
+
+    .card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--text-2);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      background: rgba(22,163,74,0.02);
+    }
+    .card-price { font-size: 1.25rem; font-weight: 900; color: var(--text); }
+    .card-price small { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+
+    /* Sin resultados */
+    .no-results {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+      display: none;
+    }
+    .no-results span { font-size: 2.5rem; display: block; margin-bottom: 1rem; }
+
+    @media (max-width: 640px) {
+      .filters { flex-direction: column; }
+      .filter-input, .search-wrap { min-width: 100%; }
+    }
+  </style>
 </head>
 <body>
 
   <header>
-    <a href="../index.html" class="logo">Gym<span>Connect</span></a>
-    <nav>
-      <a href="../login.html">Iniciar sesión</a>
-      <a href="../registro.html" class="btn-nav">Empezar gratis</a>
-    </nav>
+    <div class="container">
+      <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+      <button class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <nav>
+        <a href="../login.html">Acceder</a>
+        <a href="../registro.html" class="nav-cta">Empezar gratis</a>
+      </nav>
+    </div>
   </header>
 
-  <main style="max-width:1100px; margin:3rem auto; padding:0 1.5rem;">
+  <main style="padding: 3rem 0 5rem; min-height: calc(100vh - 70px);">
+    <div class="container">
 
-    <h1 style="font-size:1.8rem; font-weight:800; margin-bottom:0.5rem;">Encuentra tu entrenador</h1>
-    <p style="color:var(--text-muted); margin-bottom:2rem;">Más de 500 profesionales listos para ayudarte a alcanzar tus metas.</p>
-
-    <!-- Filtros -->
-    <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:2rem;">
-      <input type="text" placeholder="🔍  Buscar por nombre o especialidad..."
-        style="flex:1; min-width:220px; background:var(--card-bg); border:1px solid var(--border);
-               border-radius:8px; padding:0.65rem 1rem; color:var(--text); font-size:0.9rem;" />
-      <select style="background:var(--card-bg); border:1px solid var(--border); border-radius:8px;
-                     padding:0.65rem 1rem; color:var(--text); font-size:0.9rem;">
-        <option>Todas las especialidades</option>
-        <option>Musculación</option>
-        <option>Pérdida de peso</option>
-        <option>Crossfit</option>
-        <option>Yoga</option>
-      </select>
-      <select style="background:var(--card-bg); border:1px solid var(--border); border-radius:8px;
-                     padding:0.65rem 1rem; color:var(--text); font-size:0.9rem;">
-        <option>Cualquier precio</option>
-        <option>Menos de 30€/mes</option>
-        <option>30€ – 60€/mes</option>
-        <option>Más de 60€/mes</option>
-      </select>
-    </div>
-
-    <!-- Lista de entrenadores -->
-    <div class="grid-3">
-
-      <div class="card">
-        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
-          <div class="avatar">CR</div>
-          <div>
-            <h3 style="font-size:0.95rem;">Carlos Ruiz</h3>
-            <p style="font-size:0.8rem; color:var(--text-muted);">Madrid</p>
-          </div>
-        </div>
-        <div class="rating" style="margin-bottom:0.75rem;">★★★★★ <span style="color:var(--text-muted); font-size:0.8rem;">(128)</span></div>
-        <div class="tags" style="margin-bottom:1rem;">
-          <span class="tag">Musculación</span>
-          <span class="tag">Nutrición</span>
-        </div>
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-          <span style="font-weight:800; font-size:1.1rem;">39€<small style="font-weight:400; font-size:0.75rem; color:var(--text-muted);">/mes</small></span>
-          <a href="../login.html" class="btn btn-primary" style="padding:0.5rem 1rem; font-size:0.83rem;">Contratar</a>
-        </div>
+      <div style="margin-bottom: 2rem;">
+        <span class="section-label">Directorio de profesionales</span>
+        <h1 class="section-title">Encuentra tu<br>entrenador ideal</h1>
+        <p class="section-sub" style="margin-bottom:0;">Más de 500 entrenadores certificados en entrenamiento y nutrición. Filtra y encuentra el tuyo.</p>
       </div>
 
-      <div class="card">
-        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
-          <div class="avatar" style="background: linear-gradient(135deg,#7f22fe,#4facfe);">AM</div>
-          <div>
-            <h3 style="font-size:0.95rem;">Ana Martínez</h3>
-            <p style="font-size:0.8rem; color:var(--text-muted);">Barcelona</p>
-          </div>
+      <!-- Filtros -->
+      <div class="filters">
+        <div class="search-wrap">
+          <input class="filter-input" type="text" id="q" placeholder="Nombre, especialidad, ciudad…" oninput="filtrar()" />
         </div>
-        <div class="rating" style="margin-bottom:0.75rem;">★★★★★ <span style="color:var(--text-muted); font-size:0.8rem;">(94)</span></div>
-        <div class="tags" style="margin-bottom:1rem;">
-          <span class="tag">Yoga</span>
-          <span class="tag">Pérdida de peso</span>
-        </div>
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-          <span style="font-weight:800; font-size:1.1rem;">29€<small style="font-weight:400; font-size:0.75rem; color:var(--text-muted);">/mes</small></span>
-          <a href="../login.html" class="btn btn-primary" style="padding:0.5rem 1rem; font-size:0.83rem;">Contratar</a>
-        </div>
+        <select class="filter-select" id="especialidad" onchange="filtrar()">
+          <option value="">Todas las especialidades</option>
+          <option value="musculacion">Musculación</option>
+          <option value="perdida">Pérdida de grasa</option>
+          <option value="nutricion">Nutrición</option>
+          <option value="crossfit">Crossfit</option>
+          <option value="yoga">Yoga</option>
+          <option value="fuerza">Fuerza</option>
+        </select>
+        <select class="filter-select" id="precio" onchange="filtrar()">
+          <option value="">Cualquier precio</option>
+          <option value="low">Menos de 30€/mes</option>
+          <option value="mid">30€ – 50€/mes</option>
+          <option value="high">Más de 50€/mes</option>
+        </select>
+        <select class="filter-select" id="valoracion" onchange="filtrar()">
+          <option value="">Cualquier valoración</option>
+          <option value="5">⭐ 5 estrellas</option>
+          <option value="4">⭐ 4+ estrellas</option>
+        </select>
       </div>
 
-      <div class="card">
-        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
-          <div class="avatar" style="background: linear-gradient(135deg,#11998e,#38ef7d);">JL</div>
-          <div>
-            <h3 style="font-size:0.95rem;">Jorge López</h3>
-            <p style="font-size:0.8rem; color:var(--text-muted);">Sevilla</p>
-          </div>
-        </div>
-        <div class="rating" style="margin-bottom:0.75rem;">★★★★☆ <span style="color:var(--text-muted); font-size:0.8rem;">(61)</span></div>
-        <div class="tags" style="margin-bottom:1rem;">
-          <span class="tag">Crossfit</span>
-          <span class="tag">Fuerza</span>
-        </div>
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-          <span style="font-weight:800; font-size:1.1rem;">49€<small style="font-weight:400; font-size:0.75rem; color:var(--text-muted);">/mes</small></span>
-          <a href="../login.html" class="btn btn-primary" style="padding:0.5rem 1rem; font-size:0.83rem;">Contratar</a>
-        </div>
+      <!-- Chips de filtros activos -->
+      <div class="filter-chips" id="activeChips"></div>
+
+      <!-- Cabecera de resultados -->
+      <div class="results-header">
+        <span class="results-count" id="countLabel">Mostrando todos los entrenadores</span>
+        <select class="sort-select" id="orden" onchange="filtrar()">
+          <option value="rating">Mejor valorados</option>
+          <option value="precio-asc">Precio: menor a mayor</option>
+          <option value="precio-desc">Precio: mayor a menor</option>
+          <option value="nombre">Nombre A–Z</option>
+        </select>
+      </div>
+
+      <!-- Grid de resultados -->
+      <div class="trainers-grid" id="grid"></div>
+      <div class="no-results" id="noResults">
+        <span>🔍</span>
+        No hay entrenadores con esos filtros.<br>
+        <button class="btn btn-outline" style="margin-top:1.25rem;font-size:0.85rem;" onclick="resetFiltros()">Limpiar filtros</button>
       </div>
 
     </div>
   </main>
 
   <footer>
-    <p>&copy; 2026 <strong>GymConnect</strong></p>
+    <p>&copy; 2026 <strong>GymConnect</strong> · Todos los derechos reservados</p>
   </footer>
 
+  <script>
+    /* ============ DATOS ============ */
+    const entrenadores = [
+      { id:1, nombre:'Carlos Ruiz',     ciudad:'Madrid',    avatar:'CR', avatarColor:'linear-gradient(135deg,#16a34a,#84cc16)',
+        rating:4.9, reviews:128, precio:39,
+        tags:['musculacion','nutricion','perdida'],
+        desc:'Entrenador & Nutricionista certificado con 5 años de experiencia. Especializado en hipertrofia y pérdida de grasa con planes integrales.', pro:true },
+      { id:2, nombre:'Ana Martínez',    ciudad:'Barcelona', avatar:'AM', avatarColor:'linear-gradient(135deg,#059669,#34d399)',
+        rating:4.9, reviews:94, precio:29,
+        tags:['yoga','perdida','nutricion'],
+        desc:'Dietista y coach de bienestar. Combina yoga, pilates y planes nutricionales para una transformación completa y sostenible.', pro:true },
+      { id:3, nombre:'Jorge López',     ciudad:'Sevilla',   avatar:'JL', avatarColor:'linear-gradient(135deg,#d97706,#f59e0b)',
+        rating:4.7, reviews:61, precio:49,
+        tags:['fuerza','crossfit','musculacion'],
+        desc:'Especialista en fuerza funcional y Crossfit. Más de 7 años preparando atletas de competición y aficionados.', pro:false },
+      { id:4, nombre:'Laura Sánchez',   ciudad:'Valencia',  avatar:'LS', avatarColor:'linear-gradient(135deg,#7c3aed,#a78bfa)',
+        rating:5.0, reviews:47, precio:55,
+        tags:['nutricion','perdida','musculacion'],
+        desc:'Nutricionista deportiva y entrenadora personal. Diseña planes de alimentación personalizados integrados con el entrenamiento.', pro:true },
+      { id:5, nombre:'Marcos Fernández',ciudad:'Bilbao',    avatar:'MF', avatarColor:'linear-gradient(135deg,#0ea5e9,#38bdf8)',
+        rating:4.6, reviews:39, precio:35,
+        tags:['fuerza','musculacion'],
+        desc:'Preparador físico especializado en fuerza máxima y powerlifting. Metodología progresiva y seguimiento semanal.', pro:false },
+      { id:6, nombre:'Sofía Morales',   ciudad:'Málaga',    avatar:'SM', avatarColor:'linear-gradient(135deg,#ec4899,#f9a8d4)',
+        rating:4.8, reviews:83, precio:25,
+        tags:['yoga','perdida'],
+        desc:'Instructora de yoga certificada y coach de hábitos saludables. Perfecta para quienes buscan bienestar integral y reducir el estrés.', pro:false },
+      { id:7, nombre:'Rubén Torres',    ciudad:'Madrid',    avatar:'RT', avatarColor:'linear-gradient(135deg,#16a34a,#065f46)',
+        rating:4.5, reviews:55, precio:60,
+        tags:['crossfit','fuerza','musculacion'],
+        desc:'Coach de Crossfit con certificación L2. Programación personalizada para mejorar rendimiento en WODs y competiciones.', pro:true },
+      { id:8, nombre:'Elena Castro',    ciudad:'Zaragoza',  avatar:'EC', avatarColor:'linear-gradient(135deg,#f59e0b,#fde68a)',
+        rating:4.9, reviews:71, precio:32,
+        tags:['nutricion','perdida','musculacion'],
+        desc:'Bioquímica y nutricionista deportiva. Planes de alimentación basados en evidencia científica, adaptados a tu metabolismo.', pro:true },
+      { id:9, nombre:'Iván Romero',     ciudad:'Alicante',  avatar:'IR', avatarColor:'linear-gradient(135deg,#06b6d4,#67e8f9)',
+        rating:4.3, reviews:28, precio:20,
+        tags:['perdida','musculacion'],
+        desc:'Entrenador personal online con tarifas accesibles. Ideal para iniciarte en el fitness con acompañamiento profesional.', pro:false },
+    ];
+
+    /* ============ RENDER ============ */
+    function renderCard(e) {
+      const stars = '★'.repeat(Math.floor(e.rating)) + (e.rating % 1 >= 0.5 ? '½' : '');
+      const tagsHtml = e.tags.map(t => `<span class="tag">${labelTag(t)}</span>`).join('');
+      return `
+        <div class="trainer-card" onclick="window.location.href='perfil.html?id=${e.id}'">
+          <div class="card-header">
+            <div class="card-avatar" style="background:${e.avatarColor}">${e.avatar}</div>
+            <div class="card-info">
+              <h3>${e.nombre}</h3>
+              <p>📍 ${e.ciudad}</p>
+            </div>
+            ${e.pro ? '<span class="card-badge-pro">✓ Pro</span>' : ''}
+          </div>
+          <div class="card-body">
+            <div class="card-stars">${stars} <span>${e.rating.toFixed(1)} · ${e.reviews} reseñas</span></div>
+            <div class="card-tags">${tagsHtml}</div>
+            <p class="card-desc">${e.desc}</p>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">${e.precio}€ <small>/mes</small></div>
+            <span class="btn btn-primary" style="padding:0.5rem 1.1rem;font-size:0.8rem;">Ver perfil →</span>
+          </div>
+        </div>`;
+    }
+
+    function labelTag(t) {
+      return { musculacion:'Musculación', perdida:'Pérdida de grasa', nutricion:'Nutrición',
+               crossfit:'Crossfit', yoga:'Yoga', fuerza:'Fuerza' }[t] || t;
+    }
+
+    /* ============ FILTRAR ============ */
+    function filtrar() {
+      const q    = document.getElementById('q').value.toLowerCase();
+      const esp  = document.getElementById('especialidad').value;
+      const prec = document.getElementById('precio').value;
+      const val  = document.getElementById('valoracion').value;
+      const ord  = document.getElementById('orden').value;
+
+      let lista = entrenadores.filter(e => {
+        const matchQ   = !q || e.nombre.toLowerCase().includes(q) || e.ciudad.toLowerCase().includes(q) || e.tags.some(t => labelTag(t).toLowerCase().includes(q));
+        const matchEsp = !esp || e.tags.includes(esp);
+        const matchPrv = !prec ||
+          (prec === 'low'  && e.precio < 30)  ||
+          (prec === 'mid'  && e.precio >= 30 && e.precio <= 50) ||
+          (prec === 'high' && e.precio > 50);
+        const matchVal = !val ||
+          (val === '5' && e.rating === 5.0) ||
+          (val === '4' && e.rating >= 4.0);
+        return matchQ && matchEsp && matchPrv && matchVal;
+      });
+
+      // Ordenar
+      lista.sort((a, b) => {
+        if (ord === 'rating')      return b.rating - a.rating;
+        if (ord === 'precio-asc')  return a.precio - b.precio;
+        if (ord === 'precio-desc') return b.precio - a.precio;
+        if (ord === 'nombre')      return a.nombre.localeCompare(b.nombre);
+        return 0;
+      });
+
+      // Render
+      const grid = document.getElementById('grid');
+      grid.innerHTML = lista.map(renderCard).join('');
+      document.getElementById('noResults').style.display = lista.length === 0 ? 'block' : 'none';
+      document.getElementById('countLabel').textContent =
+        lista.length === entrenadores.length
+          ? `Mostrando todos los entrenadores (${lista.length})`
+          : `${lista.length} entrenador${lista.length !== 1 ? 'es' : ''} encontrado${lista.length !== 1 ? 's' : ''}`;
+
+      // Chips activos
+      const chips = [];
+      if (q)   chips.push({ label: `"${q}"`, clear: () => { document.getElementById('q').value = ''; filtrar(); } });
+      if (esp) chips.push({ label: labelTag(esp), clear: () => { document.getElementById('especialidad').value = ''; filtrar(); } });
+      if (prec) chips.push({ label: { low:'< 30€', mid:'30–50€', high:'> 50€' }[prec], clear: () => { document.getElementById('precio').value = ''; filtrar(); } });
+      if (val)  chips.push({ label: val === '5' ? '5 estrellas' : '4+ estrellas', clear: () => { document.getElementById('valoracion').value = ''; filtrar(); } });
+
+      document.getElementById('activeChips').innerHTML =
+        chips.map((c, i) => `<span class="chip-active" onclick="activeChipClick(${i})">✕ ${c.label}</span>`).join('');
+      window._chips = chips;
+    }
+
+    function activeChipClick(i) { window._chips[i].clear(); }
+
+    function resetFiltros() {
+      document.getElementById('q').value = '';
+      document.getElementById('especialidad').value = '';
+      document.getElementById('precio').value = '';
+      document.getElementById('valoracion').value = '';
+      filtrar();
+    }
+
+    // Carga inicial
+    filtrar();
+  </script>
 </body>
 </html>
