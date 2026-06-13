@@ -3,566 +3,202 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Resultados de clientes — GymConnect</title>
+  <title>Resultados — GymConnect</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="../js/config.js"></script>
   <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
-  <!-- SheetJS para leer archivos Excel -->
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <style>
-    /* ======= LAYOUT ======= */
-    .dashboard-layout {
-      display: grid;
-      grid-template-columns: 240px 1fr;
-      min-height: calc(100vh - 70px);
-    }
-
-    /* Sidebar */
-    .sidebar {
-      background: var(--dark-hero);
-      border-right: 1px solid rgba(255,255,255,0.06);
-      padding: 2rem 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-    .sidebar-label {
-      font-size: 0.65rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--muted-light);
-      padding: 0 0.75rem;
-      margin: 1rem 0 0.4rem;
-    }
-    .sidebar a {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.65rem 0.75rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--muted-light);
-      transition: background var(--t), color var(--t);
-    }
-    .sidebar a:hover { background: rgba(255,255,255,0.06); color: var(--text-light); }
-    .sidebar a.active { background: rgba(22,163,74,0.15); color: var(--green-l); font-weight: 700; }
-
-    /* Contenido principal */
-    .main-content { padding: 2.5rem; overflow-y: auto; }
-
-    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-    .page-header h1 { font-size: 1.4rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.3px; }
-
-    /* ======= TABS ======= */
-    .tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 2px solid var(--border); }
-    .tab {
-      padding: 0.6rem 1.25rem;
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      cursor: pointer;
-      color: var(--muted);
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      transition: color var(--t), border-color var(--t);
-    }
-    .tab:hover { color: var(--text); }
-    .tab.active { color: var(--green); border-bottom-color: var(--green); }
-
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* ======= ZONA DE SUBIDA ======= */
-    .drop-zone {
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 3rem 2rem;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color var(--t), background var(--t);
-      background: rgba(22,163,74,0.02);
-      margin-bottom: 2rem;
-    }
-    .drop-zone:hover, .drop-zone.drag-over {
-      border-color: var(--green);
-      background: rgba(22,163,74,0.05);
-    }
-    .drop-icon { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
-    .drop-zone h3 { font-size: 1rem; font-weight: 800; margin-bottom: 0.4rem; text-transform: uppercase; }
-    .drop-zone p  { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.25rem; }
-    .drop-zone input[type="file"] { display: none; }
-
-    /* ======= TABLA EXCEL ======= */
-    .excel-preview {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 1.5rem;
-    }
-    .excel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      background: rgba(22,163,74,0.04);
-    }
-    .excel-header h3 { font-size: 0.88rem; font-weight: 800; text-transform: uppercase; }
-    .excel-header span { font-size: 0.75rem; color: var(--muted); }
-    .excel-table-wrap { overflow-x: auto; max-height: 400px; overflow-y: auto; }
-    .excel-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.82rem;
-    }
-    .excel-table th {
-      background: rgba(22,163,74,0.08);
-      color: var(--green);
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-size: 0.72rem;
-      padding: 0.65rem 1rem;
-      text-align: left;
-      position: sticky;
-      top: 0;
-      white-space: nowrap;
-      border-bottom: 2px solid var(--border);
-    }
-    .excel-table td {
-      padding: 0.55rem 1rem;
-      border-bottom: 1px solid var(--border);
-      color: var(--text-2);
-      white-space: nowrap;
-    }
-    .excel-table tr:last-child td { border-bottom: none; }
-    .excel-table tr:hover td { background: rgba(22,163,74,0.03); }
-
-    /* Indicador de cambio (positivo/negativo) */
-    .val-pos { color: var(--green); font-weight: 700; }
-    .val-neg { color: #dc2626; font-weight: 700; }
-
-    /* ======= GALERÍA FOTOS/VÍDEOS ======= */
-    .media-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-    .media-item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
-      group: true;
-      transition: transform var(--t), box-shadow var(--t);
-    }
-    .media-item:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(22,163,74,0.12); }
-    .media-thumb {
-      width: 100%;
-      aspect-ratio: 4/3;
-      object-fit: cover;
-      display: block;
-    }
-    .media-thumb-video {
-      width: 100%;
-      aspect-ratio: 4/3;
-      object-fit: cover;
-      display: block;
-    }
-    .media-overlay {
-      position: absolute;
-      top: 0; right: 0;
-      display: flex;
-      gap: 0.25rem;
-      padding: 0.5rem;
-    }
-    .media-btn {
-      width: 28px; height: 28px;
-      background: rgba(0,0,0,0.6);
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      color: #fff;
-      transition: background var(--t);
-    }
-    .media-btn:hover { background: rgba(220,38,38,0.8); }
-    .media-footer {
-      padding: 0.65rem 0.75rem;
-      font-size: 0.75rem;
-    }
-    .media-footer strong { display: block; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .media-footer span   { color: var(--muted); }
-    .media-type-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      font-size: 0.65rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 0.15rem 0.5rem;
-      border-radius: 4px;
-    }
-    .badge-photo { background: rgba(22,163,74,0.1); color: var(--green); }
-    .badge-video { background: rgba(217,119,6,0.1); color: var(--gold); }
-
-    /* Modal de previsualización */
-    .modal-bg {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-bg.open { display: flex; }
-    .modal-inner {
-      max-width: 90vw;
-      max-height: 90vh;
-      position: relative;
-    }
-    .modal-inner img, .modal-inner video {
-      max-width: 90vw;
-      max-height: 85vh;
-      border-radius: 8px;
-      display: block;
-    }
-    .modal-close {
-      position: absolute;
-      top: -40px; right: 0;
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    /* ======= ESTADO VACÍO ======= */
-    .empty-state {
-      text-align: center;
-      padding: 3rem;
-      color: var(--muted);
-    }
-    .empty-state span { font-size: 3rem; display: block; margin-bottom: 0.75rem; }
-    .empty-state p { font-size: 0.88rem; }
-
-    /* Toast */
-    .toast {
-      position: fixed; bottom: 2rem; left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--text); color: var(--text-light);
-      padding: .85rem 1.5rem; border-radius: 8px;
-      font-size: .88rem; font-weight: 600;
-      box-shadow: 0 8px 32px rgba(0,0,0,.2);
-      opacity: 0; transition: opacity .3s, transform .3s;
-      z-index: 1100; border-left: 4px solid var(--green);
-      white-space: nowrap; pointer-events: none;
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    @media (max-width: 768px) {
-      .dashboard-layout { grid-template-columns: 1fr; }
-      .sidebar { display: none; }
-      .main-content { padding: 1.5rem; }
-    }
+    .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
+    .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
+    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--muted-light); padding:0 0.75rem; margin:1rem 0 0.4rem; }
+    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--muted-light); transition:background var(--t),color var(--t); text-decoration:none; }
+    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text-light); }
+    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--green-l); font-weight:700; }
+    .main { padding:2rem 2.5rem; overflow-y:auto; }
+    .cliente-selector { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:2rem; }
+    .cli-pill { padding:0.4rem 1rem; border-radius:99px; border:1px solid var(--border); background:var(--card); font-size:0.82rem; font-weight:700; color:var(--muted-light); cursor:pointer; transition:all 0.15s; }
+    .cli-pill.active { background:rgba(22,163,74,0.12); border-color:rgba(22,163,74,0.4); color:var(--green); }
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+    .stat-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; text-align:center; }
+    .stat-card .v { font-size:1.6rem; font-weight:900; color:var(--green); }
+    .stat-card .l { font-size:0.75rem; color:var(--muted); margin-top:0.25rem; }
+    .checkin-item { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+    .checkin-head { display:flex; align-items:center; gap:1.5rem; margin-bottom:0.75rem; flex-wrap:wrap; }
+    .ch-fecha { font-size:0.8rem; color:var(--muted); font-weight:700; min-width:120px; }
+    .ch-peso { font-size:1.3rem; font-weight:900; }
+    .ch-diff { font-size:0.78rem; font-weight:700; padding:0.15rem 0.45rem; border-radius:6px; }
+    .diff-down { background:rgba(22,163,74,0.1); color:var(--green); }
+    .diff-up { background:rgba(220,38,38,0.1); color:#dc2626; }
+    .ch-energia { color:#d97706; }
+    .ch-foto { width:72px; height:72px; border-radius:8px; object-fit:cover; margin-left:auto; }
+    .ch-notas { font-size:0.85rem; color:var(--text-2); line-height:1.6; margin-bottom:0.75rem; }
+    .cumpl-row { display:flex; align-items:center; gap:0.75rem; font-size:0.8rem; color:var(--muted); margin-bottom:0.75rem; }
+    .cumpl-bar { flex:1; height:6px; background:var(--border); border-radius:99px; overflow:hidden; }
+    .cumpl-fill { height:100%; background:var(--grad-main); border-radius:99px; }
+    .feedback-form { margin-top:0.75rem; display:flex; gap:0.5rem; }
+    .feedback-form textarea { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.75rem; color:var(--text); font-size:0.83rem; resize:none; }
+    .feedback-form textarea:focus { outline:none; border-color:var(--green); }
+    .feedback-saved { background:rgba(22,163,74,0.05); border:1px solid rgba(22,163,74,0.15); border-radius:8px; padding:0.65rem 0.9rem; font-size:0.83rem; color:var(--text-2); margin-top:0.5rem; }
+    .feedback-saved strong { display:block; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--green); margin-bottom:0.2rem; }
+    .sin-datos { text-align:center; padding:3rem; color:var(--muted); }
+    @media(max-width:768px){ .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1.25rem} .stats-row{grid-template-columns:repeat(2,1fr)} }
   </style>
 </head>
 <body>
-
-  <header>
-    <div class="container">
-      <a href="../index.html" class="logo">Gym<span>Connect</span></a>
-      <nav>
-        <a href="perfil.html">Mi perfil</a>
-        <a href="../login.html" class="nav-cta">Cerrar sesión</a>
-      </nav>
-    </div>
-  </header>
-
-  <div class="dashboard-layout">
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <span class="sidebar-label">Panel</span>
-      <a href="perfil.html">👤 Mi perfil</a>
-      <a href="rutinas.html">📋 Rutinas</a>
-      <a href="../chat/index.html">💬 Mensajes</a>
-      <a href="clientes.html">👥 Clientes</a>
-      <a href="resultados.html" class="active">🏆 Resultados</a>
-      <span class="sidebar-label">Cuenta</span>
-      <a href="planes.html">💳 Mi suscripción</a>
-      <a href="ajustes.html">⚙️ Ajustes</a>
-      <a href="../login.html" onclick="localStorage.clear()">🚪 Salir</a>
-    </aside>
-
-    <!-- Contenido -->
-    <main class="main-content">
-      <div class="page-header">
-        <div>
-          <h1>Resultados de clientes</h1>
-          <p style="font-size:0.85rem;color:var(--muted);margin-top:0.25rem;">Sube tablas de progreso y fotos/vídeos para mostrar en tu perfil público.</p>
-        </div>
-      </div>
-
-      <!-- Tabs -->
-      <div class="tabs">
-        <div class="tab active" onclick="switchTab('excel')">📊 Tablas Excel</div>
-        <div class="tab" onclick="switchTab('media')">🖼️ Fotos y Vídeos</div>
-      </div>
-
-      <!-- ===== TAB EXCEL ===== -->
-      <div class="tab-panel active" id="tab-excel">
-
-        <!-- Zona de subida -->
-        <div class="drop-zone" id="dropExcel"
-             onclick="document.getElementById('fileExcel').click()"
-             ondragover="ev(event,'over','dropExcel')"
-             ondragleave="ev(event,'leave','dropExcel')"
-             ondrop="ev(event,'drop','dropExcel')">
-          <span class="drop-icon">📊</span>
-          <h3>Sube una tabla de progreso</h3>
-          <p>Arrastra un archivo Excel (.xlsx, .xls) o CSV aquí, o haz clic para seleccionarlo.<br>Los datos se mostrarán como tabla en tu perfil.</p>
-          <input type="file" id="fileExcel" accept=".xlsx,.xls,.csv" onchange="handleExcel(this.files[0])" />
-          <span class="btn btn-primary" style="pointer-events:none;">Seleccionar archivo</span>
-        </div>
-
-        <!-- Tablas subidas -->
-        <div id="excelList"></div>
-
-        <!-- Ejemplo de cómo se verá -->
-        <div class="excel-preview" id="excelDemo">
-          <div class="excel-header">
-            <h3>📊 Ejemplo — Resultados de clientes (demo)</h3>
-            <span>Así se verá tu tabla en el perfil</span>
-          </div>
-          <div class="excel-table-wrap">
-            <table class="excel-table">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Inicio</th>
-                  <th>Actual</th>
-                  <th>Peso inicio (kg)</th>
-                  <th>Peso actual (kg)</th>
-                  <th>Cambio</th>
-                  <th>% Grasa inicio</th>
-                  <th>% Grasa actual</th>
-                  <th>Objetivo</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>María G.</td><td>Ene 2025</td><td>May 2025</td><td>78</td><td>70</td><td class="val-pos">−8 kg ✓</td><td>32%</td><td>26%</td><td>Pérdida de grasa</td></tr>
-                <tr><td>Javier R.</td><td>Feb 2025</td><td>May 2025</td><td>72</td><td>76</td><td class="val-pos">+4 kg ✓</td><td>18%</td><td>15%</td><td>Ganar masa muscular</td></tr>
-                <tr><td>Alba S.</td><td>Mar 2025</td><td>May 2025</td><td>65</td><td>62</td><td class="val-pos">−3 kg ✓</td><td>28%</td><td>24%</td><td>Definición</td></tr>
-                <tr><td>Carlos H.</td><td>Ene 2025</td><td>May 2025</td><td>90</td><td>83</td><td class="val-pos">−7 kg ✓</td><td>35%</td><td>28%</td><td>Pérdida de grasa</td></tr>
-                <tr><td>Lucía P.</td><td>Abr 2025</td><td>May 2025</td><td>58</td><td>57</td><td class="val-pos">−1 kg ✓</td><td>25%</td><td>24%</td><td>Tonificación</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ===== TAB MEDIA ===== -->
-      <div class="tab-panel" id="tab-media">
-
-        <!-- Zona de subida -->
-        <div class="drop-zone" id="dropMedia"
-             onclick="document.getElementById('fileMedia').click()"
-             ondragover="ev(event,'over','dropMedia')"
-             ondragleave="ev(event,'leave','dropMedia')"
-             ondrop="ev(event,'drop','dropMedia')">
-          <span class="drop-icon">🖼️</span>
-          <h3>Sube fotos o vídeos de resultados</h3>
-          <p>Imágenes (JPG, PNG, WEBP) o vídeos (MP4, MOV, WEBM).<br>Máximo 50 MB por archivo. Puedes subir varios a la vez.</p>
-          <input type="file" id="fileMedia" accept="image/*,video/*" multiple onchange="handleMedia(this.files)" />
-          <span class="btn btn-primary" style="pointer-events:none;">Seleccionar archivos</span>
-        </div>
-
-        <!-- Galería -->
-        <div class="media-grid" id="mediaGrid"></div>
-
-        <div class="empty-state" id="mediaEmpty">
-          <span>📷</span>
-          <p>Aún no has subido fotos ni vídeos.<br>Muestra los resultados reales de tus clientes para ganar credibilidad.</p>
-        </div>
-
-      </div>
-    </main>
+<header>
+  <div class="container">
+    <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+    <nav>
+      <button class="btn btn-outline" style="font-size:0.82rem;" onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
+    </nav>
   </div>
+</header>
 
-  <!-- Modal previsualización -->
-  <div class="modal-bg" id="modal" onclick="closeModal(event)">
-    <div class="modal-inner" id="modalInner">
-      <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <span class="sidebar-label">Panel</span>
+    <a href="perfil.html">👤 Mi perfil</a>
+    <a href="rutinas.html">📋 Rutinas</a>
+    <a href="nutricion.html">🥗 Nutrición</a>
+    <a href="../chat/index.html">💬 Mensajes</a>
+    <a href="clientes.html">👥 Clientes</a>
+    <a href="resultados.html" class="active">🏆 Resultados</a>
+    <span class="sidebar-label">Cuenta</span>
+    <a href="planes.html">💳 Mi suscripción</a>
+    <a href="ajustes.html">⚙️ Ajustes</a>
+    <a href="../login.html" onclick="localStorage.clear()">🚪 Salir</a>
+  </aside>
+
+  <main class="main">
+    <div style="margin-bottom:1.5rem;">
+      <h1 style="font-size:1.5rem;font-weight:800;">🏆 Resultados</h1>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0.2rem;">Sigue el progreso semanal de tus clientes</p>
     </div>
-  </div>
 
-  <div id="toast" class="toast"></div>
+    <div class="cliente-selector" id="clientePills"></div>
+    <div id="contenido"><p style="color:var(--muted);">Selecciona un cliente para ver su progreso.</p></div>
+  </main>
+</div>
 
-  <script>
-    /* ===== UTILS ===== */
-    function showToast(msg, error = false) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.style.borderLeftColor = error ? '#dc2626' : 'var(--green)';
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3500);
+<script>
+const token = () => localStorage.getItem('gc_token');
+const hdr = (json) => ({ Authorization: 'Bearer ' + token(), ...(json ? {'Content-Type':'application/json'} : {}) });
+let clientes = [], clienteActivo = null;
+
+async function init() {
+  try {
+    clientes = await fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json());
+    const pills = document.getElementById('clientePills');
+    if (!clientes.length) {
+      pills.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">Aún no tienes clientes.</p>';
+      return;
+    }
+    pills.innerHTML = clientes.map(c =>
+      `<button class="cli-pill" onclick="selCliente(${c.id},'${c.nombre}')" id="pill-${c.id}">${c.nombre}</button>`
+    ).join('');
+
+    // Auto-seleccionar desde URL param o el primero
+    const params = new URLSearchParams(location.search);
+    const presel = params.get('cliente');
+    if (presel) {
+      const c = clientes.find(x => String(x.id) === presel);
+      if (c) { selCliente(c.id, c.nombre); return; }
+    }
+    selCliente(clientes[0].id, clientes[0].nombre);
+  } catch { document.getElementById('contenido').innerHTML = '<p style="color:#dc2626;">Error al cargar.</p>'; }
+}
+
+async function selCliente(id, nombre) {
+  clienteActivo = id;
+  document.querySelectorAll('.cli-pill').forEach(p => p.classList.remove('active'));
+  const pill = document.getElementById('pill-'+id);
+  if (pill) pill.classList.add('active');
+
+  const el = document.getElementById('contenido');
+  el.innerHTML = '<p style="color:var(--muted);">Cargando…</p>';
+
+  try {
+    const lista = await fetch(`${API}/api/progreso/cliente/${id}`, { headers: hdr() }).then(r => r.json());
+
+    if (!lista.length) {
+      el.innerHTML = `<div class="sin-datos"><span style="font-size:2.5rem;">📊</span><p style="margin-top:1rem;">${nombre} aún no ha registrado ningún check-in.</p></div>`;
+      return;
     }
 
-    function switchTab(name) {
-      document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['excel','media'][i] === name));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      document.getElementById('tab-' + name).classList.add('active');
-    }
+    // Stats resumen
+    const pesos = lista.filter(p => p.peso).map(p => p.peso);
+    const pesoInicial = pesos[pesos.length-1];
+    const pesoActual = pesos[0];
+    const diferencia = pesos.length > 1 ? (pesoActual - pesoInicial).toFixed(1) : null;
+    const avgCumpl = lista.filter(p => p.cumplimiento != null).reduce((a,b) => a + b.cumplimiento, 0) / lista.filter(p => p.cumplimiento != null).length;
+    const avgEnergia = lista.filter(p => p.energia).reduce((a,b) => a + b.energia, 0) / lista.filter(p => p.energia).length;
 
-    /* ===== DRAG & DROP ===== */
-    function ev(e, type, zoneId) {
-      e.preventDefault();
-      const zone = document.getElementById(zoneId);
-      if (type === 'over')  zone.classList.add('drag-over');
-      if (type === 'leave') zone.classList.remove('drag-over');
-      if (type === 'drop') {
-        zone.classList.remove('drag-over');
-        const files = e.dataTransfer.files;
-        if (zoneId === 'dropExcel') handleExcel(files[0]);
-        else handleMedia(files);
-      }
-    }
+    el.innerHTML = `
+      <div class="stats-row">
+        <div class="stat-card"><div class="v">${pesoActual ? pesoActual+'kg' : '—'}</div><div class="l">Peso actual</div></div>
+        <div class="stat-card"><div class="v" style="color:${diferencia<0?'var(--green)':'#dc2626'}">${diferencia != null ? (diferencia>0?'+':'')+diferencia+'kg' : '—'}</div><div class="l">Cambio total</div></div>
+        <div class="stat-card"><div class="v">${isNaN(avgCumpl)?'—':Math.round(avgCumpl)+'%'}</div><div class="l">Cumplimiento medio</div></div>
+        <div class="stat-card"><div class="v">${isNaN(avgEnergia)?'—':'⭐'.repeat(Math.round(avgEnergia))}</div><div class="l">Energía media</div></div>
+      </div>
 
-    /* ===== EXCEL ===== */
-    function handleExcel(file) {
-      if (!file) return;
-      const allowed = ['.xlsx','.xls','.csv'];
-      const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
-      if (!allowed.includes(ext)) { showToast('Formato no válido. Usa .xlsx, .xls o .csv', true); return; }
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        let html = '';
-        try {
-          const wb = XLSX.read(e.target.result, { type: 'binary' });
-          const ws = wb.Sheets[wb.SheetNames[0]];
-          const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-          if (data.length === 0) { showToast('El archivo está vacío', true); return; }
-          const headers = data[0];
-          const rows = data.slice(1).filter(r => r.some(c => c !== ''));
-
-          html = `
-            <div class="excel-preview">
-              <div class="excel-header">
-                <h3>📊 ${file.name}</h3>
-                <span>${rows.length} filas · ${headers.length} columnas · ${formatSize(file.size)}</span>
-              </div>
-              <div class="excel-table-wrap">
-                <table class="excel-table">
-                  <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
-                  <tbody>
-                    ${rows.map(row => `<tr>${headers.map((_, i) => {
-                      const val = row[i] ?? '';
-                      const cls = typeof val === 'number' && i > 0
-                        ? (val > 0 ? ' class="val-pos"' : val < 0 ? ' class="val-neg"' : '')
-                        : '';
-                      return `<td${cls}>${val}</td>`;
-                    }).join('')}</tr>`).join('')}
-                  </tbody>
-                </table>
-              </div>
-            </div>`;
-          document.getElementById('excelDemo').style.display = 'none';
-        } catch(err) {
-          showToast('Error leyendo el archivo. Comprueba el formato.', true);
-          return;
+      ${lista.map((p, i) => {
+        const prev = lista[i+1];
+        let diffHtml = '';
+        if (prev && p.peso && prev.peso) {
+          const d = (p.peso - prev.peso).toFixed(1);
+          if (d !== '0.0') diffHtml = `<span class="ch-diff ${d<0?'diff-down':'diff-up'}">${d>0?'+':''}${d}kg</span>`;
         }
-        document.getElementById('excelList').innerHTML = html + document.getElementById('excelList').innerHTML;
-        showToast(`✓ "${file.name}" subido correctamente`);
-      };
-      reader.readAsBinaryString(file);
-    }
+        return `
+          <div class="checkin-item" id="ci-${p.id}">
+            <div class="checkin-head">
+              <div class="ch-fecha">${new Date(p.fecha).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}</div>
+              ${p.peso ? `<div class="ch-peso">${p.peso}kg ${diffHtml}</div>` : ''}
+              ${p.grasaCorporal ? `<span style="font-size:0.8rem;color:var(--muted);">${p.grasaCorporal}% grasa</span>` : ''}
+              ${p.energia ? `<div class="ch-energia">${'⭐'.repeat(p.energia)}</div>` : ''}
+              ${p.fotoUrl ? `<img src="${p.fotoUrl}" class="ch-foto" />` : ''}
+            </div>
+            ${p.cumplimiento != null ? `
+              <div class="cumpl-row">
+                <span>Cumplimiento: ${p.cumplimiento}%</span>
+                <div class="cumpl-bar"><div class="cumpl-fill" style="width:${p.cumplimiento}%"></div></div>
+              </div>` : ''}
+            ${p.notas ? `<div class="ch-notas">📝 ${p.notas}</div>` : ''}
+            ${p.notasEntrenador
+              ? `<div class="feedback-saved"><strong>Tu feedback</strong>${p.notasEntrenador}</div>
+                 <button class="btn btn-outline" style="font-size:0.75rem;padding:0.35rem 0.75rem;margin-top:0.5rem;" onclick="mostrarFeedback(${p.id})">✏️ Editar feedback</button>
+                 <div id="fb-${p.id}" style="display:none;margin-top:0.5rem;"></div>`
+              : `<div id="fb-${p.id}">
+                  <div class="feedback-form">
+                    <textarea rows="2" placeholder="Escribe tu feedback para este check-in…" id="fbt-${p.id}"></textarea>
+                    <button class="btn btn-primary" style="font-size:0.8rem;padding:0.5rem 1rem;" onclick="enviarFeedback(${p.id})">Enviar</button>
+                  </div>
+                </div>`}
+          </div>`;
+      }).join('')}`;
+  } catch { el.innerHTML = '<p style="color:#dc2626;">Error al cargar el progreso.</p>'; }
+}
 
-    /* ===== FOTOS Y VÍDEOS ===== */
-    let mediaItems = [];
+function mostrarFeedback(id) {
+  const el = document.getElementById('fb-'+id);
+  el.style.display = 'block';
+  el.innerHTML = `<div class="feedback-form">
+    <textarea rows="2" id="fbt-${id}" placeholder="Actualiza tu feedback…"></textarea>
+    <button class="btn btn-primary" style="font-size:0.8rem;padding:0.5rem 1rem;" onclick="enviarFeedback(${id})">Guardar</button>
+  </div>`;
+}
 
-    function handleMedia(files) {
-      if (!files || files.length === 0) return;
-      const MAX = 50 * 1024 * 1024;
-      Array.from(files).forEach(file => {
-        if (file.size > MAX) { showToast(`"${file.name}" supera los 50 MB`, true); return; }
-        const isVideo = file.type.startsWith('video/');
-        const isImage = file.type.startsWith('image/');
-        if (!isVideo && !isImage) { showToast(`"${file.name}" no es una imagen ni vídeo`, true); return; }
+async function enviarFeedback(id) {
+  const txt = document.getElementById('fbt-'+id)?.value?.trim();
+  if (!txt) return;
+  try {
+    const r = await fetch(`${API}/api/progreso/${id}/feedback`,
+      { method:'PUT', headers: hdr(true), body: JSON.stringify({ notasEntrenador: txt }) });
+    if (!r.ok) throw new Error();
+    selCliente(clienteActivo, '');
+  } catch { alert('Error al guardar el feedback.'); }
+}
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          mediaItems.unshift({ src: e.target.result, name: file.name, size: file.size, type: isVideo ? 'video' : 'photo', mime: file.type });
-          renderMedia();
-          showToast(`✓ "${file.name}" cargado`);
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function renderMedia() {
-      const grid = document.getElementById('mediaGrid');
-      document.getElementById('mediaEmpty').style.display = mediaItems.length === 0 ? 'block' : 'none';
-      grid.innerHTML = mediaItems.map((item, i) => `
-        <div class="media-item">
-          ${item.type === 'video'
-            ? `<video class="media-thumb-video" src="${item.src}" muted playsinline onclick="openModal(${i})"></video>`
-            : `<img class="media-thumb" src="${item.src}" alt="${item.name}" onclick="openModal(${i})" loading="lazy" />`}
-          <div class="media-overlay">
-            <button class="media-btn" title="Eliminar" onclick="deleteMedia(${i})">🗑</button>
-            <button class="media-btn" title="Ver" onclick="openModal(${i})">🔍</button>
-          </div>
-          <div class="media-footer">
-            <strong title="${item.name}">${item.name}</strong>
-            <span class="media-type-badge ${item.type === 'video' ? 'badge-video' : 'badge-photo'}">
-              ${item.type === 'video' ? '▶ Vídeo' : '📷 Foto'}
-            </span>
-            <span style="float:right">${formatSize(item.size)}</span>
-          </div>
-        </div>`).join('');
-    }
-
-    function deleteMedia(i) {
-      mediaItems.splice(i, 1);
-      renderMedia();
-      showToast('Archivo eliminado');
-    }
-
-    function openModal(i) {
-      const item = mediaItems[i];
-      const inner = document.getElementById('modalInner');
-      inner.innerHTML = `<button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
-        ${item.type === 'video'
-          ? `<video src="${item.src}" controls autoplay style="max-width:90vw;max-height:85vh;border-radius:8px;"></video>`
-          : `<img src="${item.src}" style="max-width:90vw;max-height:85vh;border-radius:8px;" />`}`;
-      document.getElementById('modal').classList.add('open');
-    }
-
-    function closeModal(e) {
-      if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('open');
-    }
-
-    /* ===== HELPERS ===== */
-    function formatSize(bytes) {
-      if (bytes < 1024) return bytes + ' B';
-      if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
-      return (bytes/(1024*1024)).toFixed(1) + ' MB';
-    }
-
-    // Inicializar
-    renderMedia();
-  </script>
-
+init();
+</script>
 </body>
 </html>
