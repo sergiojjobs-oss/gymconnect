@@ -27,4 +27,7 @@ public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
         WHERE m.remitenteId = :userId OR m.destinatarioId = :userId
         """)
     List<Long> findInterlocutorIds(Long userId);
+
+    @Query("SELECT COUNT(DISTINCT m.remitenteId) FROM Mensaje m WHERE m.destinatarioId IN (SELECT e.usuario.id FROM Entrenador e)")
+    long countClientesConMensajes();
 }

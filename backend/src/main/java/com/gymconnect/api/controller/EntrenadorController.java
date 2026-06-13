@@ -4,6 +4,7 @@ import com.gymconnect.api.dto.EntrenadorDto;
 import com.gymconnect.api.model.Entrenador;
 import com.gymconnect.api.model.Relacion;
 import com.gymconnect.api.repository.EntrenadorRepository;
+import com.gymconnect.api.repository.MensajeRepository;
 import com.gymconnect.api.repository.RelacionRepository;
 import com.gymconnect.api.service.EntrenadorService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class EntrenadorController {
     private final EntrenadorService service;
     private final EntrenadorRepository entrenadorRepo;
     private final RelacionRepository relacionRepo;
+    private final MensajeRepository mensajeRepo;
 
     @GetMapping
     public ResponseEntity<List<EntrenadorDto>> buscar(
@@ -46,7 +48,9 @@ public class EntrenadorController {
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> stats() {
         long totalEntrenadores = entrenadorRepo.count();
-        long totalClientes = relacionRepo.countByEstado(com.gymconnect.api.model.Relacion.Estado.ACTIVA);
+        long clientesPagadores = relacionRepo.countByEstado(com.gymconnect.api.model.Relacion.Estado.ACTIVA);
+        long clientesMensajes = mensajeRepo.countClientesConMensajes();
+        long totalClientes = Math.max(clientesPagadores, clientesMensajes);
         double avgRating = entrenadorRepo.findAll().stream()
                 .mapToDouble(e -> e.getRating() != null ? e.getRating() : 5.0)
                 .average().orElse(5.0);
