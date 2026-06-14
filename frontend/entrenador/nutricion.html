@@ -142,7 +142,8 @@ let clientes = [], comidas = [];
 
 async function init() {
   try {
-    clientes = await fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json());
+    const todos = await fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json());
+    clientes = todos.filter(c => c.esPagador);
     const sel = document.getElementById('clienteId');
     clientes.forEach(c => sel.innerHTML += `<option value="${c.id}">${c.nombre}</option>`);
   } catch {}
