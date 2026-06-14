@@ -84,6 +84,11 @@
     .badge-pro   { background: rgba(22,163,74,0.1);  color: var(--green); border: 1px solid rgba(22,163,74,0.2); }
     .badge-elite { background: rgba(124,58,237,0.1); color: #7c3aed;      border: 1px solid rgba(124,58,237,0.2); }
 
+    .btn-free  { width:100%;justify-content:center;background:linear-gradient(135deg,#f97316,#ea580c);border:none;color:#fff; }
+    .btn-free:hover { background:linear-gradient(135deg,#ea580c,#c2410c); }
+    .btn-elite { width:100%;justify-content:center;background:linear-gradient(135deg,#8b5cf6,#7c3aed);border:none;color:#fff; }
+    .btn-elite:hover { background:linear-gradient(135deg,#7c3aed,#6d28d9); }
+
     .plan-name { font-size: 1.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.3px; margin-bottom: 0.25rem; }
     .plan-price { font-size: 2.8rem; font-weight: 900; line-height: 1; letter-spacing: -2px; margin: 1rem 0 0.25rem; }
     .plan-price small { font-size: 1rem; font-weight: 500; color: var(--muted); letter-spacing: 0; }
@@ -226,7 +231,7 @@
             <li class="no">Soporte prioritario</li>
             <li class="no">Estadísticas avanzadas</li>
           </ul>
-          <button class="btn btn-outline" style="width:100%;justify-content:center;" disabled>Plan actual</button>
+          <button class="btn btn-free" disabled>Plan actual</button>
         </div>
 
         <!-- PRO -->
@@ -244,7 +249,7 @@
             <li>Soporte prioritario</li>
             <li class="no">Estadísticas avanzadas</li>
           </ul>
-          <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="openModal('pro')">Activar por 10€/mes</button>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;background:linear-gradient(135deg,#16a34a,#15803d);border:none;" onclick="openModal('pro')">Activar por 10€/mes</button>
         </div>
 
         <!-- ELITE -->
@@ -262,7 +267,7 @@
             <li>Soporte prioritario 24h</li>
             <li><strong>Estadísticas avanzadas</strong> de clientes</li>
           </ul>
-          <button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="openModal('elite')">Activar por 25€/mes</button>
+          <button class="btn btn-elite" onclick="openModal('elite')">Activar por 25€/mes</button>
         </div>
 
       </div>
