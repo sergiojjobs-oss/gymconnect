@@ -63,22 +63,42 @@
     }
     .plan-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.08); }
     .plan-card.highlighted {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+      border-color: rgba(234,179,8,0.4);
+      box-shadow: 0 0 0 2px rgba(234,179,8,0.1);
     }
-    .plan-card.highlighted::before {
-      content: '⭐ MÁS POPULAR';
+
+    /* ELITE — el que más destaca */
+    .plan-card.elite {
+      background: linear-gradient(160deg, rgba(139,92,246,0.08) 0%, var(--card) 50%);
+      border: 2px solid #8b5cf6;
+      box-shadow: 0 0 0 4px rgba(139,92,246,0.12), 0 24px 60px rgba(139,92,246,0.18);
+      transform: translateY(-10px) scale(1.02);
+      z-index: 2;
+    }
+    .plan-card.elite:hover { transform: translateY(-16px) scale(1.02); box-shadow: 0 0 0 4px rgba(139,92,246,0.2), 0 32px 80px rgba(139,92,246,0.25); }
+    .plan-card.elite::before {
+      content: '';
       position: absolute;
-      top: 1rem; right: -2.5rem;
-      background: var(--grad-main);
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, #8b5cf6, #a78bfa, #7c3aed);
+    }
+    .plan-card.elite::after {
+      content: '👑 MEJOR OPCIÓN';
+      position: absolute;
+      top: 1.1rem; right: -2.8rem;
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
       color: #fff;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 900;
-      letter-spacing: 1px;
-      padding: 0.3rem 3rem;
+      letter-spacing: 1.5px;
+      padding: 0.3rem 3.2rem;
       transform: rotate(45deg);
       transform-origin: right top;
     }
+    .plan-card.elite .plan-name { color: #8b5cf6; }
+    .plan-card.elite .plan-price { color: #7c3aed; }
+    .plan-card.elite .plan-features li::before { color: #8b5cf6; }
+    .plans-grid { align-items: start; }
 
     .plan-badge { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem; display: inline-block; padding: 0.25rem 0.75rem; border-radius: 99px; }
     .badge-free  { background: rgba(22,163,74,0.1);   color: #16a34a;  border: 1px solid rgba(22,163,74,0.25); }
@@ -257,7 +277,7 @@
         </div>
 
         <!-- ELITE -->
-        <div class="plan-card" id="card-elite">
+        <div class="plan-card elite" id="card-elite">
           <span class="plan-badge badge-elite">👑 Elite</span>
           <div class="plan-name">Elite</div>
           <div class="plan-price">25€ <small>/mes</small></div>
