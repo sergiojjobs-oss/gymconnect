@@ -156,31 +156,31 @@
       color: #7c3aed;
     }
     .card-badge-pro {
-      background: rgba(20,184,166,0.1);
-      border: 1px solid rgba(20,184,166,0.4);
-      color: #0d9488;
+      background: rgba(234,179,8,0.12);
+      border: 1px solid rgba(234,179,8,0.45);
+      color: #ca8a04;
     }
     .card-badge-free {
-      background: rgba(249,115,22,0.1);
-      border: 1px solid rgba(249,115,22,0.4);
-      color: #ea580c;
+      background: rgba(22,163,74,0.1);
+      border: 1px solid rgba(22,163,74,0.35);
+      color: #16a34a;
     }
     .trainer-card.tier-elite {
       border-color: rgba(139,92,246,0.35);
       box-shadow: 0 0 0 1px rgba(139,92,246,0.12);
     }
     .trainer-card.tier-pro {
-      border-color: rgba(20,184,166,0.35);
-      box-shadow: 0 0 0 1px rgba(20,184,166,0.1);
+      border-color: rgba(234,179,8,0.35);
+      box-shadow: 0 0 0 1px rgba(234,179,8,0.1);
     }
     .trainer-card.tier-free {
-      border-color: rgba(249,115,22,0.25);
+      border-color: rgba(22,163,74,0.25);
     }
     .trainer-card.tier-elite .card-footer {
       background: rgba(139,92,246,0.04);
     }
     .trainer-card.tier-pro .card-footer {
-      background: rgba(20,184,166,0.04);
+      background: rgba(234,179,8,0.04);
     }
 
     .card-body { padding: 1rem 1.5rem; }
@@ -343,8 +343,8 @@
       const badgeHtml = tier === 'ELITE'
         ? '<span class="card-badge card-badge-elite">👑 Elite</span>'
         : tier === 'PRO'
-          ? '<span class="card-badge card-badge-pro">⚡ Pro</span>'
-          : '<span class="card-badge card-badge-free">Free</span>';
+          ? '<span class="card-badge card-badge-pro">⭐ Pro</span>'
+          : '<span class="card-badge card-badge-free">✓ Free</span>';
       const tierClass = tier === 'ELITE' ? 'tier-elite' : tier === 'PRO' ? 'tier-pro' : 'tier-free';
       return `
         <div class="trainer-card ${tierClass}" onclick="window.location.href='perfil.html?id=${e.id}'">
