@@ -54,7 +54,7 @@ public class RutinaController {
 
         // Si se especifica clienteId, validar que es cliente activo de este entrenador
         if (body.get("clienteId") != null) {
-            Long clienteId = ((Number) body.get("clienteId")).longValue();
+            Long clienteId = Long.parseLong(body.get("clienteId").toString());
             boolean esClienteActivo = relacionRepo.existsByClienteIdAndEntrenadorIdAndEstado(
                     clienteId, ent.getId(), Relacion.Estado.ACTIVA);
             if (!esClienteActivo)
@@ -87,7 +87,7 @@ public class RutinaController {
                         if (body.get("clienteId") == null) {
                             r.setCliente(null);
                         } else {
-                            Long clienteId = ((Number) body.get("clienteId")).longValue();
+                            Long clienteId = Long.parseLong(body.get("clienteId").toString());
                             usuarioRepo.findById(clienteId).ifPresent(r::setCliente);
                         }
                     }

@@ -238,7 +238,7 @@ async function guardar() {
   const id = document.getElementById('editId').value;
   const body = {
     titulo: document.getElementById('titulo').value,
-    clienteId: document.getElementById('clienteId').value || null,
+    clienteId: parseInt(document.getElementById('clienteId').value) || null,
     diasSemana: document.getElementById('diasSemana').value || null,
     nivel: document.getElementById('nivel').value || null,
     duracionMinutos: parseInt(document.getElementById('duracion').value) || null,

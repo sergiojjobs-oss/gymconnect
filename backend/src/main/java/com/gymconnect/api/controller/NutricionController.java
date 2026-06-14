@@ -51,7 +51,7 @@ public class NutricionController {
                                                   @RequestBody Map<String, Object> body) {
         Entrenador ent = entrenadorRepo.findByUsuarioEmail(ud.getUsername())
                 .orElseThrow(() -> new RuntimeException("No encontrado"));
-        Long clienteId = ((Number) body.get("clienteId")).longValue();
+        Long clienteId = Long.parseLong(body.get("clienteId").toString());
         boolean esClienteActivo = relacionRepo.existsByClienteIdAndEntrenadorIdAndEstado(
                 clienteId, ent.getId(), Relacion.Estado.ACTIVA);
         if (!esClienteActivo) return ResponseEntity.status(403).build();
