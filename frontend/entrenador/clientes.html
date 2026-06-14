@@ -77,7 +77,8 @@ async function cargar() {
   const grid = document.getElementById('grid');
   try {
     // Contactos (clientes activos + leads con mensajes)
-    const contactos = await fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json());
+    const todos = await fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json());
+    const contactos = todos.filter(c => c.esPagador);
 
     if (!contactos.length) {
       document.getElementById('subTitulo').textContent = '0 clientes';
@@ -85,8 +86,7 @@ async function cargar() {
       return;
     }
 
-    const activos = contactos.filter(c => c.esPagador).length;
-    document.getElementById('subTitulo').textContent = `${activos} clientes activos · ${contactos.length} contactos en total`;
+    document.getElementById('subTitulo').textContent = `${contactos.length} cliente${contactos.length !== 1 ? 's' : ''} activo${contactos.length !== 1 ? 's' : ''}`;
 
     // Cargar último progreso de cada cliente en paralelo
     const progresos = await Promise.all(
