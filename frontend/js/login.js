@@ -48,9 +48,9 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     // Redirigir según rol
     setTimeout(() => {
       if (data.rol === 'ENTRENADOR') {
-        window.location.href = 'entrenador/resultados.html';
+        window.location.href = 'entrenador/perfil.html';
       } else {
-        window.location.href = 'cliente/buscar.html';
+        window.location.href = 'cliente/dashboard.html';
       }
     }, 1200);
 
