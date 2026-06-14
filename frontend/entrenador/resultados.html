@@ -87,7 +87,8 @@ let clientes = [], clienteActivo = null;
 
 async function init() {
   try {
-    clientes = await fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json());
+    const todos = await fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json());
+    clientes = todos.filter(c => c.esPagador);
     const pills = document.getElementById('clientePills');
     if (!clientes.length) {
       pills.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">Aún no tienes clientes.</p>';
