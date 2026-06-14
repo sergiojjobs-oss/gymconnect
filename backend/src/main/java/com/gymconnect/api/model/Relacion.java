@@ -31,6 +31,9 @@ public class Relacion {
     private LocalDateTime fechaInicio = LocalDateTime.now();
     private LocalDateTime fechaFin;
 
+    @Column(columnDefinition = "TEXT")
+    private String notasPrivadas;
+
     public enum Estado {
         ACTIVA, CANCELADA, PENDIENTE_PAGO
     }

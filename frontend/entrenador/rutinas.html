@@ -82,7 +82,14 @@
         <h1>📋 Rutinas</h1>
         <p style="color:var(--muted);font-size:0.88rem;margin-top:0.2rem;">Crea y asigna rutinas a tus clientes</p>
       </div>
-      <button class="btn btn-primary" onclick="abrirModal()">+ Nueva rutina</button>
+      <div style="display:flex;gap:0.5rem;">
+        <button id="btnPlantillas" class="btn btn-outline" style="font-size:0.82rem;display:none;" onclick="togglePlantillas()">📌 Mis plantillas</button>
+        <button class="btn btn-primary" onclick="abrirModal()">+ Nueva rutina</button>
+      </div>
+    </div>
+    <div id="panelPlantillas" style="display:none;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;">
+      <div style="font-size:0.78rem;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#8b5cf6;margin-bottom:0.75rem;">📌 Plantillas guardadas — click para cargar en nueva rutina</div>
+      <div id="listaPlantillas" style="display:flex;flex-wrap:wrap;gap:0.5rem;"><p style="color:var(--muted);font-size:0.85rem;">Sin plantillas aún. Guarda una rutina como plantilla.</p></div>
     </div>
     <div class="rutinas-grid" id="grid"><p style="color:var(--muted);">Cargando…</p></div>
   </main>
@@ -145,14 +152,22 @@
 <script>
 const token = () => localStorage.getItem('gc_token');
 const hdr = (json) => ({ Authorization: 'Bearer ' + token(), ...(json ? {'Content-Type':'application/json'} : {}) });
-let clientes = [], ejercicios = [];
+let clientes = [], ejercicios = [], esElite = false;
 
 async function init() {
   try {
-    const todos = await fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json());
-    clientes = todos.filter(c => c.esPagador);
+    const [todosRaw, planData] = await Promise.all([
+      fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json()),
+      fetch(`${API}/api/suscripcion/estado`, { headers: hdr() }).then(r => r.json()).catch(() => ({}))
+    ]);
+    esElite = planData.plan === 'ELITE';
+    clientes = todosRaw.filter(c => c.esPagador);
     const sel = document.getElementById('clienteId');
     clientes.forEach(c => sel.innerHTML += `<option value="${c.id}">${c.nombre}</option>`);
+    if (esElite) {
+      document.getElementById('btnPlantillas').style.display = '';
+      cargarPlantillas();
+    }
   } catch {}
   cargar();
 }
@@ -184,6 +199,7 @@ async function cargar() {
           <div class="rutina-actions">
             <button class="btn btn-outline" style="font-size:0.78rem;padding:0.45rem 0.9rem;" onclick='editar(${JSON.stringify(r)})'>✏️ Editar</button>
             <button class="btn" style="font-size:0.78rem;padding:0.45rem 0.9rem;background:rgba(220,38,38,0.08);color:#dc2626;border:1px solid rgba(220,38,38,0.2);" onclick="eliminar(${r.id})">🗑</button>
+            ${esElite ? `<button class="btn btn-outline" style="font-size:0.78rem;padding:0.45rem 0.9rem;color:#8b5cf6;border-color:rgba(139,92,246,0.3);" onclick="marcarPlantilla(${r.id},${!r.esPlantilla})" title="${r.esPlantilla?'Quitar plantilla':'Guardar como plantilla'}">${r.esPlantilla?'📌 Plantilla':'📌'}</button>` : ''}
           </div>
         </div>`;
     }).join('');
@@ -260,6 +276,51 @@ async function eliminar(id) {
   if (!confirm('¿Eliminar esta rutina?')) return;
   await fetch(`${API}/api/rutinas/${id}`, { method:'DELETE', headers: hdr() });
   cargar();
+}
+
+async function marcarPlantilla(id, valor) {
+  try {
+    await fetch(`${API}/api/elite/plantillas/${id}`, {
+      method: 'POST', headers: hdr(true),
+      body: JSON.stringify({ esPlantilla: valor })
+    });
+    cargar();
+    cargarPlantillas();
+  } catch { alert('Error al guardar plantilla.'); }
+}
+
+async function cargarPlantillas() {
+  try {
+    const lista = await fetch(`${API}/api/elite/plantillas`, { headers: hdr() }).then(r => r.json());
+    const el = document.getElementById('listaPlantillas');
+    if (!lista.length) {
+      el.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">Sin plantillas aún. Guarda una rutina como plantilla.</p>';
+      return;
+    }
+    el.innerHTML = lista.map(p => `
+      <button onclick='cargarDesde(${JSON.stringify(p)})' style="padding:0.4rem 1rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);border-radius:8px;color:#8b5cf6;font-size:0.82rem;font-weight:700;cursor:pointer;">
+        📌 ${p.titulo}
+      </button>`).join('');
+  } catch {}
+}
+
+function togglePlantillas() {
+  const p = document.getElementById('panelPlantillas');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+
+function cargarDesde(r) {
+  document.getElementById('editId').value = '';
+  document.getElementById('titulo').value = r.titulo || '';
+  document.getElementById('clienteId').value = '';
+  document.getElementById('diasSemana').value = r.diasSemana || '';
+  document.getElementById('nivel').value = r.nivel || '';
+  document.getElementById('duracion').value = r.duracionMinutos || '';
+  document.getElementById('descripcion').value = r.descripcion || '';
+  document.getElementById('modalTitulo').textContent = 'Nueva rutina (desde plantilla)';
+  ejercicios = r.ejerciciosJson ? JSON.parse(r.ejerciciosJson) : [];
+  renderEjs();
+  document.getElementById('modalOverlay').classList.add('open');
 }
 
 init();

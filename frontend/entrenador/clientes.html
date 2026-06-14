@@ -33,6 +33,15 @@
     .cli-actions { display:flex; gap:0.5rem; flex-wrap:wrap; }
     .sin-clientes { grid-column:1/-1; text-align:center; padding:4rem 2rem; color:var(--muted); }
     .sin-clientes span { font-size:3rem; display:block; margin-bottom:1rem; }
+    .alerta-inactivo { background:rgba(220,38,38,0.06); border:1px solid rgba(220,38,38,0.2); border-radius:8px; padding:0.4rem 0.7rem; font-size:0.72rem; font-weight:700; color:#dc2626; display:inline-flex; align-items:center; gap:0.3rem; margin-bottom:0.5rem; }
+    .notas-privadas-section { margin-top:0.75rem; border-top:1px solid var(--border); padding-top:0.75rem; }
+    .notas-privadas-section textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.75rem; color:var(--text); font-size:0.8rem; resize:none; margin-top:0.4rem; }
+    .notas-privadas-section textarea:focus { outline:none; border-color:#8b5cf6; }
+    .notas-label { font-size:0.68rem; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; color:#8b5cf6; display:flex; align-items:center; gap:0.3rem; }
+    .resumen-banner { background:linear-gradient(135deg,rgba(220,38,38,0.06),rgba(220,38,38,0.02)); border:1px solid rgba(220,38,38,0.2); border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem; display:none; }
+    .resumen-banner h3 { font-size:0.85rem; font-weight:800; color:#dc2626; margin-bottom:0.5rem; }
+    .resumen-banner ul { list-style:none; display:flex; flex-wrap:wrap; gap:0.5rem; }
+    .resumen-banner ul li { background:rgba(220,38,38,0.08); border:1px solid rgba(220,38,38,0.2); border-radius:99px; padding:0.2rem 0.75rem; font-size:0.78rem; font-weight:700; color:#dc2626; }
     @media(max-width:768px){ .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1.25rem} }
   </style>
 </head>
@@ -67,30 +76,38 @@
       <h1 style="font-size:1.5rem;font-weight:800;">👥 Mis clientes</h1>
       <p style="color:var(--muted);font-size:0.88rem;margin-top:0.2rem;" id="subTitulo">Cargando…</p>
     </div>
+    <div class="resumen-banner" id="resumenBanner">
+      <h3>⚠️ Clientes sin actividad esta semana</h3>
+      <ul id="resumenLista"></ul>
+    </div>
     <div class="clientes-grid" id="grid"><p style="color:var(--muted);">Cargando…</p></div>
   </main>
 </div>
 
 <script>
 const token = () => localStorage.getItem('gc_token');
-const hdr = () => ({ Authorization: 'Bearer ' + token() });
+const hdr = (json) => ({ Authorization: 'Bearer ' + token(), ...(json ? {'Content-Type':'application/json'} : {}) });
+let esElite = false;
 
 async function cargar() {
   const grid = document.getElementById('grid');
   try {
-    // Contactos (clientes activos + leads con mensajes)
-    const todos = await fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json());
-    const contactos = todos.filter(c => c.esPagador);
+    const [todosRaw, planData] = await Promise.all([
+      fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json()),
+      fetch(`${API}/api/suscripcion/estado`, { headers: hdr() }).then(r => r.json()).catch(() => ({}))
+    ]);
+    esElite = planData.plan === 'ELITE';
+
+    const contactos = todosRaw.filter(c => c.esPagador);
 
     if (!contactos.length) {
       document.getElementById('subTitulo').textContent = '0 clientes';
-      grid.innerHTML = `<div class="sin-clientes"><span>👥</span><p>Aún no tienes clientes.</p><p style="font-size:0.85rem;margin-top:0.5rem;">Cuando alguien te contrate o te escriba, aparecerá aquí.</p></div>`;
+      grid.innerHTML = `<div class="sin-clientes"><span>👥</span><p>Aún no tienes clientes.</p></div>`;
       return;
     }
 
     document.getElementById('subTitulo').textContent = `${contactos.length} cliente${contactos.length !== 1 ? 's' : ''} activo${contactos.length !== 1 ? 's' : ''}`;
 
-    // Cargar último progreso de cada cliente en paralelo
     const progresos = await Promise.all(
       contactos.map(c =>
         fetch(`${API}/api/progreso/cliente/${c.id}`, { headers: hdr() })
@@ -98,10 +115,26 @@ async function cargar() {
       )
     );
 
+    // Resumen semanal ELITE — clientes sin check-in en los últimos 7 días
+    if (esElite) {
+      const inactivos = contactos.filter((c, i) => {
+        const prog = progresos[i];
+        if (!prog) return true;
+        const dias = Math.floor((Date.now() - new Date(prog.fecha)) / 86400000);
+        return dias > 7;
+      });
+      if (inactivos.length) {
+        document.getElementById('resumenBanner').style.display = 'block';
+        document.getElementById('resumenLista').innerHTML = inactivos.map(c =>
+          `<li>⚠️ ${c.nombre}</li>`).join('');
+      }
+    }
+
     grid.innerHTML = contactos.map((c, i) => {
       const prog = progresos[i];
       const iniciales = c.nombre.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
       const diasDesde = prog ? Math.floor((Date.now() - new Date(prog.fecha)) / 86400000) : null;
+      const inactivo = esElite && (diasDesde === null || diasDesde > 7);
 
       return `
         <div class="cliente-card">
@@ -115,19 +148,12 @@ async function cargar() {
             </div>
           </div>
 
+          ${inactivo ? `<div class="alerta-inactivo">⚠️ Sin check-in esta semana</div>` : ''}
+
           <div class="cli-stats">
-            <div class="cli-stat">
-              <div class="v">${prog?.peso ? prog.peso+'kg' : '—'}</div>
-              <div class="l">Último peso</div>
-            </div>
-            <div class="cli-stat">
-              <div class="v">${prog ? diasDesde+'d' : '—'}</div>
-              <div class="l">Últ. check-in</div>
-            </div>
-            <div class="cli-stat">
-              <div class="v">${prog?.energia ? '⭐'.repeat(prog.energia) : '—'}</div>
-              <div class="l">Energía</div>
-            </div>
+            <div class="cli-stat"><div class="v">${prog?.peso ? prog.peso+'kg' : '—'}</div><div class="l">Último peso</div></div>
+            <div class="cli-stat"><div class="v">${diasDesde !== null ? diasDesde+'d' : '—'}</div><div class="l">Últ. check-in</div></div>
+            <div class="cli-stat"><div class="v">${prog?.energia ? '⭐'.repeat(prog.energia) : '—'}</div><div class="l">Energía</div></div>
           </div>
 
           ${prog?.notas ? `<div class="cli-ultimo-peso">💬 "${prog.notas.slice(0,60)}${prog.notas.length>60?'…':''}"</div>` : ''}
@@ -137,11 +163,42 @@ async function cargar() {
             <a href="resultados.html?cliente=${c.id}" class="btn btn-outline" style="font-size:0.78rem;padding:0.45rem 0.9rem;">📈 Progreso</a>
             <a href="rutinas.html" class="btn btn-outline" style="font-size:0.78rem;padding:0.45rem 0.9rem;">📋 Rutina</a>
           </div>
+
+          ${esElite ? `
+          <div class="notas-privadas-section">
+            <div class="notas-label">🔒 Notas privadas (solo tú las ves)</div>
+            <textarea id="np-${c.id}" rows="2" placeholder="Observaciones privadas sobre este cliente…" onblur="guardarNotas(${c.id})"></textarea>
+          </div>` : ''}
         </div>`;
     }).join('');
+
+    // Cargar notas privadas si ELITE
+    if (esElite) {
+      contactos.forEach(c => cargarNotas(c.id));
+    }
+
   } catch (e) {
     grid.innerHTML = '<p style="color:#dc2626;">Error al cargar clientes.</p>';
   }
+}
+
+async function cargarNotas(clienteId) {
+  try {
+    const data = await fetch(`${API}/api/elite/notas-privadas/${clienteId}`, { headers: hdr() }).then(r => r.json());
+    const el = document.getElementById(`np-${clienteId}`);
+    if (el && data.notas) el.value = data.notas;
+  } catch {}
+}
+
+async function guardarNotas(clienteId) {
+  const el = document.getElementById(`np-${clienteId}`);
+  if (!el) return;
+  try {
+    await fetch(`${API}/api/elite/notas-privadas/${clienteId}`, {
+      method: 'PUT', headers: hdr(true),
+      body: JSON.stringify({ notas: el.value })
+    });
+  } catch {}
 }
 
 cargar();

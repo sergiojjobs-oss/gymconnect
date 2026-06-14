@@ -41,6 +41,7 @@ public class Rutina {
     private Integer duracionMinutos;
 
     private Boolean activa = true;
+    private Boolean esPlantilla = false;
 
     private LocalDateTime creadaEn = LocalDateTime.now();
 }

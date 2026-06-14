@@ -8,6 +8,7 @@
   <script src="../js/config.js"></script>
   <script src="../js/plan-theme.js"></script>
   <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
     .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
@@ -72,9 +73,12 @@
   </aside>
 
   <main class="main">
-    <div style="margin-bottom:1.5rem;">
-      <h1 style="font-size:1.5rem;font-weight:800;">📈 Progreso clientes</h1>
-      <p style="color:var(--muted);font-size:0.88rem;margin-top:0.2rem;">Sigue el progreso semanal de tus clientes</p>
+    <div style="margin-bottom:1.5rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h1 style="font-size:1.5rem;font-weight:800;">📈 Progreso clientes</h1>
+        <p style="color:var(--muted);font-size:0.88rem;margin-top:0.2rem;">Sigue el progreso semanal de tus clientes</p>
+      </div>
+      <button id="btnPdf" onclick="exportarPDF()" class="btn btn-outline" style="font-size:0.82rem;display:none;">📄 Exportar informe PDF</button>
     </div>
 
     <div class="cliente-selector" id="clientePills"></div>
@@ -89,6 +93,9 @@ let clientes = [], clienteActivo = null;
 
 async function init() {
   try {
+    const plan = await fetch(`${API}/api/suscripcion/estado`, { headers: hdr() }).then(r => r.json()).then(d => d.plan).catch(() => 'FREE');
+    if (plan === 'ELITE') document.getElementById('btnPdf').style.display = '';
+
     const todos = await fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json());
     clientes = todos.filter(c => c.esPagador);
     const pills = document.getElementById('clientePills');
@@ -202,6 +209,70 @@ async function enviarFeedback(id) {
 }
 
 init();
+
+async function exportarPDF() {
+  if (!clienteActivo) return;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const nombre = document.querySelector('.cli-pill.active')?.textContent || 'Cliente';
+
+  // Header
+  doc.setFillColor(139, 92, 246);
+  doc.rect(0, 0, 210, 28, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(18); doc.setFont('helvetica', 'bold');
+  doc.text('GymConnect — Informe de Progreso', 14, 12);
+  doc.setFontSize(11); doc.setFont('helvetica', 'normal');
+  doc.text(`Cliente: ${nombre}  ·  Fecha: ${new Date().toLocaleDateString('es-ES')}`, 14, 21);
+
+  doc.setTextColor(30, 30, 30);
+  let y = 38;
+
+  // Stats resumen
+  const cards = document.querySelectorAll('.stat-card');
+  if (cards.length) {
+    doc.setFontSize(13); doc.setFont('helvetica', 'bold');
+    doc.text('Resumen', 14, y); y += 7;
+    doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+    cards.forEach(c => {
+      const v = c.querySelector('.v')?.textContent || '';
+      const l = c.querySelector('.l')?.textContent || '';
+      doc.text(`• ${l}: ${v}`, 14, y); y += 6;
+    });
+    y += 4;
+  }
+
+  // Historial check-ins
+  const checkins = document.querySelectorAll('.checkin-item');
+  if (checkins.length) {
+    doc.setFontSize(13); doc.setFont('helvetica', 'bold');
+    doc.text('Historial de check-ins', 14, y); y += 8;
+    checkins.forEach(ci => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      const fecha = ci.querySelector('.ch-fecha')?.textContent || '';
+      const peso = ci.querySelector('.ch-peso')?.textContent?.trim() || '';
+      const notas = ci.querySelector('.ch-notas')?.textContent?.replace('📝 ','') || '';
+      const cumpl = ci.querySelector('.cumpl-row span')?.textContent || '';
+      doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+      doc.text(fecha, 14, y); y += 5;
+      doc.setFont('helvetica', 'normal');
+      if (peso) { doc.text(`  Peso: ${peso}`, 14, y); y += 5; }
+      if (cumpl) { doc.text(`  ${cumpl}`, 14, y); y += 5; }
+      if (notas) {
+        const lines = doc.splitTextToSize(`  Notas: ${notas}`, 180);
+        doc.text(lines, 14, y); y += lines.length * 5;
+      }
+      doc.setDrawColor(220, 220, 220);
+      doc.line(14, y, 196, y); y += 5;
+    });
+  }
+
+  // Footer
+  doc.setFontSize(8); doc.setTextColor(150, 150, 150);
+  doc.text('Generado por GymConnect · Plan Elite', 14, 290);
+
+  doc.save(`informe-${nombre.replace(' ','-')}-${new Date().toISOString().slice(0,10)}.pdf`);
+}
 </script>
 </body>
 </html>

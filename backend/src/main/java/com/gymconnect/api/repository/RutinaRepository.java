@@ -13,4 +13,5 @@ public interface RutinaRepository extends JpaRepository<Rutina, Long> {
     Optional<Rutina> findTopByEntrenadorIdAndClienteIdAndActivaTrueOrderByCreadaEnDesc(Long entrenadorId, Long clienteId);
     // Rutina asignada a este cliente (por cualquier entrenador activo)
     Optional<Rutina> findTopByClienteIdAndActivaTrueOrderByCreadaEnDesc(Long clienteId);
+    List<Rutina> findByEntrenadorIdAndEsPlantillaTrue(Long entrenadorId);
 }

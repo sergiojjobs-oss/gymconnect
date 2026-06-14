@@ -341,7 +341,7 @@
         : `<div class="card-avatar" style="background:${color}">${iniciales(e.nombre, e.apellido)}</div>`;
       const tier = (e.planTier || 'FREE').toUpperCase();
       const badgeHtml = tier === 'ELITE'
-        ? '<span class="card-badge card-badge-elite">👑 Elite</span>'
+        ? '<span class="card-badge card-badge-elite">👑 Elite verificado</span>'
         : tier === 'PRO'
           ? '<span class="card-badge card-badge-pro">⭐ Pro</span>'
           : '<span class="card-badge card-badge-free">✓ Free</span>';
