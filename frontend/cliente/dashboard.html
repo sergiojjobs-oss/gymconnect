@@ -165,11 +165,12 @@ async function cargarEntrenador() {
     const c = contactos[0];
     // Obtener perfil completo del entrenador
     const ents = await fetch(`${API}/api/entrenadores`).then(r => r.json());
-    const ent = ents.find(e => e.usuarioId == c.id || e.id == c.id) || null;
+    const ent = ents.find(e => String(e.usuarioId) === String(c.id)) || null;
 
+    const inicEnt = (c.nombre||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
     const avatarHtml = ent && ent.fotoUrl
-      ? `<div class="ent-avatar"><img src="${ent.fotoUrl}" /></div>`
-      : `<div class="ent-avatar" style="background:${ent?.avatarColor||'var(--grad-main)'};">${(c.nombre||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)}</div>`;
+      ? `<div class="ent-avatar"><img src="${ent.fotoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>`
+      : `<div class="ent-avatar" style="background:${ent?.avatarColor||'var(--grad-main)'};">${inicEnt}</div>`;
 
     blk.innerHTML = `
       <div class="entrenador-card">
