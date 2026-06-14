@@ -303,7 +303,7 @@
     }
 
     function renderCard(e) {
-      console.log('[buscar v4] entrenador:', e.nombre, 'fotoUrl:', e.fotoUrl);
+
       const stars = '★'.repeat(Math.floor(e.rating)) + (e.rating % 1 >= 0.5 ? '½' : '');
       const tagsHtml = (e.especialidades || []).map(t => `<span class="tag">${labelTag(t)}</span>`).join('');
       const color = e.avatarColor || 'linear-gradient(135deg,#16a34a,#84cc16)';

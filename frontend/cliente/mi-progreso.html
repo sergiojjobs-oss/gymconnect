@@ -145,8 +145,6 @@ async function subirFoto(input) {
     const r = await res.json();
     if (!res.ok) throw new Error();
     document.getElementById('fotoUrl').value = r.url;
-    const prev = document.getElementById('fotoPreview');
-    prev.innerHTML = `<img src="${r.data.url}" style="width:100%;height:100%;object-fit:cover;" />`;
   } catch { showMsg('Error al subir la foto.', true); }
 }
 
