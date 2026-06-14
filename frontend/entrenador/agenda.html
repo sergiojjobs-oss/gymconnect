@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agenda — GymConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="../js/config.js"></script>
+  <script src="../js/plan-theme.js"></script>
+  <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
+  <style>
+    .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
+    .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
+    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--muted-light); padding:0 0.75rem; margin:1rem 0 0.4rem; }
+    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--muted-light); transition:background var(--t),color var(--t); text-decoration:none; }
+    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text-light); }
+    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--green-l); font-weight:700; }
+    .main { padding:2rem 2.5rem; overflow-y:auto; }
+
+    .semana-nav { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; }
+    .semana-nav button { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:0.4rem 0.85rem; color:var(--text); cursor:pointer; font-weight:700; font-size:0.82rem; }
+    .semana-nav button:hover { border-color:var(--green); }
+    .semana-titulo { font-size:1rem; font-weight:800; color:var(--text); }
+
+    .calendario { display:grid; grid-template-columns:repeat(7,1fr); gap:0.5rem; }
+    .dia-col { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; min-height:220px; }
+    .dia-header { padding:0.6rem 0.75rem; border-bottom:1px solid var(--border); text-align:center; }
+    .dia-nombre { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+    .dia-num { font-size:1.1rem; font-weight:900; color:var(--text); }
+    .dia-header.hoy { background:rgba(22,163,74,0.08); border-bottom-color:rgba(22,163,74,0.2); }
+    .dia-header.hoy .dia-num { color:var(--green); }
+    .dia-body { padding:0.5rem; display:flex; flex-direction:column; gap:0.4rem; }
+
+    .sesion-pill { border-radius:8px; padding:0.4rem 0.6rem; font-size:0.72rem; cursor:pointer; transition:opacity 0.15s; position:relative; }
+    .sesion-pill:hover { opacity:0.85; }
+    .sesion-pill .sp-hora { font-weight:900; }
+    .sesion-pill .sp-cliente { font-weight:600; opacity:0.85; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sp-tipo-fuerza { background:rgba(99,102,241,0.18); border:1px solid rgba(99,102,241,0.3); color:#818cf8; }
+    .sp-tipo-cardio { background:rgba(239,68,68,0.14); border:1px solid rgba(239,68,68,0.25); color:#f87171; }
+    .sp-tipo-flexibilidad { background:rgba(16,185,129,0.14); border:1px solid rgba(16,185,129,0.25); color:#34d399; }
+    .sp-tipo-evaluacion { background:rgba(245,158,11,0.14); border:1px solid rgba(245,158,11,0.25); color:#fbbf24; }
+    .sp-tipo-otro { background:rgba(107,114,128,0.14); border:1px solid rgba(107,114,128,0.25); color:#9ca3af; }
+    .sp-estado-completada { opacity:0.5; }
+    .sp-estado-cancelada { opacity:0.35; text-decoration:line-through; }
+    .btn-add-dia { width:100%; background:transparent; border:1px dashed var(--border); border-radius:6px; padding:0.3rem; color:var(--muted); font-size:0.75rem; cursor:pointer; margin-top:0.2rem; }
+    .btn-add-dia:hover { border-color:var(--green); color:var(--green); }
+
+    /* Modal */
+    .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:1000; padding:1rem; }
+    .modal-box { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:2rem; width:100%; max-width:480px; }
+    .modal-box h3 { font-size:1.1rem; font-weight:800; margin-bottom:1.25rem; }
+    .form-row { margin-bottom:1rem; }
+    .form-row label { display:block; font-size:0.78rem; font-weight:700; color:var(--muted); margin-bottom:0.3rem; }
+    .form-row input, .form-row select, .form-row textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.75rem; color:var(--text); font-size:0.88rem; }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline:none; border-color:var(--green); }
+    .form-row select option { background:var(--dark-hero); }
+    .modal-btns { display:flex; gap:0.75rem; margin-top:1.5rem; }
+    .btn-danger { background:rgba(220,38,38,0.1); border:1px solid rgba(220,38,38,0.3); color:#f87171; border-radius:8px; padding:0.6rem 1.25rem; font-weight:700; cursor:pointer; font-size:0.85rem; }
+    .btn-danger:hover { background:rgba(220,38,38,0.2); }
+
+    @media(max-width:900px){ .calendario{grid-template-columns:repeat(7,minmax(100px,1fr)); overflow-x:auto;} }
+    @media(max-width:768px){ .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1.25rem} }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+    <nav>
+      <button class="btn btn-outline" style="font-size:0.82rem;" onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
+    </nav>
+  </div>
+</header>
+
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <span class="sidebar-label">Panel</span>
+    <a href="perfil.html">👤 Mi perfil</a>
+    <a href="rutinas.html">📋 Rutinas</a>
+    <a href="nutricion.html">🥗 Nutrición</a>
+    <a href="../chat/index.html">💬 Mensajes</a>
+    <a href="clientes.html">👥 Clientes</a>
+    <a href="agenda.html" class="active">📅 Agenda</a>
+    <a href="ejercicios.html">🏋️ Ejercicios</a>
+    <a href="resultados.html">📈 Progreso clientes</a>
+    <a href="estadisticas.html">📊 Estadísticas</a>
+    <span class="sidebar-label">Cuenta</span>
+    <a href="planes.html">💳 Mi suscripción</a>
+    <a href="ajustes.html">⚙️ Ajustes</a>
+    <a href="../login.html" onclick="localStorage.clear()">🚪 Salir</a>
+  </aside>
+
+  <main class="main">
+    <div style="margin-bottom:1.5rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+      <div>
+        <h1 style="font-size:1.5rem;font-weight:800;">📅 Agenda</h1>
+        <p style="color:var(--muted);font-size:0.88rem;margin-top:0.2rem;">Programa y gestiona tus sesiones con clientes</p>
+      </div>
+      <button class="btn btn-primary" onclick="abrirModalNueva(null)">+ Nueva sesión</button>
+    </div>
+
+    <div class="semana-nav">
+      <button onclick="cambiarSemana(-1)">&#8249; Anterior</button>
+      <span class="semana-titulo" id="tituloSemana"></span>
+      <button onclick="cambiarSemana(1)">Siguiente &#8250;</button>
+      <button onclick="irHoy()" style="margin-left:auto;">Hoy</button>
+    </div>
+
+    <div class="calendario" id="calendario"></div>
+  </main>
+</div>
+
+<!-- Modal nueva/editar sesión -->
+<div class="modal-bg" id="modalSesion" style="display:none;">
+  <div class="modal-box">
+    <h3 id="modalTitulo">Nueva sesión</h3>
+    <div class="form-row">
+      <label>Cliente</label>
+      <select id="sCliente"></select>
+    </div>
+    <div class="form-row">
+      <label>Fecha</label>
+      <input type="date" id="sFecha" />
+    </div>
+    <div class="form-row">
+      <label>Hora</label>
+      <input type="time" id="sHora" value="09:00" />
+    </div>
+    <div class="form-row">
+      <label>Duración (min)</label>
+      <input type="number" id="sDuracion" value="60" min="15" max="240" />
+    </div>
+    <div class="form-row">
+      <label>Tipo</label>
+      <select id="sTipo">
+        <option value="Fuerza">Fuerza</option>
+        <option value="Cardio">Cardio</option>
+        <option value="Flexibilidad">Flexibilidad</option>
+        <option value="Evaluación">Evaluación</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+    <div class="form-row" id="rowEstado" style="display:none;">
+      <label>Estado</label>
+      <select id="sEstado">
+        <option value="PROGRAMADA">Programada</option>
+        <option value="COMPLETADA">Completada</option>
+        <option value="CANCELADA">Cancelada</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Notas</label>
+      <textarea id="sNotas" rows="2" placeholder="Notas opcionales…"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" style="flex:1;" onclick="guardarSesion()">Guardar</button>
+      <button id="btnEliminar" class="btn-danger" style="display:none;" onclick="eliminarSesion()">Eliminar</button>
+      <button class="btn btn-outline" onclick="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const token = () => localStorage.getItem('gc_token');
+const hdr = (json) => ({ Authorization: 'Bearer ' + token(), ...(json ? {'Content-Type':'application/json'} : {}) });
+
+const DIAS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+let fechaBase = lunes(new Date());
+let clientes = [];
+let sesionesActuales = [];
+let sesionEditId = null;
+
+function lunes(d) {
+  const c = new Date(d);
+  const dia = c.getDay() === 0 ? 6 : c.getDay() - 1;
+  c.setDate(c.getDate() - dia);
+  c.setHours(0,0,0,0);
+  return c;
+}
+
+function fmt(d) { return d.toISOString().split('T')[0]; }
+
+function cambiarSemana(dir) { fechaBase.setDate(fechaBase.getDate() + dir * 7); cargar(); }
+function irHoy() { fechaBase = lunes(new Date()); cargar(); }
+
+async function cargar() {
+  const fin = new Date(fechaBase); fin.setDate(fin.getDate() + 6);
+  const r = await fetch(`${API}/api/sesiones/semana?desde=${fmt(fechaBase)}&hasta=${fmt(fin)}`, { headers: hdr() });
+  sesionesActuales = r.ok ? await r.json() : [];
+  renderCalendario();
+}
+
+async function cargarClientes() {
+  const r = await fetch(`${API}/api/chat/contactos`, { headers: hdr() });
+  if (r.ok) {
+    const data = await r.json();
+    clientes = data.filter(c => c.esPagador);
+    const sel = document.getElementById('sCliente');
+    sel.innerHTML = clientes.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+  }
+}
+
+function renderCalendario() {
+  const hoy = fmt(new Date());
+  const fin = new Date(fechaBase); fin.setDate(fin.getDate() + 6);
+  document.getElementById('tituloSemana').textContent =
+    `${fechaBase.getDate()} ${MESES[fechaBase.getMonth()]} — ${fin.getDate()} ${MESES[fin.getMonth()]} ${fin.getFullYear()}`;
+
+  let html = '';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(fechaBase); d.setDate(d.getDate() + i);
+    const ds = fmt(d);
+    const esHoy = ds === hoy;
+    const sesiones = sesionesActuales.filter(s => s.fecha === ds);
+
+    html += `<div class="dia-col">
+      <div class="dia-header${esHoy ? ' hoy' : ''}">
+        <div class="dia-nombre">${DIAS[i]}</div>
+        <div class="dia-num">${d.getDate()}</div>
+      </div>
+      <div class="dia-body">`;
+
+    sesiones.forEach(s => {
+      const tipo = (s.tipo || 'otro').toLowerCase().replace(/ó/g,'o').replace(/é/g,'e');
+      const estadoClass = s.estado === 'COMPLETADA' ? 'sp-estado-completada' : s.estado === 'CANCELADA' ? 'sp-estado-cancelada' : '';
+      const nombreCliente = clientes.find(c => c.id == s.clienteId)?.nombre || s.clienteNombre || '—';
+      html += `<div class="sesion-pill sp-tipo-${tipo} ${estadoClass}" onclick="editarSesion(${JSON.stringify(s).replace(/"/g,'&quot;')})">
+        <div class="sp-hora">${s.hora ? s.hora.substring(0,5) : ''}</div>
+        <div class="sp-cliente">${nombreCliente}</div>
+        <div style="font-size:0.65rem;opacity:0.7;">${s.tipo || ''}</div>
+      </div>`;
+    });
+
+    html += `<button class="btn-add-dia" onclick="abrirModalNueva('${ds}')">+ añadir</button>
+      </div>
+    </div>`;
+  }
+  document.getElementById('calendario').innerHTML = html;
+}
+
+function abrirModalNueva(fecha) {
+  sesionEditId = null;
+  document.getElementById('modalTitulo').textContent = 'Nueva sesión';
+  document.getElementById('sFecha').value = fecha || fmt(new Date());
+  document.getElementById('sHora').value = '09:00';
+  document.getElementById('sDuracion').value = '60';
+  document.getElementById('sTipo').value = 'Fuerza';
+  document.getElementById('sNotas').value = '';
+  document.getElementById('rowEstado').style.display = 'none';
+  document.getElementById('btnEliminar').style.display = 'none';
+  document.getElementById('modalSesion').style.display = 'flex';
+}
+
+function editarSesion(s) {
+  sesionEditId = s.id;
+  document.getElementById('modalTitulo').textContent = 'Editar sesión';
+  document.getElementById('sFecha').value = s.fecha;
+  document.getElementById('sHora').value = s.hora ? s.hora.substring(0,5) : '09:00';
+  document.getElementById('sDuracion').value = s.duracionMinutos || 60;
+  document.getElementById('sTipo').value = s.tipo || 'Fuerza';
+  document.getElementById('sNotas').value = s.notas || '';
+  document.getElementById('sEstado').value = s.estado || 'PROGRAMADA';
+  document.getElementById('rowEstado').style.display = 'block';
+  document.getElementById('btnEliminar').style.display = 'block';
+  // Seleccionar cliente
+  if (s.clienteId) document.getElementById('sCliente').value = s.clienteId;
+  document.getElementById('modalSesion').style.display = 'flex';
+}
+
+function cerrarModal() { document.getElementById('modalSesion').style.display = 'none'; }
+
+async function guardarSesion() {
+  const body = {
+    clienteId: parseInt(document.getElementById('sCliente').value),
+    fecha: document.getElementById('sFecha').value,
+    hora: document.getElementById('sHora').value,
+    duracionMinutos: parseInt(document.getElementById('sDuracion').value),
+    tipo: document.getElementById('sTipo').value,
+    notas: document.getElementById('sNotas').value,
+  };
+  if (sesionEditId) body.estado = document.getElementById('sEstado').value;
+
+  const url = sesionEditId ? `${API}/api/sesiones/${sesionEditId}` : `${API}/api/sesiones`;
+  const method = sesionEditId ? 'PUT' : 'POST';
+  const r = await fetch(url, { method, headers: hdr(true), body: JSON.stringify(body) });
+  if (r.ok) { cerrarModal(); cargar(); }
+  else alert('Error al guardar la sesión');
+}
+
+async function eliminarSesion() {
+  if (!confirm('¿Eliminar esta sesión?')) return;
+  const r = await fetch(`${API}/api/sesiones/${sesionEditId}`, { method: 'DELETE', headers: hdr() });
+  if (r.ok) { cerrarModal(); cargar(); }
+}
+
+cargarClientes().then(() => cargar());
+</script>
+</body>
+</html>

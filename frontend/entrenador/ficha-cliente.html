@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ficha de cliente — GymConnect</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="../js/config.js"></script>
+  <script src="../js/plan-theme.js"></script>
+  <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
+  <style>
+    .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
+    .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
+    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--muted-light); padding:0 0.75rem; margin:1rem 0 0.4rem; }
+    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--muted-light); transition:background var(--t),color var(--t); text-decoration:none; }
+    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text-light); }
+    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--green-l); font-weight:700; }
+    .main { padding:2rem 2.5rem; overflow-y:auto; }
+
+    .cliente-selector { display:flex; gap:0.75rem; align-items:center; margin-bottom:2rem; flex-wrap:wrap; }
+    .cliente-selector select { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:0.55rem 0.85rem; color:var(--text); font-size:0.9rem; min-width:220px; }
+    .cliente-selector select option { background:var(--dark-hero); }
+
+    .ficha-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+    .ficha-section { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; }
+    .ficha-section.full-width { grid-column:1/-1; }
+    .section-title { font-size:0.75rem; font-weight:900; text-transform:uppercase; letter-spacing:1.5px; color:var(--green); margin-bottom:1.1rem; display:flex; align-items:center; gap:0.5rem; }
+    .form-row { margin-bottom:1rem; }
+    .form-row:last-child { margin-bottom:0; }
+    .form-row label { display:block; font-size:0.75rem; font-weight:700; color:var(--muted); margin-bottom:0.3rem; }
+    .form-row input, .form-row select, .form-row textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.55rem 0.75rem; color:var(--text); font-size:0.88rem; transition:border-color 0.15s; }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline:none; border-color:var(--green); }
+    .form-row select option { background:var(--dark-hero); }
+    .form-2col { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+    .form-3col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; }
+
+    .medidas-visual { display:grid; grid-template-columns:repeat(3,1fr); gap:0.75rem; margin-bottom:1rem; }
+    .medida-box { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:0.75rem; text-align:center; }
+    .medida-box .mv-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin-bottom:0.4rem; }
+    .medida-box input { width:100%; background:transparent; border:none; text-align:center; font-size:1.2rem; font-weight:900; color:var(--text); }
+    .medida-box input:focus { outline:none; }
+    .medida-box .mv-unit { font-size:0.7rem; color:var(--muted); }
+
+    .save-bar { position:sticky; bottom:0; background:var(--dark-hero); border-top:1px solid var(--border); padding:1rem 2.5rem; display:flex; gap:0.75rem; align-items:center; justify-content:flex-end; margin:-2rem -2.5rem; margin-top:2rem; }
+    .save-status { font-size:0.82rem; color:var(--green); margin-right:auto; display:none; }
+
+    .sin-cliente { text-align:center; padding:4rem 2rem; color:var(--muted); }
+    .sin-cliente span { font-size:3rem; display:block; margin-bottom:1rem; }
+
+    @media(max-width:900px){ .ficha-grid{grid-template-columns:1fr} .form-2col,.form-3col{grid-template-columns:1fr} }
+    @media(max-width:768px){ .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1.25rem} .save-bar{margin:-1.25rem -1.25rem;margin-top:1.5rem;padding:1rem 1.25rem} }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+    <nav>
+      <button class="btn btn-outline" style="font-size:0.82rem;" onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
+    </nav>
+  </div>
+</header>
+
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <span class="sidebar-label">Panel</span>
+    <a href="perfil.html">👤 Mi perfil</a>
+    <a href="rutinas.html">📋 Rutinas</a>
+    <a href="nutricion.html">🥗 Nutrición</a>
+    <a href="../chat/index.html">💬 Mensajes</a>
+    <a href="clientes.html">👥 Clientes</a>
+    <a href="ficha-cliente.html" class="active">📋 Fichas de clientes</a>
+    <a href="agenda.html">📅 Agenda</a>
+    <a href="ejercicios.html">🏋️ Ejercicios</a>
+    <a href="resultados.html">📈 Progreso clientes</a>
+    <a href="estadisticas.html">📊 Estadísticas</a>
+    <span class="sidebar-label">Cuenta</span>
+    <a href="planes.html">💳 Mi suscripción</a>
+    <a href="ajustes.html">⚙️ Ajustes</a>
+    <a href="../login.html" onclick="localStorage.clear()">🚪 Salir</a>
+  </aside>
+
+  <main class="main">
+    <div style="margin-bottom:1.5rem;">
+      <h1 style="font-size:1.5rem;font-weight:800;">📋 Ficha de cliente</h1>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0.2rem;">Datos personales, objetivos, medidas y condiciones de salud</p>
+    </div>
+
+    <div class="cliente-selector">
+      <label style="font-size:0.82rem;font-weight:700;color:var(--muted);">Selecciona cliente:</label>
+      <select id="selCliente" onchange="cargarFicha()">
+        <option value="">— Elige un cliente —</option>
+      </select>
+    </div>
+
+    <div id="sinCliente" class="sin-cliente">
+      <span>📋</span>
+      <p>Selecciona un cliente para ver o editar su ficha</p>
+    </div>
+
+    <div id="fichaContent" style="display:none;">
+      <div class="ficha-grid">
+
+        <!-- Datos personales -->
+        <div class="ficha-section">
+          <div class="section-title">👤 Datos personales</div>
+          <div class="form-2col">
+            <div class="form-row">
+              <label>Edad</label>
+              <input type="number" id="fEdad" min="10" max="100" placeholder="años" />
+            </div>
+            <div class="form-row">
+              <label>Sexo</label>
+              <select id="fSexo">
+                <option value="">— Selecciona —</option>
+                <option>Masculino</option>
+                <option>Femenino</option>
+                <option>Otro</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-2col">
+            <div class="form-row">
+              <label>Altura (cm)</label>
+              <input type="number" id="fAltura" min="100" max="250" placeholder="cm" />
+            </div>
+            <div class="form-row">
+              <label>Peso objetivo (kg)</label>
+              <input type="number" id="fPesoObj" min="30" max="300" step="0.1" placeholder="kg" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Objetivo y nivel -->
+        <div class="ficha-section">
+          <div class="section-title">🎯 Objetivo y nivel</div>
+          <div class="form-row">
+            <label>Objetivo principal</label>
+            <select id="fObjetivo">
+              <option value="">— Selecciona —</option>
+              <option>Pérdida de peso</option>
+              <option>Ganancia muscular</option>
+              <option>Resistencia</option>
+              <option>Tonificación</option>
+              <option>Salud general</option>
+              <option>Rendimiento deportivo</option>
+              <option>Rehabilitación</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Nivel de fitness</label>
+            <select id="fNivel">
+              <option value="">— Selecciona —</option>
+              <option>Principiante</option>
+              <option>Intermedio</option>
+              <option>Avanzado</option>
+            </select>
+          </div>
+          <div class="form-2col">
+            <div class="form-row">
+              <label>Días disponibles/semana</label>
+              <input type="number" id="fDias" min="1" max="7" placeholder="días" />
+            </div>
+            <div class="form-row">
+              <label>Horas de sueño</label>
+              <input type="number" id="fSuenio" min="3" max="12" step="0.5" placeholder="h/noche" />
+            </div>
+          </div>
+          <div class="form-row">
+            <label>Equipamiento disponible</label>
+            <input type="text" id="fEquipamiento" placeholder="p. ej. Gimnasio completo, Solo mancuernas, Sin equipamiento" />
+          </div>
+        </div>
+
+        <!-- Medidas corporales iniciales -->
+        <div class="ficha-section">
+          <div class="section-title">📏 Medidas iniciales</div>
+          <div class="medidas-visual">
+            <div class="medida-box">
+              <div class="mv-label">Cintura</div>
+              <input type="number" id="fCintura" step="0.1" placeholder="—" />
+              <div class="mv-unit">cm</div>
+            </div>
+            <div class="medida-box">
+              <div class="mv-label">Cadera</div>
+              <input type="number" id="fCadera" step="0.1" placeholder="—" />
+              <div class="mv-unit">cm</div>
+            </div>
+            <div class="medida-box">
+              <div class="mv-label">Pecho</div>
+              <input type="number" id="fPecho" step="0.1" placeholder="—" />
+              <div class="mv-unit">cm</div>
+            </div>
+          </div>
+          <p style="font-size:0.75rem;color:var(--muted);">Estas medidas son el punto de partida para medir el progreso del cliente.</p>
+        </div>
+
+        <!-- Salud -->
+        <div class="ficha-section">
+          <div class="section-title">🏥 Salud e historial</div>
+          <div class="form-row">
+            <label>Lesiones previas o actuales</label>
+            <textarea id="fLesiones" rows="2" placeholder="p. ej. Rodilla derecha, espalda lumbar…"></textarea>
+          </div>
+          <div class="form-row">
+            <label>Condiciones médicas</label>
+            <textarea id="fCondiciones" rows="2" placeholder="p. ej. Hipertensión, diabetes, asma…"></textarea>
+          </div>
+        </div>
+
+        <!-- Motivación -->
+        <div class="ficha-section full-width">
+          <div class="section-title">💬 Motivación y notas</div>
+          <div class="form-2col">
+            <div class="form-row">
+              <label>¿Qué le motiva a entrenar?</label>
+              <textarea id="fMotivacion" rows="3" placeholder="Sus razones, objetivos de vida, qué le hace mantenerse constante…"></textarea>
+            </div>
+            <div class="form-row">
+              <label>Otras notas del entrenador</label>
+              <textarea id="fNotas" rows="3" placeholder="Observaciones personales, preferencias, cosas a tener en cuenta…"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="save-bar">
+        <span class="save-status" id="saveStatus">✓ Guardado</span>
+        <button class="btn btn-outline" onclick="cargarFicha()">Descartar cambios</button>
+        <button class="btn btn-primary" onclick="guardar()">Guardar ficha</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const token = () => localStorage.getItem('gc_token');
+const hdr = (json) => ({ Authorization: 'Bearer ' + token(), ...(json ? {'Content-Type':'application/json'} : {}) });
+
+async function init() {
+  const r = await fetch(`${API}/api/chat/contactos`, { headers: hdr() });
+  if (!r.ok) return;
+  const todos = await r.json();
+  const clientes = todos.filter(c => c.esPagador);
+  const sel = document.getElementById('selCliente');
+  clientes.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.nombre;
+    sel.appendChild(opt);
+  });
+
+  // Si viene ?clienteId=... en la URL, seleccionarlo
+  const params = new URLSearchParams(location.search);
+  if (params.get('clienteId')) {
+    sel.value = params.get('clienteId');
+    cargarFicha();
+  }
+}
+
+async function cargarFicha() {
+  const id = document.getElementById('selCliente').value;
+  if (!id) {
+    document.getElementById('sinCliente').style.display = 'block';
+    document.getElementById('fichaContent').style.display = 'none';
+    return;
+  }
+  document.getElementById('sinCliente').style.display = 'none';
+  document.getElementById('fichaContent').style.display = 'block';
+
+  const r = await fetch(`${API}/api/ficha-cliente/${id}`, { headers: hdr() });
+  if (r.status === 204 || !r.ok) {
+    limpiarFormulario();
+    return;
+  }
+  const f = await r.json();
+  llenarFormulario(f);
+}
+
+function llenarFormulario(f) {
+  document.getElementById('fEdad').value = f.edad || '';
+  document.getElementById('fSexo').value = f.sexo || '';
+  document.getElementById('fAltura').value = f.alturacm || '';
+  document.getElementById('fPesoObj').value = f.pesoObjetivo || '';
+  document.getElementById('fObjetivo').value = f.objetivo || '';
+  document.getElementById('fNivel').value = f.nivelFitness || '';
+  document.getElementById('fDias').value = f.diasDisponibles || '';
+  document.getElementById('fSuenio').value = f.horasSuenio || '';
+  document.getElementById('fEquipamiento').value = f.equipamientoDisponible || '';
+  document.getElementById('fCintura').value = f.cinturaInicial || '';
+  document.getElementById('fCadera').value = f.caderaInicial || '';
+  document.getElementById('fPecho').value = f.pechoInicial || '';
+  document.getElementById('fLesiones').value = f.lesiones || '';
+  document.getElementById('fCondiciones').value = f.condicionesMedicas || '';
+  document.getElementById('fMotivacion').value = f.motivacion || '';
+  document.getElementById('fNotas').value = f.otrasNotas || '';
+}
+
+function limpiarFormulario() {
+  ['fEdad','fSexo','fAltura','fPesoObj','fObjetivo','fNivel','fDias','fSuenio',
+   'fEquipamiento','fCintura','fCadera','fPecho','fLesiones','fCondiciones','fMotivacion','fNotas']
+    .forEach(id => { document.getElementById(id).value = ''; });
+}
+
+async function guardar() {
+  const id = document.getElementById('selCliente').value;
+  if (!id) return;
+
+  const body = {
+    edad: parseInt(document.getElementById('fEdad').value) || null,
+    sexo: document.getElementById('fSexo').value || null,
+    alturacm: parseFloat(document.getElementById('fAltura').value) || null,
+    pesoObjetivo: parseFloat(document.getElementById('fPesoObj').value) || null,
+    objetivo: document.getElementById('fObjetivo').value || null,
+    nivelFitness: document.getElementById('fNivel').value || null,
+    diasDisponibles: parseInt(document.getElementById('fDias').value) || null,
+    horasSuenio: parseFloat(document.getElementById('fSuenio').value) || null,
+    equipamientoDisponible: document.getElementById('fEquipamiento').value || null,
+    cinturaInicial: parseFloat(document.getElementById('fCintura').value) || null,
+    caderaInicial: parseFloat(document.getElementById('fCadera').value) || null,
+    pechoInicial: parseFloat(document.getElementById('fPecho').value) || null,
+    lesiones: document.getElementById('fLesiones').value || null,
+    condicionesMedicas: document.getElementById('fCondiciones').value || null,
+    motivacion: document.getElementById('fMotivacion').value || null,
+    otrasNotas: document.getElementById('fNotas').value || null,
+  };
+
+  const r = await fetch(`${API}/api/ficha-cliente/${id}`, {
+    method: 'POST', headers: hdr(true), body: JSON.stringify(body)
+  });
+
+  const status = document.getElementById('saveStatus');
+  if (r.ok) {
+    status.textContent = '✓ Guardado correctamente';
+    status.style.display = 'block';
+    status.style.color = 'var(--green)';
+    setTimeout(() => { status.style.display = 'none'; }, 3000);
+  } else {
+    status.textContent = '✗ Error al guardar';
+    status.style.display = 'block';
+    status.style.color = '#f87171';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
