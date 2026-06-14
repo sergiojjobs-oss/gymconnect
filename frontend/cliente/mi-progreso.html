@@ -108,16 +108,7 @@
         <label>Notas para tu entrenador</label>
         <textarea id="notas" rows="3" placeholder="¿Cómo ha ido la semana? ¿Algo que destacar?"></textarea>
       </div>
-      <div class="form-group" style="margin-bottom:1.25rem;">
-        <label>Foto de progreso (opcional)</label>
-        <div style="display:flex;align-items:center;gap:1rem;">
-          <label style="cursor:pointer;display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:0.85rem;font-weight:600;color:var(--text-2);">
-            📷 Subir foto <input type="file" accept="image/*" style="display:none" onchange="subirFoto(this)" />
-          </label>
-          <div id="fotoPreview" style="width:64px;height:64px;border-radius:8px;background:var(--bg);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:1.5rem;overflow:hidden;">📷</div>
-        </div>
-        <input type="hidden" id="fotoUrl" />
-      </div>
+      <input type="hidden" id="fotoUrl" />
       <button class="btn btn-primary" onclick="guardar()" style="width:100%;">Guardar check-in</button>
       <div id="msg" style="margin-top:0.75rem;font-size:0.85rem;text-align:center;display:none;"></div>
     </div>
