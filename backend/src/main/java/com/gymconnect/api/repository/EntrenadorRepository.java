@@ -18,7 +18,9 @@ public interface EntrenadorRepository extends JpaRepository<Entrenador, Long> {
            "(:especialidad IS NULL OR :especialidad MEMBER OF e.especialidades) AND " +
            "(:precioMax IS NULL OR e.precioMensual <= :precioMax) AND " +
            "(:precioMin IS NULL OR e.precioMensual >= :precioMin) AND " +
-           "(:ratingMin IS NULL OR e.rating >= :ratingMin)")
+           "(:ratingMin IS NULL OR e.rating >= :ratingMin) " +
+           "ORDER BY CASE e.usuario.plan WHEN 'ELITE' THEN 0 WHEN 'PRO' THEN 1 ELSE 2 END, " +
+           "COALESCE(e.rating, 0) DESC")
     List<Entrenador> buscarConFiltros(
         @Param("especialidad") String especialidad,
         @Param("precioMin") Double precioMin,

@@ -141,10 +141,7 @@
       margin-bottom: 0.15rem;
     }
     .card-info p { font-size: 0.78rem; color: var(--muted); }
-    .card-badge-pro {
-      background: rgba(22,163,74,0.1);
-      border: 1px solid rgba(22,163,74,0.3);
-      color: var(--green);
+    .card-badge {
       padding: 0.2rem 0.55rem;
       border-radius: 4px;
       font-size: 0.65rem;
@@ -152,6 +149,38 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       white-space: nowrap;
+    }
+    .card-badge-elite {
+      background: rgba(139,92,246,0.12);
+      border: 1px solid rgba(139,92,246,0.4);
+      color: #7c3aed;
+    }
+    .card-badge-pro {
+      background: rgba(20,184,166,0.1);
+      border: 1px solid rgba(20,184,166,0.4);
+      color: #0d9488;
+    }
+    .card-badge-free {
+      background: rgba(249,115,22,0.1);
+      border: 1px solid rgba(249,115,22,0.4);
+      color: #ea580c;
+    }
+    .trainer-card.tier-elite {
+      border-color: rgba(139,92,246,0.35);
+      box-shadow: 0 0 0 1px rgba(139,92,246,0.12);
+    }
+    .trainer-card.tier-pro {
+      border-color: rgba(20,184,166,0.35);
+      box-shadow: 0 0 0 1px rgba(20,184,166,0.1);
+    }
+    .trainer-card.tier-free {
+      border-color: rgba(249,115,22,0.25);
+    }
+    .trainer-card.tier-elite .card-footer {
+      background: rgba(139,92,246,0.04);
+    }
+    .trainer-card.tier-pro .card-footer {
+      background: rgba(20,184,166,0.04);
     }
 
     .card-body { padding: 1rem 1.5rem; }
@@ -310,15 +339,22 @@
       const avatarHtml = e.fotoUrl
         ? `<div class="card-avatar" style="overflow:hidden;"><img src="${e.fotoUrl}" style="width:100%;height:100%;object-fit:cover;" /></div>`
         : `<div class="card-avatar" style="background:${color}">${iniciales(e.nombre, e.apellido)}</div>`;
+      const tier = (e.planTier || 'FREE').toUpperCase();
+      const badgeHtml = tier === 'ELITE'
+        ? '<span class="card-badge card-badge-elite">👑 Elite</span>'
+        : tier === 'PRO'
+          ? '<span class="card-badge card-badge-pro">⚡ Pro</span>'
+          : '<span class="card-badge card-badge-free">Free</span>';
+      const tierClass = tier === 'ELITE' ? 'tier-elite' : tier === 'PRO' ? 'tier-pro' : 'tier-free';
       return `
-        <div class="trainer-card" onclick="window.location.href='perfil.html?id=${e.id}'">
+        <div class="trainer-card ${tierClass}" onclick="window.location.href='perfil.html?id=${e.id}'">
           <div class="card-header">
             ${avatarHtml}
             <div class="card-info">
               <h3>${e.nombre} ${e.apellido}</h3>
               <p>📍 ${e.ciudad}</p>
             </div>
-            ${e.pro ? '<span class="card-badge-pro">✓ Pro</span>' : ''}
+            ${badgeHtml}
           </div>
           <div class="card-body">
             <div class="card-stars">${stars} <span>${e.rating.toFixed(1)} · ${e.totalResenas} reseñas</span></div>

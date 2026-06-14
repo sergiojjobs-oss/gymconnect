@@ -30,6 +30,7 @@ public class EntrenadorDto {
     private List<String> certificaciones;
     private List<String> idiomas;
     private Boolean esEjemplo;
+    private String planTier;
 
     public static EntrenadorDto from(Entrenador e) {
         EntrenadorDto dto = new EntrenadorDto();
@@ -44,6 +45,7 @@ public class EntrenadorDto {
         dto.setTotalResenas(e.getTotalResenas());
         dto.setVerificado(e.getVerificado());
         dto.setPro(e.getUsuario().getPlan() != com.gymconnect.api.model.Usuario.PlanSuscripcion.FREE);
+        dto.setPlanTier(e.getUsuario().getPlan().name());
         dto.setEspecialidades(e.getEspecialidades());
         dto.setServicios(e.getServicios());
         dto.setAniosExperiencia(e.getAniosExperiencia());

@@ -172,7 +172,6 @@ async function guardar() {
     showMsg('✓ Check-in guardado. ¡Sigue así!');
     // Limpiar form
     ['peso','grasa','musculatura','cumplimiento','notas','fotoUrl'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('fotoPreview').innerHTML = '📷';
     energiaVal = 0;
     document.querySelectorAll('.energia-btn').forEach(b => b.classList.remove('sel'));
     cargarHistorial();

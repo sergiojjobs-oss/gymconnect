@@ -136,6 +136,9 @@ public class PaypalController {
                         cliente.getId(), entrenador.getId(), Relacion.Estado.ACTIVA);
 
                 if (!yaExiste) {
+                    if (!suscripcionService.puedeAceptarCliente(entrenador.getId())) {
+                        return ResponseEntity.status(403).body(Map.of("error", "El entrenador ha alcanzado el límite de clientes de su plan"));
+                    }
                     Relacion relacion = new Relacion();
                     relacion.setCliente(cliente);
                     relacion.setEntrenador(entrenador);
