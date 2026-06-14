@@ -374,8 +374,89 @@
       }
 
       document.getElementById('reviewsTitle').textContent = 'Reseñas (' + e.totalResenas + ')';
-      document.getElementById('reviews').innerHTML =
-        '<p style="font-size:0.83rem;color:var(--muted);">Las reseñas estarán disponibles próximamente.</p>';
+      cargarResenas(e.id);
+    }
+
+    async function cargarResenas(entrenadorId) {
+      const token = localStorage.getItem('gc_token');
+      const user = JSON.parse(localStorage.getItem('gc_user') || 'null');
+      const div = document.getElementById('reviews');
+
+      // Cargar reseñas existentes
+      const res = await fetch(`${API}/api/resenas/entrenador/${entrenadorId}`);
+      const lista = res.ok ? await res.json() : [];
+
+      let html = '';
+
+      // Formulario solo para clientes logueados
+      if (token && user && user.rol === 'CLIENTE') {
+        // Ver si ya tiene reseña propia
+        let miResena = null;
+        try {
+          const mr = await fetch(`${API}/api/resenas/entrenador/${entrenadorId}/mia`, { headers: { 'Authorization': 'Bearer ' + token } });
+          if (mr.ok) miResena = await mr.json();
+        } catch {}
+
+        const estrellas = miResena?.estrellas || 0;
+        const starsHtml = [1,2,3,4,5].map(n =>
+          `<span class="star-btn" data-v="${n}" onclick="selStar(${n})" style="font-size:1.5rem;cursor:pointer;color:${n<=estrellas?'#f59e0b':'#d1d5db'};">★</span>`
+        ).join('');
+
+        html += `<div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem;">
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.75rem;">${miResena ? 'Tu reseña' : 'Deja tu reseña'}</div>
+          <div id="starsRow" style="margin-bottom:0.75rem;">${starsHtml}</div>
+          <input type="hidden" id="starVal" value="${estrellas}" />
+          <textarea id="comentarioInput" rows="3" placeholder="Cuéntanos tu experiencia…" style="width:100%;padding:0.65rem;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;resize:vertical;font-family:inherit;">${miResena?.comentario || ''}</textarea>
+          <button onclick="enviarResena(${entrenadorId})" class="btn btn-primary" style="margin-top:0.75rem;width:100%;justify-content:center;">
+            ${miResena ? 'Actualizar reseña' : 'Publicar reseña'}
+          </button>
+          <div id="resenaMsg" style="font-size:0.82rem;margin-top:0.5rem;"></div>
+        </div>`;
+      }
+
+      if (lista.length === 0) {
+        html += '<p style="font-size:0.83rem;color:var(--muted);">Aún no hay reseñas. ¡Sé el primero!</p>';
+      } else {
+        html += lista.map(r => `
+          <div class="review-item">
+            <div class="review-header">
+              <div class="review-avatar">${r.cliente.nombre[0]}${r.cliente.apellido?.[0]||''}</div>
+              <span class="review-name">${r.cliente.nombre} ${r.cliente.apellido||''}</span>
+              <span class="review-stars">${'★'.repeat(r.estrellas)}${'☆'.repeat(5-r.estrellas)}</span>
+            </div>
+            <div class="review-text">${r.comentario || ''}</div>
+          </div>`).join('');
+      }
+
+      div.innerHTML = html;
+    }
+
+    let _starVal = 0;
+    function selStar(n) {
+      _starVal = n;
+      document.getElementById('starVal').value = n;
+      document.querySelectorAll('.star-btn').forEach(s => {
+        s.style.color = parseInt(s.dataset.v) <= n ? '#f59e0b' : '#d1d5db';
+      });
+    }
+
+    async function enviarResena(entrenadorId) {
+      const token = localStorage.getItem('gc_token');
+      const estrellas = parseInt(document.getElementById('starVal').value);
+      const comentario = document.getElementById('comentarioInput').value.trim();
+      const msg = document.getElementById('resenaMsg');
+      if (!estrellas) { msg.style.color='#dc2626'; msg.textContent='Selecciona una valoración.'; return; }
+      try {
+        const r = await fetch(`${API}/api/resenas/entrenador/${entrenadorId}`, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
+          body: JSON.stringify({ estrellas, comentario })
+        });
+        const data = await r.json();
+        if (!r.ok) { msg.style.color='#dc2626'; msg.textContent=data.error||'Error al publicar.'; return; }
+        msg.style.color='#16a34a'; msg.textContent='✓ Reseña publicada';
+        cargarResenas(entrenadorId);
+      } catch { msg.style.color='#dc2626'; msg.textContent='Error de conexión.'; }
     }
 
     async function cargarPerfil() {
