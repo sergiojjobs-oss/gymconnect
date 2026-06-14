@@ -215,10 +215,10 @@
           const u = JSON.parse(localStorage.getItem('gc_user') || 'null');
           if (u && u.rol === 'CLIENTE') {
             document.getElementById('mainNav').innerHTML =
-              '<a href="dashboard.html">← Mi dashboard</a>';
+              '<a href="dashboard.html" class="nav-cta">← Mi dashboard</a>';
           } else if (u && u.rol === 'ENTRENADOR') {
             document.getElementById('mainNav').innerHTML =
-              '<a href="../entrenador/perfil.html">← Mi panel</a>';
+              '<a href="../entrenador/perfil.html" class="nav-cta">← Mi panel</a>';
           }
         })();
       </script>
