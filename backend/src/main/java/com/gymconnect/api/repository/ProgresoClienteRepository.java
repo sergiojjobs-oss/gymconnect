@@ -10,4 +10,5 @@ public interface ProgresoClienteRepository extends JpaRepository<ProgresoCliente
     List<ProgresoCliente> findByClienteIdOrderByFechaDesc(Long clienteId);
     List<ProgresoCliente> findByEntrenadorIdAndClienteIdOrderByFechaDesc(Long entrenadorId, Long clienteId);
     Optional<ProgresoCliente> findTopByClienteIdOrderByFechaDesc(Long clienteId);
+    List<ProgresoCliente> findByEntrenadorId(Long entrenadorId);
 }
