@@ -59,9 +59,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsSource() {
         CorsConfiguration config = new CorsConfiguration();
         // Permitir orígenes configurados + siempre incluir Netlify y localhost
-        List<String> origins = Arrays.stream(allowedOrigins.split(","))
-                .map(String::trim).filter(s -> !s.isBlank()).distinct().toList();
-        config.setAllowedOrigins(origins);
+        List<String> origins = new java.util.ArrayList<>(Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim).filter(s -> !s.isBlank()).toList());
+        origins.add("https://gymconnect-navy.vercel.app");
+        origins.add("http://localhost:5500");
+        origins.add("http://127.0.0.1:5500");
+        config.setAllowedOrigins(origins.stream().distinct().toList());
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
