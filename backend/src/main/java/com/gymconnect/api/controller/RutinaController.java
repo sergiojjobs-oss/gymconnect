@@ -1,9 +1,11 @@
 package com.gymconnect.api.controller;
 
 import com.gymconnect.api.model.Entrenador;
+import com.gymconnect.api.model.Relacion;
 import com.gymconnect.api.model.Rutina;
 import com.gymconnect.api.model.Usuario;
 import com.gymconnect.api.repository.EntrenadorRepository;
+import com.gymconnect.api.repository.RelacionRepository;
 import com.gymconnect.api.repository.RutinaRepository;
 import com.gymconnect.api.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class RutinaController {
     private final RutinaRepository rutinaRepo;
     private final EntrenadorRepository entrenadorRepo;
     private final UsuarioRepository usuarioRepo;
+    private final RelacionRepository relacionRepo;
 
     // Entrenador: listar todas sus rutinas
     @GetMapping("/mis-rutinas")
@@ -49,9 +52,13 @@ public class RutinaController {
         if (body.get("duracionMinutos") != null)
             r.setDuracionMinutos(((Number) body.get("duracionMinutos")).intValue());
 
-        // Si se especifica clienteId, asignar al cliente
+        // Si se especifica clienteId, validar que es cliente activo de este entrenador
         if (body.get("clienteId") != null) {
             Long clienteId = ((Number) body.get("clienteId")).longValue();
+            boolean esClienteActivo = relacionRepo.existsByClienteIdAndEntrenadorIdAndEstado(
+                    clienteId, ent.getId(), Relacion.Estado.ACTIVA);
+            if (!esClienteActivo)
+                return ResponseEntity.status(403).build();
             usuarioRepo.findById(clienteId).ifPresent(r::setCliente);
         }
 

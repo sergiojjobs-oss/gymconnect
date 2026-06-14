@@ -2,9 +2,11 @@ package com.gymconnect.api.controller;
 
 import com.gymconnect.api.model.Entrenador;
 import com.gymconnect.api.model.PlanNutricional;
+import com.gymconnect.api.model.Relacion;
 import com.gymconnect.api.model.Usuario;
 import com.gymconnect.api.repository.EntrenadorRepository;
 import com.gymconnect.api.repository.PlanNutricionalRepository;
+import com.gymconnect.api.repository.RelacionRepository;
 import com.gymconnect.api.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ public class NutricionController {
     private final PlanNutricionalRepository planRepo;
     private final EntrenadorRepository entrenadorRepo;
     private final UsuarioRepository usuarioRepo;
+    private final RelacionRepository relacionRepo;
 
     // Entrenador: listar planes que ha creado
     @GetMapping("/mis-planes")
@@ -49,6 +52,9 @@ public class NutricionController {
         Entrenador ent = entrenadorRepo.findByUsuarioEmail(ud.getUsername())
                 .orElseThrow(() -> new RuntimeException("No encontrado"));
         Long clienteId = ((Number) body.get("clienteId")).longValue();
+        boolean esClienteActivo = relacionRepo.existsByClienteIdAndEntrenadorIdAndEstado(
+                clienteId, ent.getId(), Relacion.Estado.ACTIVA);
+        if (!esClienteActivo) return ResponseEntity.status(403).build();
         Usuario cliente = usuarioRepo.findById(clienteId)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
