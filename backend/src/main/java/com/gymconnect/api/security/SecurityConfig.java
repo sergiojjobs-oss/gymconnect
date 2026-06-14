@@ -44,13 +44,11 @@ public class SecurityConfig {
                 // Rutas públicas
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/entrenadores/**").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
                 // Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
             )
-            .headers(h -> h.frameOptions(f -> f.disable())) // para H2 console
             .authenticationProvider(authProvider())
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -61,17 +59,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsSource() {
         CorsConfiguration config = new CorsConfiguration();
         // Permitir orígenes configurados + siempre incluir Netlify y localhost
-        List<String> origins = new java.util.ArrayList<>(Arrays.asList(allowedOrigins.split(",")));
-        origins.add("https://splendid-daffodil-79285f.netlify.app");
-        origins.add("https://gymconnect-six.vercel.app");
-        origins.add("https://frontend-murex-five-21.vercel.app");
-        origins.add("https://gymconnect-app.vercel.app");
-        origins.add("https://gymconnect-app-mu.vercel.app");
-        origins.add("https://gymconnect-navy.vercel.app");
-        origins.add("http://localhost:3000");
-        origins.add("http://localhost:5500");
-        origins.add("http://127.0.0.1:5500");
-        config.setAllowedOrigins(origins.stream().map(String::trim).distinct().toList());
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim).filter(s -> !s.isBlank()).distinct().toList();
+        config.setAllowedOrigins(origins);
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
