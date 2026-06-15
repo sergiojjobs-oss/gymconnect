@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -50,7 +50,7 @@
     .client-bar-wrap { margin-top: 0.75rem; }
     .client-bar-label { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.4rem; }
     .client-bar { height: 8px; background: var(--bg-2); border-radius: 99px; overflow: hidden; }
-    .client-bar-fill { height: 100%; border-radius: 99px; background: var(--grad-gold); transition: width 0.5s; }
+    .client-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#2563eb,#60a5fa); transition: width 0.5s; }
     .client-bar-fill.full { background: linear-gradient(90deg, #dc2626, #ef4444); }
 
     /* Cards de planes */
@@ -106,13 +106,13 @@
 
     .plan-badge { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem; display: inline-block; padding: 0.25rem 0.75rem; border-radius: 99px; }
     .badge-free  { background: rgba(22,163,74,0.1);   color: #16a34a;  border: 1px solid rgba(22,163,74,0.25); }
-    .badge-pro   { background: rgba(234,179,8,0.1);   color: #ca8a04;  border: 1px solid rgba(234,179,8,0.3); }
+    .badge-pro   { background: rgba(37,99,235,0.1);   color: #60a5fa;  border: 1px solid rgba(37,99,235,0.3); }
     .badge-elite { background: rgba(124,58,237,0.1);  color: #7c3aed;  border: 1px solid rgba(124,58,237,0.2); }
 
     .btn-free  { width:100%;justify-content:center;background:linear-gradient(135deg,#16a34a,#15803d);border:none;color:#fff; }
     .btn-free:hover { background:linear-gradient(135deg,#15803d,#166534); }
-    .btn-pro   { width:100%;justify-content:center;background:linear-gradient(135deg,#eab308,#ca8a04);border:none;color:#fff; }
-    .btn-pro:hover  { background:linear-gradient(135deg,#ca8a04,#a16207); }
+    .btn-pro   { width:100%;justify-content:center;background:linear-gradient(135deg,#2563eb,#60a5fa);border:none;color:#fff; }
+    .btn-pro:hover  { background:linear-gradient(135deg,#1d4ed8,#2563eb); }
     .btn-elite { width:100%;justify-content:center;background:linear-gradient(135deg,#8b5cf6,#7c3aed);border:none;color:#fff; }
     .btn-elite:hover { background:linear-gradient(135deg,#7c3aed,#6d28d9); }
 
@@ -230,7 +230,7 @@
           <div class="client-bar-wrap">
             <div class="client-bar-label">
               <span id="barLabel">2 de 3 clientes usados</span>
-              <span style="color:var(--gold);font-weight:800;" id="barPct">67%</span>
+              <span style="color:#60a5fa;font-weight:800;" id="barPct">67%</span>
             </div>
             <div class="client-bar">
               <div class="client-bar-fill" id="barFill" style="width:67%"></div>

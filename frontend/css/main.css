@@ -117,6 +117,7 @@ select option { background: #ffffff; color: #111827; }
   margin-bottom: 1.5rem;
 }
 .badge-gold { background:rgba(217,119,6,0.08); border-color:rgba(217,119,6,0.2); color:var(--gold); }
+.badge-blue { background:rgba(37,99,235,0.08); border-color:rgba(37,99,235,0.2); color:#60a5fa; }
 
 .tag {
   display: inline-block;
@@ -181,6 +182,13 @@ select option { background: #ffffff; color: #111827; }
   box-shadow: 0 4px 20px rgba(217,119,6,0.28);
 }
 .btn-gold:hover { box-shadow: 0 8px 36px rgba(217,119,6,0.42); transform:translateY(-1px); filter:brightness(1.05); }
+
+.btn-blue {
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(37,99,235,0.28);
+}
+.btn-blue:hover { box-shadow: 0 8px 36px rgba(37,99,235,0.42); transform:translateY(-1px); filter:brightness(1.05); }
 
 .btn-outline {
   background: transparent;

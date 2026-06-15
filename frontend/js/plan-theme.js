@@ -12,7 +12,7 @@
 
     const themes = {
       FREE:  { h: '142', s: '72%', accent: '#16a34a', accentBg: 'rgba(22,163,74,0.15)',  accentText: '#4ade80' },
-      PRO:   { h: '45',  s: '93%', accent: '#ca8a04', accentBg: 'rgba(234,179,8,0.15)',  accentText: '#fbbf24' },
+      PRO:   { h: '217', s: '91%', accent: '#2563eb', accentBg: 'rgba(37,99,235,0.15)',  accentText: '#60a5fa' },
       ELITE: { h: '263', s: '70%', accent: '#7c3aed', accentBg: 'rgba(139,92,246,0.15)', accentText: '#a78bfa' }
     };
 
