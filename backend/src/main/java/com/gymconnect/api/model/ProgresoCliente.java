@@ -24,7 +24,7 @@ public class ProgresoCliente {
     private Usuario cliente;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "entrenador_id", nullable = false)
+    @JoinColumn(name = "entrenador_id", nullable = true)
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler","usuario","especialidades","servicios","certificaciones","idiomas"})
     private Entrenador entrenador;
 

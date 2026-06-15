@@ -35,15 +35,13 @@ public class ProgresoController {
         Usuario cliente = usuarioRepo.findByEmail(ud.getUsername())
                 .orElseThrow(() -> new RuntimeException("No encontrado"));
 
-        // Buscar entrenador activo del cliente
+        // Entrenador activo (opcional — el progreso es del cliente aunque no tenga entrenador)
         var relaciones = relacionRepo.findByClienteIdAndEstado(cliente.getId(), Relacion.Estado.ACTIVA);
-        if (relaciones.isEmpty()) return ResponseEntity.badRequest().body("Sin entrenador activo");
-
-        Entrenador entrenador = relaciones.get(0).getEntrenador();
+        Entrenador entrenador = relaciones.isEmpty() ? null : relaciones.get(0).getEntrenador();
 
         ProgresoCliente p = new ProgresoCliente();
         p.setCliente(cliente);
-        p.setEntrenador(entrenador);
+        if (entrenador != null) p.setEntrenador(entrenador);
         p.setFecha(LocalDate.now());
         if (body.get("peso") != null) p.setPeso(((Number) body.get("peso")).doubleValue());
         if (body.get("grasaCorporal") != null) p.setGrasaCorporal(((Number) body.get("grasaCorporal")).doubleValue());
