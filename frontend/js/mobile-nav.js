@@ -42,6 +42,7 @@
   backdrop.addEventListener('click', closeMobileSidebar);
 
   document.addEventListener('DOMContentLoaded', function () {
+    document.body.classList.add('has-mobile-nav');
     document.body.appendChild(nav);
     document.body.appendChild(backdrop);
   });
