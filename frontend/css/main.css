@@ -87,6 +87,7 @@ a { text-decoration:none; color:inherit; }
 img { display:block; max-width:100%; }
 button { font-family: var(--font); cursor:pointer; }
 input, select, textarea { font-family: var(--font); }
+select option { background: #ffffff; color: #111827; }
 
 /* =============================================
    UTILITIES
