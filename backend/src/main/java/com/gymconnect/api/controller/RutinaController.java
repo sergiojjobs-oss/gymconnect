@@ -121,6 +121,8 @@ public class RutinaController {
     public ResponseEntity<?> miRutina(@AuthenticationPrincipal UserDetails ud) {
         Usuario user = usuarioRepo.findByEmail(ud.getUsername())
                 .orElseThrow(() -> new RuntimeException("No encontrado"));
+        boolean tieneEntrenador = !relacionRepo.findByClienteIdAndEstado(user.getId(), Relacion.Estado.ACTIVA).isEmpty();
+        if (!tieneEntrenador) return ResponseEntity.noContent().build();
         return rutinaRepo.findTopByClienteIdAndActivaTrueOrderByCreadaEnDesc(user.getId())
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());
