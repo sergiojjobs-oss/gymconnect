@@ -274,11 +274,67 @@
       align-self: center;
     }
 
+    /* ── Back button ── */
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.18);
+      color: #4ade80; border-radius: 99px; padding: 0.32rem 0.85rem;
+      font-size: 0.78rem; font-weight: 700; cursor: pointer;
+      text-decoration: none; transition: background 0.15s, transform 0.1s;
+      flex-shrink: 0;
+    }
+    .back-btn:hover { background: rgba(74,222,128,0.14); transform: translateX(-2px); }
+
+    /* ── Search bar ── */
+    .chat-search {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid rgba(74,222,128,0.08);
+    }
+    .chat-search input {
+      width: 100%; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(74,222,128,0.12); border-radius: 10px;
+      padding: 0.5rem 0.85rem; font-size: 0.8rem; color: #eef7f1;
+      font-family: inherit; outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-search input::placeholder { color: rgba(160,210,175,0.35); }
+    .chat-search input:focus { border-color: rgba(74,222,128,0.35); }
+
+    /* ── Date separator ── */
+    .date-sep {
+      align-self: center; font-size: 0.67rem; font-weight: 700;
+      color: rgba(160,210,175,0.35); background: rgba(255,255,255,0.03);
+      padding: 0.2rem 0.75rem; border-radius: 99px;
+      margin: 0.5rem 0; letter-spacing: 0.5px;
+      border: 1px solid rgba(74,222,128,0.07);
+    }
+
+    /* ── Unread badge in sidebar ── */
+    .unread-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #4ade80; flex-shrink: 0;
+      box-shadow: 0 0 0 2px rgba(74,222,128,0.2);
+    }
+
+    /* ── Typing indicator ── */
+    .msg-bubble.typing span {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(160,210,175,0.6); margin: 0 1px;
+      animation: bounce 1.2s infinite;
+    }
+    .msg-bubble.typing span:nth-child(2) { animation-delay: 0.2s; }
+    .msg-bubble.typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+
+    /* ── Header actions ── */
+    .chat-header-actions { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; }
+
     /* ── Responsive ── */
     @media (max-width: 700px) {
       .chat-wrap { flex-direction: column; padding: 0; gap: 0; height: auto; min-height: calc(100vh - 64px); }
-      .chat-sidebar { width: 100%; border-radius: 0; border: none; border-bottom: 1px solid rgba(74,222,128,0.12); max-height: 220px; }
-      .chat-main { flex: 1; border-radius: 0; border: none; min-height: calc(100vh - 64px - 220px); }
+      .chat-sidebar { width: 100%; border-radius: 0; border: none; border-bottom: 1px solid rgba(74,222,128,0.12); max-height: 240px; }
+      .chat-main { flex: 1; border-radius: 0; border: none; min-height: calc(100vh - 64px - 240px); }
+      .back-btn span { display: none; }
     }
   </style>
 </head>
@@ -288,6 +344,7 @@
   <div class="container">
     <a href="../index.html" class="logo">Moment<span>Fit</span></a>
     <nav>
+      <a id="backBtn" href="#" class="back-btn">← <span>Dashboard</span></a>
       <span id="ws-status" class="ws-status disconnected">● Desconectado</span>
       <button class="btn btn-primary" style="font-size:0.82rem" onclick="logout()">Cerrar sesión</button>
     </nav>
@@ -298,6 +355,9 @@
   <!-- Lista de conversaciones -->
   <div class="chat-sidebar">
     <div class="chat-sidebar-header">💬 Conversaciones</div>
+    <div class="chat-search">
+      <input type="text" id="searchInput" placeholder="Buscar conversación…" oninput="filtrarContactos(this.value)">
+    </div>
     <div class="chat-list" id="chatList">
       <div style="padding:1.5rem;text-align:center;color:rgba(160,210,175,0.4);font-size:0.83rem;">
         Cargando…
@@ -429,25 +489,38 @@ async function cargarContactos() { // returns Promise
 // ── Abrir conversación ──────────────────────────────────────────
 async function abrirChat(contacto) {
   contactoActivo = contacto;
+  lastMsgDate = null;
 
   document.querySelectorAll('.chat-item').forEach(el => {
     el.classList.toggle('active', el.dataset.id == contacto.id);
+    // quitar punto de no leído
+    const dot = el.querySelector('.unread-dot');
+    if (dot && el.dataset.id == contacto.id) dot.remove();
   });
 
+  const wsOk = stompClient && stompClient.connected;
   const main = document.getElementById('chatMain');
   main.innerHTML = `
     <div class="chat-header">
       <div class="chat-header-avatar">${contacto.nombre.charAt(0)}</div>
-      <div>
+      <div style="flex:1;min-width:0;">
         <div class="chat-header-name">${contacto.nombre}</div>
-        <div class="chat-status">En línea</div>
+        <div class="chat-status${wsOk ? '' : ' offline'}" id="chatStatus">
+          ${wsOk ? 'En línea' : 'Conectando…'}
+        </div>
+      </div>
+      <div class="chat-header-actions">
+        <span id="ws-status-inline" style="font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:99px;background:${wsOk ? 'rgba(74,222,128,0.1)' : 'rgba(248,113,113,0.1)'};color:${wsOk ? '#4ade80' : '#f87171'};border:1px solid ${wsOk ? 'rgba(74,222,128,0.2)' : 'rgba(248,113,113,0.2)'}">
+          ${wsOk ? '● Conectado' : '● Reconectando…'}
+        </span>
       </div>
     </div>
     <div class="chat-messages" id="messages"></div>
     <div class="chat-input-bar">
       <textarea id="msgInput" placeholder="Escribe un mensaje…" rows="1"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"
         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviar();}"></textarea>
-      <button class="send-btn" onclick="enviar()">Enviar ↑</button>
+      <button class="send-btn" id="sendBtn" onclick="enviar()">↑</button>
     </div>
   `;
 
@@ -513,20 +586,42 @@ function recibirMensaje(msg) {
 }
 
 // ── Renderizar un mensaje ───────────────────────────────────────
+let lastMsgDate = null;
+
+function formatFecha(fecha) {
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const ayer = new Date(hoy); ayer.setDate(ayer.getDate()-1);
+  const d = new Date(fecha); d.setHours(0,0,0,0);
+  if (d.getTime() === hoy.getTime()) return 'Hoy';
+  if (d.getTime() === ayer.getTime()) return 'Ayer';
+  return new Date(fecha).toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric' });
+}
+
 function mostrarMensaje(msg, esMio) {
   const msgs = document.getElementById('messages');
   if (!msgs) return;
 
+  const fechaMsg = msg.fechaEnvio ? new Date(msg.fechaEnvio) : new Date();
+  const diaKey = fechaMsg.toDateString();
+
+  // Separador de fecha si cambia el día
+  if (diaKey !== lastMsgDate) {
+    lastMsgDate = diaKey;
+    const sep = document.createElement('div');
+    sep.className = 'date-sep';
+    sep.textContent = formatFecha(fechaMsg);
+    msgs.appendChild(sep);
+  }
+
   const div = document.createElement('div');
   div.className = 'msg ' + (esMio ? 'mine' : 'theirs');
 
-  const hora = msg.fechaEnvio
-    ? new Date(msg.fechaEnvio).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-    : new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  const hora = fechaMsg.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  const tick = esMio ? ' <span style="opacity:0.7;font-size:0.7rem">✓✓</span>' : '';
 
   div.innerHTML = `
     <div class="msg-bubble">${escapeHtml(msg.contenido)}</div>
-    <span class="msg-time">${hora}</span>
+    <span class="msg-time">${hora}${tick}</span>
   `;
   msgs.appendChild(div);
 }
@@ -560,6 +655,23 @@ function logout() {
   localStorage.removeItem('gc_token');
   localStorage.removeItem('gc_user');
   window.location.href = '../login.html';
+}
+
+// ── Back button ────────────────────────────────────────────────
+const backBtn = document.getElementById('backBtn');
+if (user) {
+  const dest = user.rol === 'ENTRENADOR' ? '../entrenador/perfil.html' : '../cliente/dashboard.html';
+  backBtn.href = dest;
+}
+
+// ── Filtrar contactos ───────────────────────────────────────────
+let todosContactos = [];
+function filtrarContactos(q) {
+  const items = document.querySelectorAll('.chat-item');
+  items.forEach(el => {
+    const nombre = el.querySelector('.chat-item-name')?.textContent?.toLowerCase() || '';
+    el.style.display = nombre.includes(q.toLowerCase()) ? '' : 'none';
+  });
 }
 
 // ── Iniciar ────────────────────────────────────────────────────
