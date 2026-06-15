@@ -114,14 +114,30 @@ public class ChatController {
 
             resultado.addAll(vistos.values());
         } else {
-            // Cliente: ver sus entrenadores activos
+            // Cliente: entrenadores activos primero
+            Map<Long, Map<String, Object>> vistos = new LinkedHashMap<>();
             var relaciones = relacionRepo.findByClienteIdAndEstado(yo.getId(), Relacion.Estado.ACTIVA);
             for (Relacion r : relaciones) {
+                Long eid = r.getEntrenador().getUsuario().getId();
                 Map<String, Object> c = new HashMap<>();
-                c.put("id", r.getEntrenador().getUsuario().getId());
+                c.put("id", eid);
                 c.put("nombre", r.getEntrenador().getUsuario().getNombre() + " " + r.getEntrenador().getUsuario().getApellido());
-                resultado.add(c);
+                c.put("esPagador", true);
+                vistos.put(eid, c);
             }
+            // Resto de usuarios con mensajes previos
+            for (Long interlocutorId : mensajeRepo.findInterlocutorIds(yo.getId())) {
+                if (!vistos.containsKey(interlocutorId)) {
+                    usuarioRepo.findById(interlocutorId).ifPresent(u -> {
+                        Map<String, Object> c = new HashMap<>();
+                        c.put("id", u.getId());
+                        c.put("nombre", u.getNombre() + " " + u.getApellido());
+                        c.put("esPagador", false);
+                        vistos.put(u.getId(), c);
+                    });
+                }
+            }
+            resultado.addAll(vistos.values());
         }
 
         return ResponseEntity.ok(resultado);
