@@ -627,7 +627,7 @@ function mostrarMensaje(msg, esMio) {
       <div class="msg-actions">
         <button class="msg-action-btn" onclick="responderMsg('${id}','${textoEscapado}')" title="Responder">↩</button>
         <button class="msg-action-btn" onclick="copiarMsg('${textoEscapado}')" title="Copiar">📋</button>
-        <button class="msg-action-btn del" onclick="this.closest('.msg').remove()" title="Eliminar">🗑</button>
+        ${esMio ? `<button class="msg-action-btn del" onclick="eliminarMensaje(this,'${id}')" title="Eliminar">🗑</button>` : ''}
       </div>
     </div>
     <span class="msg-time">${hora} ${tick}</span>
@@ -650,6 +650,15 @@ function responderMsg(id, texto) {
 function copiarMsg(texto) {
   const textoReal = texto.replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
   navigator.clipboard?.writeText(textoReal).catch(()=>{});
+}
+
+async function eliminarMensaje(btn, id) {
+  const msgEl = btn.closest('.msg');
+  if (id.startsWith('tmp-')) { msgEl.remove(); return; }
+  const r = await fetch(`${API}/api/chat/mensaje/${id}`, {
+    method: 'DELETE', headers: { Authorization: 'Bearer ' + token }
+  });
+  if (r.ok || r.status === 404) msgEl.remove();
 }
 
 function cancelarRespuesta() {

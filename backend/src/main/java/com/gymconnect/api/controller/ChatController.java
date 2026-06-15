@@ -154,6 +154,21 @@ public class ChatController {
         return ResponseEntity.ok(resultado);
     }
 
+    // REST: eliminar mensaje individual (solo el remitente puede borrarlo)
+    @DeleteMapping("/api/chat/mensaje/{mensajeId}")
+    public ResponseEntity<Void> eliminarMensaje(
+            @PathVariable Long mensajeId,
+            @AuthenticationPrincipal UserDetails ud) {
+
+        Usuario yo = usuarioRepo.findByEmail(ud.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        return mensajeRepo.findById(mensajeId)
+                .filter(m -> m.getRemitenteId().equals(yo.getId()))
+                .map(m -> { mensajeRepo.delete(m); return ResponseEntity.<Void>ok().build(); })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     // REST: eliminar conversación (todos los mensajes entre dos usuarios)
     @DeleteMapping("/api/chat/{otroId}/conversacion")
     public ResponseEntity<Void> eliminarConversacion(
