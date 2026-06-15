@@ -170,6 +170,7 @@ async function cargar() {
             <a href="../chat/index.html?contacto=${c.id}" class="btn btn-primary" style="font-size:0.78rem;padding:0.45rem 0.9rem;">💬 Mensaje</a>
             <a href="resultados.html?cliente=${c.id}" class="btn btn-outline" style="font-size:0.78rem;padding:0.45rem 0.9rem;">📈 Progreso</a>
             <a href="rutinas.html" class="btn btn-outline" style="font-size:0.78rem;padding:0.45rem 0.9rem;">📋 Rutina</a>
+            <button onclick="eliminarCliente(${c.id}, '${c.nombre}')" class="btn" style="font-size:0.78rem;padding:0.45rem 0.9rem;background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.25);">🚫 Eliminar</button>
           </div>
 
           ${esElite ? `
@@ -207,6 +208,23 @@ async function guardarNotas(clienteId) {
       body: JSON.stringify({ notas: el.value })
     });
   } catch {}
+}
+
+async function eliminarCliente(clienteId, nombre) {
+  if (!confirm(`¿Eliminar a ${nombre} de tu lista de clientes? Se cancelará la relación activa.`)) return;
+  try {
+    const res = await fetch(`${API}/api/entrenadores/clientes/${clienteId}/eliminar`, {
+      method: 'DELETE', headers: hdr()
+    });
+    if (res.ok) {
+      alert(`${nombre} ha sido eliminado de tu lista.`);
+      cargar();
+    } else {
+      alert('No se pudo eliminar. Inténtalo de nuevo.');
+    }
+  } catch {
+    alert('Error de conexión.');
+  }
 }
 
 cargar();

@@ -3,9 +3,11 @@ package com.gymconnect.api.controller;
 import com.gymconnect.api.dto.EntrenadorDto;
 import com.gymconnect.api.model.Entrenador;
 import com.gymconnect.api.model.Relacion;
+import com.gymconnect.api.model.Usuario;
 import com.gymconnect.api.repository.EntrenadorRepository;
 import com.gymconnect.api.repository.MensajeRepository;
 import com.gymconnect.api.repository.RelacionRepository;
+import com.gymconnect.api.repository.UsuarioRepository;
 import com.gymconnect.api.service.EntrenadorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +53,7 @@ public class EntrenadorController {
     private final EntrenadorService service;
     private final EntrenadorRepository entrenadorRepo;
     private final RelacionRepository relacionRepo;
+    private final UsuarioRepository usuarioRepo;
     private final MensajeRepository mensajeRepo;
 
     @GetMapping
@@ -127,5 +131,47 @@ public class EntrenadorController {
 
         entrenadorRepo.save(e);
         return ResponseEntity.ok(EntrenadorDto.from(e));
+    }
+
+    // Cliente cancela su relación con un entrenador
+    @DeleteMapping("/{entrenadorId}/cancelar")
+    public ResponseEntity<?> cancelarRelacion(@PathVariable Long entrenadorId,
+                                               @AuthenticationPrincipal UserDetails ud) {
+        Usuario cliente = usuarioRepo.findByEmail(ud.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        List<Relacion> relaciones = relacionRepo.findByClienteIdAndEstado(cliente.getId(), Relacion.Estado.ACTIVA);
+        Relacion relacion = relaciones.stream()
+                .filter(r -> r.getEntrenador().getId().equals(entrenadorId))
+                .findFirst()
+                .orElse(null);
+
+        if (relacion == null) return ResponseEntity.notFound().build();
+
+        relacion.setEstado(Relacion.Estado.CANCELADA);
+        relacion.setFechaFin(LocalDateTime.now());
+        relacionRepo.save(relacion);
+        return ResponseEntity.ok(Map.of("mensaje", "Relación cancelada correctamente"));
+    }
+
+    // Entrenador elimina a un cliente de su lista
+    @DeleteMapping("/clientes/{clienteId}/eliminar")
+    public ResponseEntity<?> eliminarCliente(@PathVariable Long clienteId,
+                                              @AuthenticationPrincipal UserDetails ud) {
+        Entrenador entrenador = entrenadorRepo.findByUsuarioEmail(ud.getUsername())
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+
+        List<Relacion> relaciones = relacionRepo.findByEntrenadorIdAndEstado(entrenador.getId(), Relacion.Estado.ACTIVA);
+        Relacion relacion = relaciones.stream()
+                .filter(r -> r.getCliente().getId().equals(clienteId))
+                .findFirst()
+                .orElse(null);
+
+        if (relacion == null) return ResponseEntity.notFound().build();
+
+        relacion.setEstado(Relacion.Estado.CANCELADA);
+        relacion.setFechaFin(LocalDateTime.now());
+        relacionRepo.save(relacion);
+        return ResponseEntity.ok(Map.of("mensaje", "Cliente eliminado correctamente"));
     }
 }
