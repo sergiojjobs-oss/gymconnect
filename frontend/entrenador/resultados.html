@@ -220,65 +220,208 @@ init();
 async function exportarPDF() {
   if (!clienteActivo) return;
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const nombre = document.querySelector('.cli-pill.active')?.textContent || 'Cliente';
+  const hoy = new Date().toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric' });
+  const W = 210, PL = 14, PR = 196;
 
-  // Header
-  doc.setFillColor(139, 92, 246);
-  doc.rect(0, 0, 210, 28, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(18); doc.setFont('helvetica', 'bold');
-  doc.text('GymConnect — Informe de Progreso', 14, 12);
+  // ── Paleta ──
+  const C = {
+    purple: [124, 58, 237], purpleL: [167, 139, 250],
+    green:  [22, 163, 74],  greenL:  [74, 222, 128],
+    dark:   [15, 23, 42],   gray:    [100, 116, 139],
+    light:  [241, 245, 249],border:  [226, 232, 240],
+    white:  [255, 255, 255],red:     [220, 38, 38]
+  };
+
+  const rgb = (arr) => ({ r: arr[0], g: arr[1], b: arr[2] });
+
+  // ── PÁGINA 1: PORTADA ──────────────────────────────────────────
+  // Fondo degradado simulado con rectángulos
+  doc.setFillColor(...C.dark); doc.rect(0, 0, W, 297, 'F');
+  doc.setFillColor(...C.purple); doc.rect(0, 0, W, 80, 'F');
+
+  // Patrón decorativo (círculos)
+  doc.setFillColor(139, 92, 246); doc.setGState(doc.GState({ opacity: 0.3 }));
+  doc.circle(170, 20, 40, 'F');
+  doc.circle(30, 65, 25, 'F');
+  doc.setGState(doc.GState({ opacity: 1 }));
+
+  // Logo
+  doc.setTextColor(...C.white);
+  doc.setFontSize(28); doc.setFont('helvetica', 'bold');
+  doc.text('GymConnect', PL, 28);
   doc.setFontSize(11); doc.setFont('helvetica', 'normal');
-  doc.text(`Cliente: ${nombre}  ·  Fecha: ${new Date().toLocaleDateString('es-ES')}`, 14, 21);
+  doc.setTextColor(...C.purpleL);
+  doc.text('Plataforma de entrenamiento personal', PL, 36);
 
-  doc.setTextColor(30, 30, 30);
-  let y = 38;
+  // Título
+  doc.setTextColor(...C.white);
+  doc.setFontSize(22); doc.setFont('helvetica', 'bold');
+  doc.text('Informe de Progreso', PL, 54);
+  doc.setFontSize(12); doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...C.purpleL);
+  doc.text(`Cliente: ${nombre}`, PL, 63);
+  doc.text(`Generado el ${hoy}`, PL, 70);
 
-  // Stats resumen
+  // Stats resumen en cards
   const cards = document.querySelectorAll('.stat-card');
   if (cards.length) {
-    doc.setFontSize(13); doc.setFont('helvetica', 'bold');
-    doc.text('Resumen', 14, y); y += 7;
-    doc.setFontSize(10); doc.setFont('helvetica', 'normal');
-    cards.forEach(c => {
-      const v = c.querySelector('.v')?.textContent || '';
-      const l = c.querySelector('.l')?.textContent || '';
-      doc.text(`• ${l}: ${v}`, 14, y); y += 6;
+    const statsData = Array.from(cards).map(c => ({
+      v: c.querySelector('.v')?.textContent?.replace(/⭐/g,'★') || '—',
+      l: c.querySelector('.l')?.textContent || ''
+    }));
+
+    const cardW = 42, cardH = 28, gap = 4;
+    const totalW = statsData.length * cardW + (statsData.length - 1) * gap;
+    const startX = (W - totalW) / 2;
+    let cx = startX;
+    const cy = 95;
+
+    statsData.forEach(s => {
+      // Card background
+      doc.setFillColor(...C.white); doc.setDrawColor(...C.border);
+      doc.roundedRect(cx, cy, cardW, cardH, 3, 3, 'FD');
+      // Accent top
+      doc.setFillColor(...C.purple);
+      doc.roundedRect(cx, cy, cardW, 2.5, 1, 1, 'F');
+      // Value
+      doc.setTextColor(...C.purple);
+      doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+      doc.text(s.v, cx + cardW/2, cy + 13, { align:'center' });
+      // Label
+      doc.setTextColor(...C.gray);
+      doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+      doc.text(s.l.toUpperCase(), cx + cardW/2, cy + 21, { align:'center' });
+      cx += cardW + gap;
     });
-    y += 4;
   }
 
-  // Historial check-ins
+  // Decorative bottom text
+  doc.setTextColor(...C.gray);
+  doc.setFontSize(8);
+  doc.text('Plan Elite · Informes de progreso avanzados', W/2, 285, { align:'center' });
+  doc.setDrawColor(...C.purple); doc.setLineWidth(0.5);
+  doc.line(PL, 288, PR, 288);
+  doc.setFontSize(7); doc.setTextColor(...C.gray);
+  doc.text(`Pág. 1`, PR, 292, { align:'right' });
+
+  // ── PÁGINA 2+: HISTORIAL ──────────────────────────────────────
+  doc.addPage();
+
+  const drawPageHeader = () => {
+    doc.setFillColor(...C.purple); doc.rect(0, 0, W, 16, 'F');
+    doc.setTextColor(...C.white); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
+    doc.text('GymConnect · Informe de Progreso', PL, 10);
+    doc.text(nombre, PR, 10, { align:'right' });
+  };
+
+  const drawPageFooter = (page) => {
+    doc.setDrawColor(...C.border); doc.setLineWidth(0.3);
+    doc.line(PL, 286, PR, 286);
+    doc.setFontSize(7); doc.setTextColor(...C.gray); doc.setFont('helvetica', 'normal');
+    doc.text('Generado por GymConnect · Plan Elite', PL, 291);
+    doc.text(`Pág. ${page}`, PR, 291, { align:'right' });
+  };
+
+  drawPageHeader();
+
+  // Sección título
+  let y = 26, pageNum = 2;
+  doc.setTextColor(...C.dark); doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+  doc.text('Historial de Check-ins', PL, y); y += 3;
+  doc.setFillColor(...C.purple); doc.rect(PL, y, 30, 0.8, 'F'); y += 6;
+
   const checkins = document.querySelectorAll('.checkin-item');
-  if (checkins.length) {
-    doc.setFontSize(13); doc.setFont('helvetica', 'bold');
-    doc.text('Historial de check-ins', 14, y); y += 8;
-    checkins.forEach(ci => {
-      if (y > 270) { doc.addPage(); y = 20; }
-      const fecha = ci.querySelector('.ch-fecha')?.textContent || '';
-      const peso = ci.querySelector('.ch-peso')?.textContent?.trim() || '';
-      const notas = ci.querySelector('.ch-notas')?.textContent?.replace('📝 ','') || '';
-      const cumpl = ci.querySelector('.cumpl-row span')?.textContent || '';
-      doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-      doc.text(fecha, 14, y); y += 5;
-      doc.setFont('helvetica', 'normal');
-      if (peso) { doc.text(`  Peso: ${peso}`, 14, y); y += 5; }
-      if (cumpl) { doc.text(`  ${cumpl}`, 14, y); y += 5; }
-      if (notas) {
-        const lines = doc.splitTextToSize(`  Notas: ${notas}`, 180);
-        doc.text(lines, 14, y); y += lines.length * 5;
-      }
-      doc.setDrawColor(220, 220, 220);
-      doc.line(14, y, 196, y); y += 5;
-    });
-  }
 
-  // Footer
-  doc.setFontSize(8); doc.setTextColor(150, 150, 150);
-  doc.text('Generado por GymConnect · Plan Elite', 14, 290);
+  checkins.forEach((ci, idx) => {
+    const fecha = ci.querySelector('.ch-fecha')?.textContent || '';
+    const pesoRaw = ci.querySelector('.ch-peso')?.textContent?.trim() || '';
+    const peso = pesoRaw.replace(/[↑↓+\-\d\.kg\s]+$/,'').trim(); // solo número+kg
+    const cumplTxt = ci.querySelector('.cumpl-row span')?.textContent || '';
+    const cumplNum = parseInt(cumplTxt.match(/\d+/)?.[0]) || 0;
+    const notas = ci.querySelector('.ch-notas')?.textContent?.replace('📝 ','').trim() || '';
+    const feedback = ci.querySelector('.feedback-saved')?.textContent?.replace('Tu feedback','').trim() || '';
 
-  doc.save(`informe-${nombre.replace(' ','-')}-${new Date().toISOString().slice(0,10)}.pdf`);
+    const notasLines = notas ? doc.splitTextToSize(notas, 120) : [];
+    const feedLines  = feedback ? doc.splitTextToSize(feedback, 120) : [];
+    const cardH = 14 + (peso ? 6 : 0) + (cumplTxt ? 9 : 0) + (notasLines.length * 4.5) + (feedLines.length * 4.5) + 6;
+
+    // Nueva página si no cabe
+    if (y + cardH > 282) {
+      drawPageFooter(pageNum++);
+      doc.addPage();
+      drawPageHeader();
+      y = 26;
+    }
+
+    // Card border
+    doc.setFillColor(...C.light); doc.setDrawColor(...C.border); doc.setLineWidth(0.3);
+    doc.roundedRect(PL, y, PR - PL, cardH, 2, 2, 'FD');
+
+    // Acento izquierdo
+    doc.setFillColor(...C.purple);
+    doc.roundedRect(PL, y, 2, cardH, 1, 1, 'F');
+
+    // Número de check-in + fecha
+    const ci_y = y + 7;
+    doc.setFillColor(...C.purple);
+    doc.circle(PL + 9, y + 5.5, 4, 'F');
+    doc.setTextColor(...C.white); doc.setFontSize(7); doc.setFont('helvetica', 'bold');
+    doc.text(String(checkins.length - idx), PL + 9, y + 7, { align:'center' });
+
+    doc.setTextColor(...C.dark); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text(fecha.charAt(0).toUpperCase() + fecha.slice(1), PL + 16, ci_y);
+
+    // Peso
+    if (pesoRaw) {
+      doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.purple);
+      doc.text(pesoRaw.split(' ')[0] + ' kg', PR - 2, ci_y, { align:'right' });
+    }
+
+    let ry = ci_y + 6;
+
+    // Barra de cumplimiento
+    if (cumplTxt && cumplNum > 0) {
+      doc.setTextColor(...C.gray); doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
+      doc.text('CUMPLIMIENTO', PL + 5, ry);
+      doc.setFontSize(7.5); doc.setFont('helvetica', 'bold');
+      doc.setTextColor(cumplNum >= 80 ? C.green[0] : C.gray[0], cumplNum >= 80 ? C.green[1] : C.gray[1], cumplNum >= 80 ? C.green[2] : C.gray[2]);
+      doc.text(`${cumplNum}%`, PR - 2, ry, { align:'right' });
+      ry += 3;
+      // Track
+      doc.setFillColor(...C.border); doc.roundedRect(PL + 5, ry, 140, 2.5, 1, 1, 'F');
+      // Fill
+      const fillColor = cumplNum >= 80 ? C.green : cumplNum >= 50 ? C.purple : C.red;
+      doc.setFillColor(...fillColor);
+      doc.roundedRect(PL + 5, ry, Math.max(2, 140 * cumplNum / 100), 2.5, 1, 1, 'F');
+      ry += 6;
+    }
+
+    // Notas del cliente
+    if (notasLines.length) {
+      doc.setTextColor(...C.gray); doc.setFontSize(7); doc.setFont('helvetica', 'bold');
+      doc.text('NOTAS CLIENTE', PL + 5, ry); ry += 3.5;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...C.dark);
+      doc.text(notasLines, PL + 5, ry); ry += notasLines.length * 4.5;
+    }
+
+    // Feedback entrenador
+    if (feedLines.length) {
+      doc.setFillColor(240, 253, 244); doc.setDrawColor(...C.greenL);
+      doc.roundedRect(PL + 5, ry - 1, 176, feedLines.length * 4.5 + 6, 1.5, 1.5, 'FD');
+      doc.setTextColor(...C.green); doc.setFontSize(7); doc.setFont('helvetica', 'bold');
+      doc.text('FEEDBACK ENTRENADOR', PL + 8, ry + 2.5); ry += 5;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...C.dark);
+      doc.text(feedLines, PL + 8, ry); ry += feedLines.length * 4.5;
+    }
+
+    y += cardH + 4;
+  });
+
+  drawPageFooter(pageNum);
+
+  doc.save(`informe-${nombre.replace(/\s+/g,'-')}-${new Date().toISOString().slice(0,10)}.pdf`);
 }
 </script>
 <script src="../js/sidebar-user.js"></script>
