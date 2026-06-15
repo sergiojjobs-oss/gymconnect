@@ -273,12 +273,26 @@
         </div>
         <select class="filter-select" id="especialidad" onchange="filtrar()">
           <option value="">Todas las especialidades</option>
-          <option value="musculacion">Musculación</option>
-          <option value="perdida">Pérdida de grasa</option>
-          <option value="nutricion">Nutrición</option>
-          <option value="crossfit">Crossfit</option>
-          <option value="yoga">Yoga</option>
-          <option value="fuerza">Fuerza</option>
+          <option>Musculación / Hipertrofia</option>
+          <option>Pérdida de grasa</option>
+          <option>Nutrición deportiva</option>
+          <option>Fuerza y potencia</option>
+          <option>Entrenamiento funcional</option>
+          <option>HIIT / Cardio intenso</option>
+          <option>Crossfit</option>
+          <option>Calistenia</option>
+          <option>Yoga</option>
+          <option>Pilates</option>
+          <option>Flexibilidad y movilidad</option>
+          <option>Running / Atletismo</option>
+          <option>Ciclismo</option>
+          <option>Natación</option>
+          <option>Deportes de combate</option>
+          <option>Rehabilitación física</option>
+          <option>Entrenamiento para mayores</option>
+          <option>Preparación física deportiva</option>
+          <option>Entrenamiento online</option>
+          <option>Pérdida de peso post-parto</option>
         </select>
         <select class="filter-select" id="precio" onchange="filtrar()">
           <option value="">Cualquier precio</option>
@@ -326,9 +340,7 @@
   <script>
     let todosEntrenadores = [];
 
-    const LABEL_TAG = { musculacion:'Musculación', perdida:'Pérdida de grasa', nutricion:'Nutrición',
-                        crossfit:'Crossfit', yoga:'Yoga', fuerza:'Fuerza' };
-    function labelTag(t) { return LABEL_TAG[t] || t; }
+    function labelTag(t) { return t; }
 
     function iniciales(nombre, apellido) {
       return (nombre.charAt(0) + apellido.charAt(0)).toUpperCase();

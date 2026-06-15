@@ -129,13 +129,8 @@
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
           <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Especialidades</h3>
-          <div class="form-group">
-            <label>Especialidades (etiquetas)</label>
-            <div class="tag-input-wrap" id="especWrap" onclick="document.getElementById('especInput').focus()">
-              <input type="text" id="especInput" placeholder="ej. Pérdida de grasa, Fuerza…" onkeydown="addTag(event,'espec')" />
-            </div>
-            <p class="hint">Pulsa Enter o coma para añadir.</p>
-          </div>
+          <p class="hint" style="margin-bottom:1rem;">Selecciona todas las que apliquen (máx. 6)</p>
+          <div id="especChecks" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.5rem;"></div>
         </div>
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
@@ -221,8 +216,65 @@
       setTimeout(() => t.classList.remove('show'), 3500);
     }
 
+    const ESPECIALIDADES = [
+      'Musculación / Hipertrofia',
+      'Pérdida de grasa',
+      'Nutrición deportiva',
+      'Fuerza y potencia',
+      'Entrenamiento funcional',
+      'HIIT / Cardio intenso',
+      'Crossfit',
+      'Calistenia',
+      'Yoga',
+      'Pilates',
+      'Flexibilidad y movilidad',
+      'Running / Atletismo',
+      'Ciclismo',
+      'Natación',
+      'Deportes de combate',
+      'Rehabilitación física',
+      'Entrenamiento para mayores',
+      'Preparación física deportiva',
+      'Entrenamiento online',
+      'Pérdida de peso post-parto',
+    ];
+
+    function renderEspecChecks() {
+      const wrap = document.getElementById('especChecks');
+      wrap.innerHTML = ESPECIALIDADES.map(e => `
+        <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.82rem;font-weight:500;transition:border-color 0.15s,background 0.15s;" class="espec-check-label">
+          <input type="checkbox" value="${e}" onchange="toggleEspec(this)" style="accent-color:var(--green);width:15px;height:15px;cursor:pointer;" />
+          ${e}
+        </label>`).join('');
+    }
+
+    function toggleEspec(cb) {
+      if (cb.checked) {
+        if (especTags.length >= 6) { cb.checked = false; showToast('Máximo 6 especialidades', true); return; }
+        if (!especTags.includes(cb.value)) especTags.push(cb.value);
+      } else {
+        especTags = especTags.filter(t => t !== cb.value);
+      }
+      syncEspecChecks();
+    }
+
+    function syncEspecChecks() {
+      document.querySelectorAll('#especChecks input[type=checkbox]').forEach(cb => {
+        cb.checked = especTags.includes(cb.value);
+        const label = cb.closest('label');
+        if (cb.checked) {
+          label.style.borderColor = 'var(--green)';
+          label.style.background = 'rgba(22,163,74,0.07)';
+          label.style.color = 'var(--green)';
+        } else {
+          label.style.borderColor = '';
+          label.style.background = '';
+          label.style.color = '';
+        }
+      });
+    }
+
     const tagMap = {
-      espec:   { arr: () => especTags,   setArr: v => especTags = v,   wrapId: 'especWrap',   inpId: 'especInput' },
       serv:    { arr: () => servTags,    setArr: v => servTags = v,    wrapId: 'servWrap',    inpId: 'servInput' },
       cert:    { arr: () => certTags,    setArr: v => certTags = v,    wrapId: 'certWrap',    inpId: 'certInput' },
       idiomas: { arr: () => idiomasTags, setArr: v => idiomasTags = v, wrapId: 'idiomasWrap', inpId: 'idiomasInput' }
@@ -321,7 +373,8 @@
         servTags    = ent.servicios        || [];
         certTags    = ent.certificaciones  || [];
         idiomasTags = ent.idiomas          || [];
-        renderTags('espec');
+        renderEspecChecks();
+        syncEspecChecks();
         renderTags('serv');
         renderTags('cert');
         renderTags('idiomas');
@@ -375,6 +428,7 @@
       }
     }
 
+    renderEspecChecks();
     cargarDatos();
   </script>
 </body>
