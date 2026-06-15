@@ -242,25 +242,22 @@
     .emoji-picker button { background: none; border: none; font-size: 1.3rem; cursor: pointer; padding: 0.2rem; border-radius: 6px; transition: background 0.1s; }
     .emoji-picker button:hover { background: rgba(74,222,128,0.1); }
 
-    /* ── Menú contextual ── */
-    .ctx-menu {
-      position: fixed; z-index: 200;
-      background: #0f2318; border: 1px solid rgba(74,222,128,0.2);
-      border-radius: 12px; padding: 0.4rem;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-      display: none; min-width: 160px;
+    /* ── Acciones del mensaje (hover) ── */
+    .msg-actions {
+      display: none; gap: 0.25rem; align-items: center;
+      position: absolute; top: 50%; transform: translateY(-50%);
     }
-    .ctx-menu.open { display: block; }
-    .ctx-item {
-      display: flex; align-items: center; gap: 0.6rem;
-      padding: 0.55rem 0.85rem; border-radius: 8px;
-      font-size: 0.85rem; font-weight: 600; color: #eef7f1;
-      cursor: pointer; transition: background 0.1s;
+    .msg.mine .msg-actions  { left: -80px; }
+    .msg.theirs .msg-actions { right: -80px; }
+    .msg:hover .msg-actions { display: flex; }
+    .msg-action-btn {
+      background: #1a3524; border: 1px solid rgba(74,222,128,0.15);
+      border-radius: 8px; padding: 0.3rem 0.45rem; font-size: 0.8rem;
+      cursor: pointer; color: rgba(160,210,175,0.7); transition: all 0.15s;
+      line-height: 1;
     }
-    .ctx-item:hover { background: rgba(74,222,128,0.1); }
-    .ctx-item.danger { color: #f87171; }
-    .ctx-item.danger:hover { background: rgba(239,68,68,0.1); }
-    .ctx-sep { height: 1px; background: rgba(74,222,128,0.1); margin: 0.25rem 0; }
+    .msg-action-btn:hover { background: rgba(74,222,128,0.15); color: #4ade80; }
+    .msg-action-btn.del:hover { background: rgba(239,68,68,0.15); color: #f87171; }
 
     /* ── Back btn ── */
     .back-btn {
@@ -304,14 +301,6 @@
   </div>
 </header>
 
-<!-- Menú contextual -->
-<div class="ctx-menu" id="ctxMenu">
-  <div class="ctx-item" onclick="ctxResponder()">↩ Responder</div>
-  <div class="ctx-item" onclick="ctxCopiar()">📋 Copiar</div>
-  <div class="ctx-sep"></div>
-  <div class="ctx-item danger" onclick="ctxEliminar()">🗑 Eliminar</div>
-</div>
-
 <div class="chat-wrap">
   <div class="chat-sidebar">
     <div class="chat-sidebar-header">💬 Conversaciones</div>
@@ -340,8 +329,7 @@ if (!user || !token) window.location.href = '../login.html';
 let stompClient = null;
 let contactoActivo = null;
 let lastMsgDate = null;
-let replyingTo = null;    // { id, autor, texto }
-let ctxTarget = null;     // { id, texto, esMio, el }
+let replyingTo = null;
 let typingTimer = null;
 let typingHideTimer = null;
 
@@ -497,7 +485,6 @@ async function abrirChat(contacto) {
   msgs.appendChild(document.getElementById('typingIndicator'));
   scrollAbajo();
   document.getElementById('msgInput').focus();
-  document.addEventListener('click', cerrarCtxMenu);
 }
 
 // ── Emojis ──────────────────────────────────────────────────────
@@ -636,8 +623,14 @@ function mostrarMensaje(msg, esMio) {
   div.dataset.id = id;
   div.dataset.texto = msg.contenido;
   div.dataset.esMio = esMio ? '1' : '0';
+  const textoEscapado = escapeHtml(msg.contenido).replace(/"/g,'&quot;');
   div.innerHTML = `
-    <div class="msg-bubble" oncontextmenu="abrirCtx(event,this.closest('.msg'))">${quoteHtml}${escapeHtml(msg.contenido)}</div>
+    <div class="msg-actions">
+      <button class="msg-action-btn" onclick="responderMsg('${id}','${textoEscapado}')" title="Responder">↩</button>
+      <button class="msg-action-btn" onclick="copiarMsg('${textoEscapado}')" title="Copiar">📋</button>
+      <button class="msg-action-btn del" onclick="this.closest('.msg').remove()" title="Eliminar">🗑</button>
+    </div>
+    <div class="msg-bubble">${quoteHtml}${escapeHtml(msg.contenido)}</div>
     <span class="msg-time">${hora} ${tick}</span>
   `;
 
@@ -645,38 +638,19 @@ function mostrarMensaje(msg, esMio) {
   if (ti) msgs.insertBefore(div, ti); else msgs.appendChild(div);
 }
 
-// ── Menú contextual ─────────────────────────────────────────────
-function abrirCtx(e, msgEl) {
-  e.preventDefault();
-  ctxTarget = { id: msgEl.dataset.id, texto: msgEl.dataset.texto, esMio: msgEl.dataset.esMio === '1', el: msgEl };
-  const menu = document.getElementById('ctxMenu');
-  menu.style.left = Math.min(e.clientX, window.innerWidth - 180) + 'px';
-  menu.style.top  = Math.min(e.clientY, window.innerHeight - 150) + 'px';
-  menu.classList.add('open');
-  e.stopPropagation();
-}
-
-function cerrarCtxMenu() { document.getElementById('ctxMenu')?.classList.remove('open'); }
-
-function ctxResponder() {
-  cerrarCtxMenu();
-  if (!ctxTarget) return;
-  replyingTo = { id: ctxTarget.id, texto: ctxTarget.texto, autor: ctxTarget.esMio ? 'Tú' : contactoActivo?.nombre };
+// ── Acciones de mensaje ─────────────────────────────────────────
+function responderMsg(id, texto) {
+  const textoReal = texto.replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+  replyingTo = { id, texto: textoReal, autor: contactoActivo?.nombre };
   document.getElementById('replyLabel').textContent = 'Respondiendo a ' + replyingTo.autor;
-  document.getElementById('replyText').textContent = replyingTo.texto;
+  document.getElementById('replyText').textContent = textoReal;
   document.getElementById('replyBar').classList.add('visible');
   document.getElementById('msgInput')?.focus();
 }
 
-function ctxCopiar() {
-  cerrarCtxMenu();
-  if (ctxTarget) navigator.clipboard?.writeText(ctxTarget.texto).catch(()=>{});
-}
-
-function ctxEliminar() {
-  cerrarCtxMenu();
-  if (!ctxTarget) return;
-  ctxTarget.el?.remove();
+function copiarMsg(texto) {
+  const textoReal = texto.replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+  navigator.clipboard?.writeText(textoReal).catch(()=>{});
 }
 
 function cancelarRespuesta() {
