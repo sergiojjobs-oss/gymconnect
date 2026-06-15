@@ -1,1 +1,215 @@
-﻿
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis clientes — GymConnect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <script src="../js/config.js"></script>
+  <script src="../js/plan-theme.js"></script>
+  <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
+  <style>
+    .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
+    .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
+    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--muted-light); padding:0 0.75rem; margin:1rem 0 0.4rem; }
+    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--muted-light); transition:background var(--t),color var(--t); text-decoration:none; }
+    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text-light); }
+    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--green-l); font-weight:700; }
+    .main { padding:2rem 2.5rem; overflow-y:auto; }
+    .clientes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.25rem; }
+    .cliente-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; transition:border-color 0.15s; }
+    .cliente-card:hover { border-color:rgba(22,163,74,0.3); }
+    .cliente-head { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
+    .cli-avatar { width:48px; height:48px; border-radius:50%; background:var(--grad-main); display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:900; color:#fff; flex-shrink:0; }
+    .cli-nombre { font-size:0.95rem; font-weight:800; }
+    .cli-estado { font-size:0.72rem; font-weight:700; padding:0.15rem 0.5rem; border-radius:6px; display:inline-flex; align-items:center; gap:0.3rem; margin-top:0.2rem; }
+    .estado-activo { background:rgba(22,163,74,0.1); color:var(--green); border:1px solid rgba(22,163,74,0.2); }
+    .estado-lead { background:rgba(245,158,11,0.1); color:#d97706; border:1px solid rgba(245,158,11,0.2); }
+    .cli-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.5rem; margin-bottom:1rem; }
+    .cli-stat { background:var(--bg); border-radius:8px; padding:0.5rem; text-align:center; }
+    .cli-stat .v { font-size:0.9rem; font-weight:900; color:var(--text); }
+    .cli-stat .l { font-size:0.62rem; color:var(--muted); margin-top:0.1rem; }
+    .cli-ultimo-peso { font-size:0.82rem; color:var(--muted); margin-bottom:1rem; }
+    .cli-actions { display:flex; gap:0.5rem; flex-wrap:wrap; }
+    .sin-clientes { grid-column:1/-1; text-align:center; padding:4rem 2rem; color:var(--muted); }
+    .sin-clientes span { font-size:3rem; display:block; margin-bottom:1rem; }
+    .alerta-inactivo { background:rgba(220,38,38,0.06); border:1px solid rgba(220,38,38,0.2); border-radius:8px; padding:0.4rem 0.7rem; font-size:0.72rem; font-weight:700; color:#dc2626; display:inline-flex; align-items:center; gap:0.3rem; margin-bottom:0.5rem; }
+    .notas-privadas-section { margin-top:0.75rem; border-top:1px solid var(--border); padding-top:0.75rem; }
+    .notas-privadas-section textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.75rem; color:var(--text); font-size:0.8rem; resize:none; margin-top:0.4rem; }
+    .notas-privadas-section textarea:focus { outline:none; border-color:#8b5cf6; }
+    .notas-label { font-size:0.68rem; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; color:#8b5cf6; display:flex; align-items:center; gap:0.3rem; }
+    .resumen-banner { background:linear-gradient(135deg,rgba(220,38,38,0.06),rgba(220,38,38,0.02)); border:1px solid rgba(220,38,38,0.2); border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem; display:none; }
+    .resumen-banner h3 { font-size:0.85rem; font-weight:800; color:#dc2626; margin-bottom:0.5rem; }
+    .resumen-banner ul { list-style:none; display:flex; flex-wrap:wrap; gap:0.5rem; }
+    .resumen-banner ul li { background:rgba(220,38,38,0.08); border:1px solid rgba(220,38,38,0.2); border-radius:99px; padding:0.2rem 0.75rem; font-size:0.78rem; font-weight:700; color:#dc2626; }
+    @media(max-width:768px){ .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1.25rem} }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+    <nav>
+      <button class="btn btn-outline" style="font-size:0.82rem;" onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
+    </nav>
+  </div>
+</header>
+
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <span class="sidebar-label">Panel</span>
+    <a href="perfil.html">👤 Mi perfil</a>
+    <a href="rutinas.html">📋 Rutinas</a>
+    <a href="nutricion.html">🥗 Nutrición</a>
+    <a href="../chat/index.html">💬 Mensajes</a>
+    <a href="clientes.html" class="active">👥 Clientes</a>
+    <a href="ficha-cliente.html">📋 Fichas de clientes</a>
+    <a href="agenda.html">📅 Agenda</a>
+    <a href="ejercicios.html">🏋️ Ejercicios</a>
+    <a href="resultados.html">📈 Progreso clientes</a>
+    <a href="estadisticas.html">📊 Estadísticas</a>
+    <span class="sidebar-label">Cuenta</span>
+    <a href="planes.html">💳 Mi suscripción</a>
+    <a href="ajustes.html">⚙️ Ajustes</a>
+    <a href="../login.html" onclick="localStorage.clear()">🚪 Salir</a>
+  </aside>
+
+  <main class="main">
+    <div style="margin-bottom:2rem;">
+      <h1 style="font-size:1.5rem;font-weight:800;">👥 Mis clientes</h1>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0.2rem;" id="subTitulo">Cargando…</p>
+    </div>
+    <div class="resumen-banner" id="resumenBanner">
+      <h3>⚠️ Clientes sin actividad esta semana</h3>
+      <ul id="resumenLista"></ul>
+    </div>
+    <div class="clientes-grid" id="grid"><p style="color:var(--muted);">Cargando…</p></div>
+  </main>
+</div>
+
+<script>
+const token = () => localStorage.getItem('gc_token');
+const hdr = (json) => ({ Authorization: 'Bearer ' + token(), ...(json ? {'Content-Type':'application/json'} : {}) });
+let esElite = false;
+
+async function cargar() {
+  const grid = document.getElementById('grid');
+  try {
+    const [todosRaw, planData] = await Promise.all([
+      fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json()),
+      fetch(`${API}/api/suscripcion/estado`, { headers: hdr() }).then(r => r.json()).catch(() => ({}))
+    ]);
+    esElite = planData.plan === 'ELITE';
+
+    const contactos = todosRaw.filter(c => c.esPagador);
+
+    if (!contactos.length) {
+      document.getElementById('subTitulo').textContent = '0 clientes';
+      grid.innerHTML = `<div class="sin-clientes"><span>👥</span><p>Aún no tienes clientes.</p></div>`;
+      return;
+    }
+
+    document.getElementById('subTitulo').textContent = `${contactos.length} cliente${contactos.length !== 1 ? 's' : ''} activo${contactos.length !== 1 ? 's' : ''}`;
+
+    const progresos = await Promise.all(
+      contactos.map(c =>
+        fetch(`${API}/api/progreso/cliente/${c.id}`, { headers: hdr() })
+          .then(r => r.json()).then(lista => lista[0] || null).catch(() => null)
+      )
+    );
+
+    // Resumen semanal ELITE — clientes sin check-in en los últimos 7 días
+    if (esElite) {
+      const inactivos = contactos.filter((c, i) => {
+        const prog = progresos[i];
+        if (!prog) return true;
+        const dias = Math.floor((Date.now() - new Date(prog.fecha)) / 86400000);
+        return dias > 7;
+      });
+      if (inactivos.length) {
+        document.getElementById('resumenBanner').style.display = 'block';
+        document.getElementById('resumenLista').innerHTML = inactivos.map(c =>
+          `<li>⚠️ ${c.nombre}</li>`).join('');
+      }
+    }
+
+    grid.innerHTML = contactos.map((c, i) => {
+      const prog = progresos[i];
+      const iniciales = c.nombre.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+      const diasDesde = prog ? Math.floor((Date.now() - new Date(prog.fecha)) / 86400000) : null;
+      const inactivo = esElite && (diasDesde === null || diasDesde > 7);
+
+      return `
+        <div class="cliente-card">
+          <div class="cliente-head">
+            <div class="cli-avatar">${iniciales}</div>
+            <div>
+              <div class="cli-nombre">${c.nombre}</div>
+              <div class="cli-estado ${c.esPagador ? 'estado-activo' : 'estado-lead'}">
+                ${c.esPagador ? '✓ Cliente activo' : '💬 Lead'}
+              </div>
+            </div>
+          </div>
+
+          ${inactivo ? `<div class="alerta-inactivo">⚠️ Sin check-in esta semana</div>` : ''}
+
+          <div class="cli-stats">
+            <div class="cli-stat"><div class="v">${prog?.peso ? prog.peso+'kg' : '—'}</div><div class="l">Último peso</div></div>
+            <div class="cli-stat"><div class="v">${diasDesde !== null ? diasDesde+'d' : '—'}</div><div class="l">Últ. check-in</div></div>
+            <div class="cli-stat"><div class="v">${prog?.energia ? '⭐'.repeat(prog.energia) : '—'}</div><div class="l">Energía</div></div>
+          </div>
+
+          ${prog?.notas ? `<div class="cli-ultimo-peso">💬 "${prog.notas.slice(0,60)}${prog.notas.length>60?'…':''}"</div>` : ''}
+
+          <div class="cli-actions">
+            <a href="../chat/index.html?contacto=${c.id}" class="btn btn-primary" style="font-size:0.78rem;padding:0.45rem 0.9rem;">💬 Mensaje</a>
+            <a href="resultados.html?cliente=${c.id}" class="btn btn-outline" style="font-size:0.78rem;padding:0.45rem 0.9rem;">📈 Progreso</a>
+            <a href="rutinas.html" class="btn btn-outline" style="font-size:0.78rem;padding:0.45rem 0.9rem;">📋 Rutina</a>
+          </div>
+
+          ${esElite ? `
+          <div class="notas-privadas-section">
+            <div class="notas-label">🔒 Notas privadas (solo tú las ves)</div>
+            <textarea id="np-${c.id}" rows="2" placeholder="Observaciones privadas sobre este cliente…" onblur="guardarNotas(${c.id})"></textarea>
+          </div>` : ''}
+        </div>`;
+    }).join('');
+
+    // Cargar notas privadas si ELITE
+    if (esElite) {
+      contactos.forEach(c => cargarNotas(c.id));
+    }
+
+  } catch (e) {
+    grid.innerHTML = '<p style="color:#dc2626;">Error al cargar clientes.</p>';
+  }
+}
+
+async function cargarNotas(clienteId) {
+  try {
+    const data = await fetch(`${API}/api/elite/notas-privadas/${clienteId}`, { headers: hdr() }).then(r => r.json());
+    const el = document.getElementById(`np-${clienteId}`);
+    if (el && data.notas) el.value = data.notas;
+  } catch {}
+}
+
+async function guardarNotas(clienteId) {
+  const el = document.getElementById(`np-${clienteId}`);
+  if (!el) return;
+  try {
+    await fetch(`${API}/api/elite/notas-privadas/${clienteId}`, {
+      method: 'PUT', headers: hdr(true),
+      body: JSON.stringify({ notas: el.value })
+    });
+  } catch {}
+}
+
+cargar();
+</script>
+<script src="../js/sidebar-user.js"></script>
+</body>
+</html>

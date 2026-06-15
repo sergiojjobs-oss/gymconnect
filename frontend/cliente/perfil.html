@@ -1,1 +1,482 @@
-﻿
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfil — GymConnect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <script src="../js/config.js"></script>
+  <script src="../js/auth-guard.js" data-rol="CLIENTE"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=AdCjPbDMjomTwFZOBxgRsQAQsUQdHbzvmKTPOa_fDSAE7skBsdwMl2osJFISy_swAHmetn3Z6H2oCC_h&currency=EUR&intent=capture"></script>
+  <style>
+    /* Modal de contratación */
+    .modal-bg { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center; }
+    .modal-bg.open { display:flex; }
+    .modal-box { background:#fff;border-radius:16px;padding:2rem;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.25); }
+    .modal-box h2 { font-size:1.2rem;font-weight:900;text-transform:uppercase;margin-bottom:0.35rem; }
+    .modal-box .sub { font-size:0.83rem;color:var(--muted);margin-bottom:1.5rem; }
+    .modal-summary { background:var(--bg);border-radius:8px;padding:1rem;margin-bottom:1.5rem;font-size:0.85rem; }
+    .modal-summary-row { display:flex;justify-content:space-between;padding:0.3rem 0; }
+    .modal-summary-row:last-child { font-weight:900;border-top:1px solid var(--border);margin-top:0.4rem;padding-top:0.7rem;color:var(--green); }
+    .modal-cancel-btn { width:100%;text-align:center;margin-top:0.75rem;font-size:0.82rem;color:var(--muted);cursor:pointer;background:none;border:none;font-weight:600; }
+    .modal-cancel-btn:hover { color:var(--text); }
+  </style>
+  <style>
+    .profile-hero {
+      background: var(--dark-hero);
+      padding: 3rem 0 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(22,163,74,0.12), transparent 65%);
+      pointer-events: none;
+    }
+    .profile-hero-inner {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+    }
+    .profile-big-avatar {
+      width: 100px; height: 100px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 900; color: #fff;
+      border: 4px solid rgba(255,255,255,0.15);
+      flex-shrink: 0;
+    }
+    .profile-hero-info h1 { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; color: var(--text-light); margin-bottom: 0.25rem; }
+    .profile-hero-info p  { color: var(--muted-light); font-size: 0.9rem; }
+    .profile-hero-info .stars { color: var(--gold-l); margin-top: 0.5rem; font-size: 0.9rem; }
+    .profile-hero-info .stars span { color: var(--muted-light); }
+    .profile-hero-cta { margin-left: auto; display: flex; flex-direction: column; gap: 0.75rem; align-items: flex-end; }
+    .profile-price-big { font-size: 2.2rem; font-weight: 900; color: var(--text-light); line-height: 1; }
+    .profile-price-big small { font-size: 0.8rem; color: var(--muted-light); font-weight: 400; }
+
+    .profile-body { padding: 3rem 0 5rem; }
+    .profile-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start; }
+
+    .info-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .info-card h2 { font-size: 0.85rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 1rem; }
+
+    .stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1.25rem; }
+    .stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; }
+    .stat-box strong { display: block; font-size: 1.5rem; font-weight: 900; color: var(--green); }
+    .stat-box span   { font-size: 0.73rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+
+    .review-item { padding: 1rem 0; border-bottom: 1px solid var(--border); }
+    .review-item:last-child { border-bottom: none; }
+    .review-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem; }
+    .review-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--grad-main); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; color: #fff; }
+    .review-name { font-size: 0.85rem; font-weight: 700; }
+    .review-stars { color: var(--gold-l); font-size: 0.78rem; margin-left: auto; }
+    .review-text { font-size: 0.83rem; color: var(--text-2); line-height: 1.65; }
+
+    .sticky-cta {
+      position: sticky;
+      top: 90px;
+    }
+
+    @media (max-width: 768px) {
+      .profile-grid { grid-template-columns: 1fr; }
+      .profile-hero-cta { margin-left: 0; align-items: flex-start; }
+      .sticky-cta { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+      <nav>
+        <a href="buscar.html">← Volver</a>
+        <a href="#" class="nav-cta" onclick="abrirModalContratacion();return false;">Contratar</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero del perfil -->
+  <div class="profile-hero" id="profileHero">
+    <div class="container">
+      <div class="profile-hero-inner">
+        <div class="profile-big-avatar" id="bigAvatar" style="overflow:hidden;"></div>
+        <div class="profile-hero-info">
+          <h1 id="heroNombre"></h1>
+          <p id="heroCiudad"></p>
+          <div class="stars" id="heroStars"></div>
+          <div id="heroExtras"></div>
+        </div>
+        <div class="profile-hero-cta">
+          <div class="profile-price-big" id="heroPrecio"></div>
+          <button class="btn btn-primary" style="font-size:0.9rem;" onclick="abrirModalContratacion()">Contratar ahora →</button>
+          <button class="btn btn-light" onclick="irAlChat()">Enviar mensaje</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-body">
+    <div class="container">
+      <div class="profile-grid">
+
+        <!-- Columna izquierda -->
+        <div>
+
+          <!-- Certificaciones -->
+          <div class="info-card" id="certsCard">
+            <h2>Certificaciones</h2>
+            <div id="certsBadges" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+          </div>
+
+          <!-- Stats -->
+          <div class="stat-row" id="statRow"></div>
+
+          <!-- Bio -->
+          <div class="info-card">
+            <h2>Sobre mí</h2>
+            <p id="bioText" style="font-size:0.92rem;color:var(--text-2);line-height:1.8;"></p>
+            <div id="bioTags" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.25rem;"></div>
+          </div>
+
+          <!-- Metodología -->
+          <div class="info-card" id="metodologiaCard">
+            <h2>Metodología de trabajo</h2>
+            <p id="metodologiaText" style="font-size:0.92rem;color:var(--text-2);line-height:1.8;white-space:pre-wrap;"></p>
+          </div>
+
+          <!-- Servicios -->
+          <div class="info-card">
+            <h2>¿Qué incluye el plan?</h2>
+            <ul id="servicios" style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;"></ul>
+          </div>
+
+          <!-- Instagram -->
+          <div class="info-card" id="instagramCard" style="display:none;"></div>
+
+          <!-- Reseñas -->
+          <div class="info-card">
+            <h2 id="reviewsTitle"></h2>
+            <div id="reviews"></div>
+          </div>
+        </div>
+
+        <!-- Columna derecha (sticky) -->
+        <div class="sticky-cta">
+          <div class="info-card">
+            <h2>Contratar plan</h2>
+            <div style="font-size:2rem;font-weight:900;color:var(--text);margin-bottom:0.25rem;" id="sidebarPrecio"></div>
+            <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.25rem;">Pago mensual · Cancela cuando quieras</p>
+            <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:0.75rem;" onclick="abrirModalContratacion()">Contratar ahora →</button>
+            <button class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;" onclick="irAlChat()">💬 Enviar mensaje</button>
+            <div style="margin-top:1.25rem;font-size:0.78rem;color:var(--muted);text-align:center;">
+              🔒 Pago seguro con PayPal<br>✅ Sin permanencia
+            </div>
+          </div>
+
+          <div class="info-card" style="margin-top:0;">
+            <h2>Disponibilidad</h2>
+            <p style="font-size:0.83rem;color:var(--text-2);">🟢 Acepta nuevos clientes</p>
+            <p style="font-size:0.83rem;color:var(--muted);margin-top:0.4rem;">Responde en menos de 24h</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer><p>&copy; 2026 <strong>GymConnect</strong></p></footer>
+
+  <!-- Modal de contratación con PayPal -->
+  <div class="modal-bg" id="hireModal">
+    <div class="modal-box">
+      <h2>Contratar entrenador</h2>
+      <p class="sub">Pago mensual · Sin permanencia · Cancela cuando quieras</p>
+      <div class="modal-summary">
+        <div class="modal-summary-row"><span>Entrenador</span><span id="mNombre">—</span></div>
+        <div class="modal-summary-row"><span>Precio</span><span id="mPrecio">—</span></div>
+        <div class="modal-summary-row"><span>Facturación</span><span>Mensual</span></div>
+        <div class="modal-summary-row"><span>Total hoy</span><span id="mTotal">—</span></div>
+      </div>
+      <div id="hire-paypal-container"></div>
+      <button class="modal-cancel-btn" onclick="cerrarModalContratacion()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Modal éxito contratación -->
+  <div class="modal-bg" id="hireSuccessModal">
+    <div class="modal-box" style="text-align:center;">
+      <div style="font-size:3rem;margin-bottom:1rem;">🎉</div>
+      <h2>¡Contratación completada!</h2>
+      <p style="font-size:0.88rem;color:var(--muted);margin:0.75rem 0 2rem;">Ya puedes chatear con tu entrenador y empezar tu plan hoy mismo.</p>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="irAlChat()">💬 Ir al chat →</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" style="
+    position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--text);color:var(--text-light);padding:.85rem 1.5rem;border-radius:8px;
+    font-size:.88rem;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.2);opacity:0;
+    transition:opacity .3s,transform .3s;z-index:999;border-left:4px solid var(--green);
+    white-space:nowrap;pointer-events:none;"></div>
+
+  <script>
+    const token = localStorage.getItem('gc_token');
+    let e = null;
+    let hirePaypalRendered = false;
+
+    function irAlChat() {
+      if (!e) return;
+      window.location.href = `../chat/index.html?userId=${e.usuarioId}&nombre=${encodeURIComponent(e.nombre + ' ' + e.apellido)}`;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.opacity = '1';
+      t.style.transform = 'translateX(-50%) translateY(0)';
+      setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, 3000);
+    }
+
+    function abrirModalContratacion() {
+      if (!e) return;
+      document.getElementById('mNombre').textContent = e.nombre + ' ' + e.apellido;
+      document.getElementById('mPrecio').textContent = e.precioMensual + '€/mes';
+      document.getElementById('mTotal').textContent  = e.precioMensual + '€';
+      document.getElementById('hireModal').classList.add('open');
+      if (!hirePaypalRendered) { renderHirePaypal(); hirePaypalRendered = true; }
+    }
+
+    function cerrarModalContratacion() {
+      document.getElementById('hireModal').classList.remove('open');
+    }
+
+    function renderHirePaypal() {
+      if (typeof paypal === 'undefined') {
+        document.getElementById('hire-paypal-container').innerHTML =
+          '<p style="color:#dc2626;font-size:0.82rem;font-weight:700;">⚠️ PayPal no disponible</p>';
+        return;
+      }
+      paypal.Buttons({
+        style: { layout:'vertical', color:'gold', shape:'rect', label:'pay' },
+        createOrder: async () => {
+          const res = await fetch(`${API}/api/paypal/contratacion/crear`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ entrenadorNombre: e.nombre + ' ' + e.apellido, entrenadorId: String(e.id), importe: e.precioMensual.toFixed(2) })
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Error al crear el pago');
+          return data.orderId;
+        },
+        onApprove: async (data) => {
+          const res = await fetch(`${API}/api/paypal/contratacion/capturar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ orderId: data.orderID, entrenadorId: String(e.id) })
+          });
+          const result = await res.json();
+          if (result.ok) { cerrarModalContratacion(); document.getElementById('hireSuccessModal').classList.add('open'); }
+          else showToast('Error al confirmar el pago: ' + (result.error || ''));
+        },
+        onError: () => showToast('Error en el pago. Inténtalo de nuevo.'),
+        onCancel: () => { showToast('Pago cancelado.'); cerrarModalContratacion(); }
+      }).render('#hire-paypal-container');
+    }
+
+    function renderPerfil(ent) {
+      e = ent;
+      const color = e.avatarColor || 'linear-gradient(135deg,#16a34a,#84cc16)';
+      const iniciales = (e.nombre.charAt(0) + e.apellido.charAt(0)).toUpperCase();
+
+      // Avatar o foto
+      const avatar = document.getElementById('bigAvatar');
+      if (e.fotoUrl) {
+        avatar.innerHTML = `<img src="${e.fotoUrl}" style="width:100%;height:100%;object-fit:cover;" />`;
+      } else {
+        avatar.style.background = color;
+        avatar.textContent = iniciales;
+      }
+
+      document.getElementById('heroNombre').textContent = e.nombre + ' ' + e.apellido;
+      document.getElementById('heroCiudad').textContent = (e.ciudad ? '📍 ' + e.ciudad + ' · ' : '') + (e.pro ? '✓ Entrenador Pro' : 'Entrenador verificado');
+      document.getElementById('heroStars').innerHTML = '★'.repeat(Math.floor(e.rating)) + ` <span>${e.rating} · ${e.totalResenas} reseñas</span>`;
+      document.getElementById('heroPrecio').innerHTML = e.precioMensual + '€ <small>/mes</small>';
+      document.getElementById('sidebarPrecio').innerHTML = e.precioMensual + '€ <small style="font-size:.75rem;color:var(--muted);font-weight:400">/mes</small>';
+      document.title = e.nombre + ' ' + e.apellido + ' — GymConnect';
+
+      // Stats
+      document.getElementById('statRow').innerHTML = `
+        <div class="stat-box"><strong>${e.totalResenas}</strong><span>Reseñas</span></div>
+        <div class="stat-box"><strong>${e.rating}★</strong><span>Valoración</span></div>
+        <div class="stat-box"><strong>${e.aniosExperiencia || '—'} años</strong><span>Experiencia</span></div>`;
+
+      // Idiomas e Instagram/YouTube en hero
+      const extras = [];
+      if ((e.idiomas||[]).length) extras.push((e.idiomas).map(i=>`<span style="background:rgba(255,255,255,0.1);color:#fff;border-radius:20px;padding:.15rem .6rem;font-size:.75rem;font-weight:700;">🌐 ${i}</span>`).join(''));
+      if (e.instagram) extras.push(`<a href="https://instagram.com/${e.instagram}" target="_blank" style="color:var(--muted-light);font-size:.82rem;">📸 @${e.instagram}</a>`);
+      if (e.youtube)   extras.push(`<a href="${e.youtube}" target="_blank" style="color:var(--muted-light);font-size:.82rem;">▶ YouTube</a>`);
+      const extrasEl = document.getElementById('heroExtras');
+      if (extrasEl) extrasEl.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem;">${extras.join('')}</div>`;
+
+      // Certificaciones
+      const certs = e.certificaciones || [];
+      const certsEl = document.getElementById('certsBadges');
+      if (certsEl) {
+        certsEl.innerHTML = certs.length
+          ? certs.map(c => `<span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(22,163,74,0.08);color:var(--green);border:1px solid rgba(22,163,74,0.2);border-radius:6px;padding:.3rem .75rem;font-size:.78rem;font-weight:800;">🏅 ${c}</span>`).join('')
+          : '<p style="font-size:.83rem;color:var(--muted);">Sin certificaciones añadidas aún.</p>';
+        document.getElementById('certsCard').style.display = certs.length ? 'block' : 'none';
+      }
+
+      // Bio y especialidades
+      document.getElementById('bioText').textContent = e.bio || '';
+      document.getElementById('bioTags').innerHTML = (e.especialidades || []).map(t => `<span class="tag">${t}</span>`).join('');
+
+      // Metodología
+      const metEl = document.getElementById('metodologiaText');
+      const metCard = document.getElementById('metodologiaCard');
+      if (metEl && e.metodologia) { metEl.textContent = e.metodologia; metCard.style.display = 'block'; }
+      else if (metCard) metCard.style.display = 'none';
+
+      // Servicios
+      document.getElementById('servicios').innerHTML = (e.servicios || []).map(s =>
+        `<li style="display:flex;align-items:flex-start;gap:.6rem;font-size:.88rem;color:var(--text-2);">
+           <span style="color:var(--green);font-weight:700;margin-top:1px;">✓</span>${s}
+         </li>`).join('') || '<li style="font-size:.83rem;color:var(--muted);">Sin servicios especificados aún.</li>';
+
+      // Instagram destacado
+      const igCard = document.getElementById('instagramCard');
+      if (igCard) {
+        if (e.instagram) {
+          igCard.style.display = 'block';
+          igCard.innerHTML = `
+            <div style="display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;">
+              <div style="font-size:2.5rem;">📸</div>
+              <div style="flex:1;">
+                <div style="font-weight:900;font-size:1rem;margin-bottom:0.2rem;">Instagram</div>
+                <div style="font-size:0.85rem;color:var(--muted);">@${e.instagram}</div>
+              </div>
+              <a href="https://instagram.com/${e.instagram}" target="_blank"
+                style="display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border-radius:10px;padding:0.65rem 1.25rem;font-weight:800;font-size:0.88rem;text-decoration:none;">
+                Ver @${e.instagram} →
+              </a>
+            </div>`;
+        } else {
+          igCard.style.display = 'none';
+        }
+      }
+
+      document.getElementById('reviewsTitle').textContent = 'Reseñas (' + e.totalResenas + ')';
+      cargarResenas(e.id);
+    }
+
+    async function cargarResenas(entrenadorId) {
+      const token = localStorage.getItem('gc_token');
+      const user = JSON.parse(localStorage.getItem('gc_user') || 'null');
+      const div = document.getElementById('reviews');
+
+      // Cargar reseñas existentes
+      const res = await fetch(`${API}/api/resenas/entrenador/${entrenadorId}`);
+      const lista = res.ok ? await res.json() : [];
+
+      let html = '';
+
+      // Formulario solo para clientes logueados
+      if (token && user && user.rol === 'CLIENTE') {
+        // Ver si ya tiene reseña propia
+        let miResena = null;
+        try {
+          const mr = await fetch(`${API}/api/resenas/entrenador/${entrenadorId}/mia`, { headers: { 'Authorization': 'Bearer ' + token } });
+          if (mr.ok) miResena = await mr.json();
+        } catch {}
+
+        const estrellas = miResena?.estrellas || 0;
+        const starsHtml = [1,2,3,4,5].map(n =>
+          `<span class="star-btn" data-v="${n}" onclick="selStar(${n})" style="font-size:1.5rem;cursor:pointer;color:${n<=estrellas?'#f59e0b':'#d1d5db'};">★</span>`
+        ).join('');
+
+        html += `<div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem;">
+          <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.75rem;">${miResena ? 'Tu reseña' : 'Deja tu reseña'}</div>
+          <div id="starsRow" style="margin-bottom:0.75rem;">${starsHtml}</div>
+          <input type="hidden" id="starVal" value="${estrellas}" />
+          <textarea id="comentarioInput" rows="3" placeholder="Cuéntanos tu experiencia…" style="width:100%;padding:0.65rem;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;resize:vertical;font-family:inherit;">${miResena?.comentario || ''}</textarea>
+          <button onclick="enviarResena(${entrenadorId})" class="btn btn-primary" style="margin-top:0.75rem;width:100%;justify-content:center;">
+            ${miResena ? 'Actualizar reseña' : 'Publicar reseña'}
+          </button>
+          <div id="resenaMsg" style="font-size:0.82rem;margin-top:0.5rem;"></div>
+        </div>`;
+      }
+
+      if (lista.length === 0) {
+        html += '<p style="font-size:0.83rem;color:var(--muted);">Aún no hay reseñas. ¡Sé el primero!</p>';
+      } else {
+        html += lista.map(r => `
+          <div class="review-item">
+            <div class="review-header">
+              <div class="review-avatar">${r.cliente.nombre[0]}${r.cliente.apellido?.[0]||''}</div>
+              <span class="review-name">${r.cliente.nombre} ${r.cliente.apellido||''}</span>
+              <span class="review-stars">${'★'.repeat(r.estrellas)}${'☆'.repeat(5-r.estrellas)}</span>
+            </div>
+            <div class="review-text">${r.comentario || ''}</div>
+          </div>`).join('');
+      }
+
+      div.innerHTML = html;
+    }
+
+    let _starVal = 0;
+    function selStar(n) {
+      _starVal = n;
+      document.getElementById('starVal').value = n;
+      document.querySelectorAll('.star-btn').forEach(s => {
+        s.style.color = parseInt(s.dataset.v) <= n ? '#f59e0b' : '#d1d5db';
+      });
+    }
+
+    async function enviarResena(entrenadorId) {
+      const token = localStorage.getItem('gc_token');
+      const estrellas = parseInt(document.getElementById('starVal').value);
+      const comentario = document.getElementById('comentarioInput').value.trim();
+      const msg = document.getElementById('resenaMsg');
+      if (!estrellas) { msg.style.color='#dc2626'; msg.textContent='Selecciona una valoración.'; return; }
+      try {
+        const r = await fetch(`${API}/api/resenas/entrenador/${entrenadorId}`, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
+          body: JSON.stringify({ estrellas, comentario })
+        });
+        const data = await r.json();
+        if (!r.ok) { msg.style.color='#dc2626'; msg.textContent=data.error||'Error al publicar.'; return; }
+        msg.style.color='#16a34a'; msg.textContent='✓ Reseña publicada';
+        cargarResenas(entrenadorId);
+      } catch { msg.style.color='#dc2626'; msg.textContent='Error de conexión.'; }
+    }
+
+    async function cargarPerfil() {
+      const params = new URLSearchParams(location.search);
+      const id = parseInt(params.get('id')) || 1;
+      try {
+        const res = await fetch(`${API}/api/entrenadores/${id}`);
+        if (!res.ok) throw new Error('No encontrado');
+        renderPerfil(await res.json());
+      } catch {
+        document.body.innerHTML = '<p style="padding:2rem;color:#dc2626;">No se pudo cargar el perfil del entrenador.</p>';
+      }
+    }
+
+    cargarPerfil();
+  </script>
+<script src="../js/sidebar-user.js"></script>
+</body>
+</html>
