@@ -15,11 +15,35 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/entrenadores")
 @RequiredArgsConstructor
 public class EntrenadorController {
+
+    static final Set<String> ESPECIALIDADES_VALIDAS = Set.of(
+        "Musculación / Hipertrofia",
+        "Pérdida de grasa",
+        "Nutrición deportiva",
+        "Fuerza y potencia",
+        "Entrenamiento funcional",
+        "HIIT / Cardio intenso",
+        "Crossfit",
+        "Calistenia",
+        "Yoga",
+        "Pilates",
+        "Flexibilidad y movilidad",
+        "Running / Atletismo",
+        "Ciclismo",
+        "Natación",
+        "Deportes de combate",
+        "Rehabilitación física",
+        "Entrenamiento para mayores",
+        "Preparación física deportiva",
+        "Entrenamiento online",
+        "Pérdida de peso post-parto"
+    );
 
     private final EntrenadorService service;
     private final EntrenadorRepository entrenadorRepo;
@@ -79,7 +103,15 @@ public class EntrenadorController {
         if (body.containsKey("ciudad"))           e.setCiudad((String) body.get("ciudad"));
         if (body.containsKey("precioMensual"))    e.setPrecioMensual(((Number) body.get("precioMensual")).doubleValue());
         if (body.containsKey("aniosExperiencia")) e.setAniosExperiencia(((Number) body.get("aniosExperiencia")).intValue());
-        if (body.containsKey("especialidades"))    e.setEspecialidades((List<String>) body.get("especialidades"));
+        if (body.containsKey("especialidades")) {
+            List<String> raw = (List<String>) body.get("especialidades");
+            List<String> validas = raw.stream()
+                .filter(ESPECIALIDADES_VALIDAS::contains)
+                .distinct()
+                .limit(6)
+                .toList();
+            e.setEspecialidades(validas);
+        }
         if (body.containsKey("servicios"))         e.setServicios((List<String>) body.get("servicios"));
         if (body.containsKey("paypalEmail"))       e.setPaypalEmail((String) body.get("paypalEmail"));
         if (body.containsKey("fotoUrl"))           e.setFotoUrl((String) body.get("fotoUrl"));
