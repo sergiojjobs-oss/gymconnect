@@ -63,6 +63,9 @@
       position: relative;
     }
     .chat-item:hover { background: rgba(74,222,128,0.07); transform: translateX(2px); }
+    .chat-delete-btn { display:none; background:none; border:none; color:#f87171; font-size:0.85rem; cursor:pointer; padding:0.2rem 0.4rem; border-radius:6px; flex-shrink:0; }
+    .chat-delete-btn:hover { background:rgba(239,68,68,0.15); }
+    .chat-item:hover .chat-delete-btn { display:block; }
     .chat-item.active { background: rgba(74,222,128,0.12); }
     .chat-item.active::before {
       content: '';
@@ -480,6 +483,7 @@ async function cargarContactos() { // returns Promise
         <div class="chat-item-name" style="display:flex;align-items:center;gap:0.4rem;">${c.nombre}${badge}</div>
         <div class="chat-item-preview">${c.ultimoMensaje || 'Sin mensajes'}</div>
       </div>
+      <button class="chat-delete-btn" onclick="eliminarConversacion(event,${c.id})" title="Eliminar conversación">🗑</button>
     `;
     div.addEventListener('click', () => abrirChat(c));
     lista.appendChild(div);
@@ -666,6 +670,21 @@ if (user) {
 
 // ── Filtrar contactos ───────────────────────────────────────────
 let todosContactos = [];
+async function eliminarConversacion(e, contactoId) {
+  e.stopPropagation();
+  if (!confirm('¿Eliminar esta conversación? Se borrarán todos los mensajes.')) return;
+  const r = await fetch(`${API}/api/chat/${contactoId}/conversacion`, {
+    method: 'DELETE', headers: { Authorization: 'Bearer ' + token }
+  });
+  if (r.ok) {
+    if (contactoActivo?.id == contactoId) {
+      contactoActivo = null;
+      document.getElementById('chat-main').innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:rgba(160,210,175,0.4);font-size:0.9rem;">Selecciona una conversación</div>`;
+    }
+    cargarContactos();
+  }
+}
+
 function filtrarContactos(q) {
   const items = document.querySelectorAll('.chat-item');
   items.forEach(el => {

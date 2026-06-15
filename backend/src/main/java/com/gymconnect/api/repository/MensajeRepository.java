@@ -32,4 +32,6 @@ public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
 
     @Query("SELECT COUNT(DISTINCT m.remitenteId) FROM Mensaje m WHERE m.destinatarioId IN (SELECT e.usuario.id FROM Entrenador e)")
     long countClientesConMensajes();
+
+    void deleteByRemitenteIdAndDestinatarioId(Long remitenteId, Long destinatarioId);
 }
