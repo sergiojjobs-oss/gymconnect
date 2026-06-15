@@ -13,7 +13,33 @@
   <script src="../js/auth-guard.js" data-rol="CLIENTE"></script>
   <script src="https://www.paypal.com/sdk/js?client-id=AdCjPbDMjomTwFZOBxgRsQAQsUQdHbzvmKTPOa_fDSAE7skBsdwMl2osJFISy_swAHmetn3Z6H2oCC_h&currency=EUR&intent=capture"></script>
   <style>
-    /* Modal de contratación */
+    /* ── Plan theme tokens ─────────────────────────────────────── */
+    :root {
+      --plan-color:   #4ade80;
+      --plan-color2:  #16a34a;
+      --plan-glow:    rgba(74,222,128,0.18);
+      --plan-bg:      rgba(74,222,128,0.07);
+      --plan-border:  rgba(74,222,128,0.22);
+      --plan-hero-bg: radial-gradient(ellipse 70% 90% at 65% 50%, rgba(22,163,74,0.20), transparent 70%);
+    }
+    .tier-pro {
+      --plan-color:   #fbbf24;
+      --plan-color2:  #d97706;
+      --plan-glow:    rgba(251,191,36,0.20);
+      --plan-bg:      rgba(251,191,36,0.07);
+      --plan-border:  rgba(251,191,36,0.28);
+      --plan-hero-bg: radial-gradient(ellipse 70% 90% at 65% 50%, rgba(217,119,6,0.22), transparent 70%);
+    }
+    .tier-elite {
+      --plan-color:   #a78bfa;
+      --plan-color2:  #7c3aed;
+      --plan-glow:    rgba(167,139,250,0.22);
+      --plan-bg:      rgba(167,139,250,0.07);
+      --plan-border:  rgba(167,139,250,0.28);
+      --plan-hero-bg: radial-gradient(ellipse 70% 90% at 65% 50%, rgba(124,58,237,0.25), transparent 70%);
+    }
+
+    /* ── Modal ─────────────────────────────────────────────────── */
     .modal-bg { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center; }
     .modal-bg.open { display:flex; }
     .modal-box { background:#fff;border-radius:16px;padding:2rem;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.25); }
@@ -21,11 +47,11 @@
     .modal-box .sub { font-size:0.83rem;color:var(--muted);margin-bottom:1.5rem; }
     .modal-summary { background:var(--bg);border-radius:8px;padding:1rem;margin-bottom:1.5rem;font-size:0.85rem; }
     .modal-summary-row { display:flex;justify-content:space-between;padding:0.3rem 0; }
-    .modal-summary-row:last-child { font-weight:900;border-top:1px solid var(--border);margin-top:0.4rem;padding-top:0.7rem;color:var(--green); }
+    .modal-summary-row:last-child { font-weight:900;border-top:1px solid var(--border);margin-top:0.4rem;padding-top:0.7rem;color:var(--plan-color); }
     .modal-cancel-btn { width:100%;text-align:center;margin-top:0.75rem;font-size:0.82rem;color:var(--muted);cursor:pointer;background:none;border:none;font-weight:600; }
     .modal-cancel-btn:hover { color:var(--text); }
-  </style>
-  <style>
+
+    /* ── Hero ──────────────────────────────────────────────────── */
     .profile-hero {
       background: var(--dark-hero);
       padding: 3rem 0 4rem;
@@ -35,28 +61,58 @@
     .profile-hero::before {
       content: '';
       position: absolute; inset: 0;
-      background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(22,163,74,0.12), transparent 65%);
+      background: var(--plan-hero-bg);
       pointer-events: none;
+      transition: background 0.4s;
+    }
+    /* top accent bar per plan */
+    .profile-hero::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--plan-color2), var(--plan-color));
     }
     .profile-hero-inner {
       position: relative; z-index: 1;
       display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
     }
     .profile-big-avatar {
-      width: 100px; height: 100px; border-radius: 50%;
+      width: 110px; height: 110px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 2rem; font-weight: 900; color: #fff;
-      border: 4px solid rgba(255,255,255,0.15);
+      font-size: 2.2rem; font-weight: 900; color: #fff;
+      border: 3px solid var(--plan-color);
+      box-shadow: 0 0 0 6px var(--plan-glow);
       flex-shrink: 0;
+      overflow: hidden;
+      transition: border-color 0.4s, box-shadow 0.4s;
     }
     .profile-hero-info h1 { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; color: var(--text-light); margin-bottom: 0.25rem; }
     .profile-hero-info p  { color: var(--muted-light); font-size: 0.9rem; }
     .profile-hero-info .stars { color: var(--gold-l); margin-top: 0.5rem; font-size: 0.9rem; }
     .profile-hero-info .stars span { color: var(--muted-light); }
     .profile-hero-cta { margin-left: auto; display: flex; flex-direction: column; gap: 0.75rem; align-items: flex-end; }
-    .profile-price-big { font-size: 2.2rem; font-weight: 900; color: var(--text-light); line-height: 1; }
+    .profile-price-big { font-size: 2.4rem; font-weight: 900; color: var(--plan-color); line-height: 1; text-shadow: 0 0 30px var(--plan-glow); }
     .profile-price-big small { font-size: 0.8rem; color: var(--muted-light); font-weight: 400; }
 
+    /* Plan badge */
+    .plan-badge {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.3rem 0.85rem; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;
+      background: var(--plan-bg);
+      border: 1px solid var(--plan-border);
+      color: var(--plan-color);
+      margin-top: 0.5rem;
+    }
+
+    /* CTA button accent */
+    .btn-plan {
+      background: linear-gradient(135deg, var(--plan-color2), var(--plan-color));
+      color: #fff;
+      border: none;
+    }
+    .btn-plan:hover { filter: brightness(1.1); }
+
+    /* ── Body ──────────────────────────────────────────────────── */
     .profile-body { padding: 3rem 0 5rem; }
     .profile-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start; }
 
@@ -67,12 +123,28 @@
       padding: 1.75rem;
       margin-bottom: 1.25rem;
     }
+    /* top micro-line on highlighted cards */
+    .info-card.accented {
+      border-top: 2px solid var(--plan-color);
+    }
     .info-card h2 { font-size: 0.85rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 1rem; }
 
     .stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1.25rem; }
     .stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; }
-    .stat-box strong { display: block; font-size: 1.5rem; font-weight: 900; color: var(--green); }
+    .stat-box strong { display: block; font-size: 1.5rem; font-weight: 900; color: var(--plan-color); }
     .stat-box span   { font-size: 0.73rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+
+    /* Sidebar CTA card */
+    .sidebar-cta-card {
+      background: var(--card);
+      border: 1px solid var(--plan-border);
+      border-top: 3px solid var(--plan-color);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 0 20px var(--plan-glow);
+    }
+    .sidebar-cta-card h2 { font-size: 0.85rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 1rem; }
 
     .review-item { padding: 1rem 0; border-bottom: 1px solid var(--border); }
     .review-item:last-child { border-bottom: none; }
@@ -82,10 +154,7 @@
     .review-stars { color: var(--gold-l); font-size: 0.78rem; margin-left: auto; }
     .review-text { font-size: 0.83rem; color: var(--text-2); line-height: 1.65; }
 
-    .sticky-cta {
-      position: sticky;
-      top: 90px;
-    }
+    .sticky-cta { position: sticky; top: 90px; }
 
     @media (max-width: 768px) {
       .profile-grid { grid-template-columns: 1fr; }
@@ -110,16 +179,17 @@
   <div class="profile-hero" id="profileHero">
     <div class="container">
       <div class="profile-hero-inner">
-        <div class="profile-big-avatar" id="bigAvatar" style="overflow:hidden;"></div>
+        <div class="profile-big-avatar" id="bigAvatar"></div>
         <div class="profile-hero-info">
           <h1 id="heroNombre"></h1>
           <p id="heroCiudad"></p>
           <div class="stars" id="heroStars"></div>
+          <div id="heroBadge"></div>
           <div id="heroExtras"></div>
         </div>
         <div class="profile-hero-cta">
           <div class="profile-price-big" id="heroPrecio"></div>
-          <button class="btn btn-primary" style="font-size:0.9rem;" onclick="abrirModalContratacion()">Contratar ahora →</button>
+          <button class="btn btn-plan" style="font-size:0.9rem;padding:0.75rem 1.5rem;" onclick="abrirModalContratacion()">Contratar ahora →</button>
           <button class="btn btn-light" onclick="irAlChat()">Enviar mensaje</button>
         </div>
       </div>
@@ -143,7 +213,7 @@
           <div class="stat-row" id="statRow"></div>
 
           <!-- Bio -->
-          <div class="info-card">
+          <div class="info-card accented">
             <h2>Sobre mí</h2>
             <p id="bioText" style="font-size:0.92rem;color:var(--text-2);line-height:1.8;"></p>
             <div id="bioTags" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.25rem;"></div>
@@ -173,11 +243,11 @@
 
         <!-- Columna derecha (sticky) -->
         <div class="sticky-cta">
-          <div class="info-card">
+          <div class="sidebar-cta-card">
             <h2>Contratar plan</h2>
-            <div style="font-size:2rem;font-weight:900;color:var(--text);margin-bottom:0.25rem;" id="sidebarPrecio"></div>
+            <div style="font-size:2rem;font-weight:900;color:var(--plan-color);margin-bottom:0.25rem;" id="sidebarPrecio"></div>
             <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.25rem;">Pago mensual · Cancela cuando quieras</p>
-            <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:0.75rem;" onclick="abrirModalContratacion()">Contratar ahora →</button>
+            <button class="btn btn-plan" style="width:100%;justify-content:center;margin-bottom:0.75rem;" onclick="abrirModalContratacion()">Contratar ahora →</button>
             <button class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;" onclick="irAlChat()">💬 Enviar mensaje</button>
             <div style="margin-top:1.25rem;font-size:0.78rem;color:var(--muted);text-align:center;">
               🔒 Pago seguro con PayPal<br>✅ Sin permanencia
@@ -299,6 +369,25 @@
       const color = e.avatarColor || 'linear-gradient(135deg,#16a34a,#84cc16)';
       const iniciales = (e.nombre.charAt(0) + e.apellido.charAt(0)).toUpperCase();
 
+      // Apply plan tier class to hero + body
+      const tier = (e.planTier || 'FREE').toUpperCase();
+      const tierClass = tier === 'ELITE' ? 'tier-elite' : tier === 'PRO' ? 'tier-pro' : '';
+      if (tierClass) {
+        document.getElementById('profileHero').classList.add(tierClass);
+        document.querySelector('.profile-body').classList.add(tierClass);
+        document.querySelector('.sticky-cta').classList.add(tierClass);
+      }
+
+      // Plan badge
+      const badgeConf = {
+        ELITE: { icon: '👑', label: 'Entrenador Elite', cls: 'tier-elite' },
+        PRO:   { icon: '⚡', label: 'Entrenador Pro',   cls: 'tier-pro'  },
+        FREE:  { icon: '✓',  label: 'Entrenador verificado', cls: '' }
+      };
+      const bd = badgeConf[tier] || badgeConf.FREE;
+      const badgeEl = document.getElementById('heroBadge');
+      if (badgeEl) badgeEl.innerHTML = `<span class="plan-badge ${bd.cls}">${bd.icon} ${bd.label}</span>`;
+
       // Avatar o foto
       const avatar = document.getElementById('bigAvatar');
       if (e.fotoUrl) {
@@ -309,7 +398,7 @@
       }
 
       document.getElementById('heroNombre').textContent = e.nombre + ' ' + e.apellido;
-      document.getElementById('heroCiudad').textContent = (e.ciudad ? '📍 ' + e.ciudad + ' · ' : '') + (e.pro ? '✓ Entrenador Pro' : 'Entrenador verificado');
+      document.getElementById('heroCiudad').textContent = (e.ciudad ? '📍 ' + e.ciudad : '');
       document.getElementById('heroStars').innerHTML = '★'.repeat(Math.floor(e.rating)) + ` <span>${e.rating} · ${e.totalResenas} reseñas</span>`;
       document.getElementById('heroPrecio').innerHTML = e.precioMensual + '€ <small>/mes</small>';
       document.getElementById('sidebarPrecio').innerHTML = e.precioMensual + '€ <small style="font-size:.75rem;color:var(--muted);font-weight:400">/mes</small>';
