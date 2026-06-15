@@ -10,159 +10,268 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css" />
   <style>
-    /* ── How it works ── */
-    .how-section { padding:7rem 0; background:var(--dark-hero); position:relative; overflow:hidden; }
-    .how-section::before {
-      content:'';position:absolute;inset:0;
-      background:radial-gradient(ellipse 50% 60% at 80% 50%, rgba(22,163,74,0.07),transparent 60%);
-      pointer-events:none;
+    /* ── Animated orbs ── */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      pointer-events: none;
+      animation: orbFloat 8s ease-in-out infinite alternate;
     }
-    .steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:3.5rem; }
-    .step {
-      position:relative;
-      padding:2rem;
-      background:rgba(255,255,255,0.03);
-      border:1px solid rgba(255,255,255,0.06);
-      border-radius:16px;
-      transition:border-color var(--t),background var(--t);
+    .orb-1 { width:500px;height:500px;background:#22c55e;top:-100px;right:-80px;animation-duration:9s; }
+    .orb-2 { width:350px;height:350px;background:#16a34a;bottom:-60px;left:10%;animation-duration:11s;animation-delay:-3s; }
+    .orb-3 { width:250px;height:250px;background:#84cc16;top:40%;left:30%;opacity:0.08;animation-duration:13s;animation-delay:-6s; }
+    @keyframes orbFloat {
+      from { transform: translateY(0) scale(1); }
+      to   { transform: translateY(-40px) scale(1.08); }
     }
-    .step:hover { border-color:rgba(22,163,74,0.2); background:rgba(22,163,74,0.04); }
-    .step-num {
-      font-size:3rem;
-      font-weight:900;
-      line-height:1;
-      letter-spacing:-3px;
-      background:var(--grad-main);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      background-clip:text;
-      margin-bottom:1rem;
+
+    /* ── Hero overrides ── */
+    .hero { min-height:100vh; padding:0; }
+    .hero-grid { grid-template-columns:1fr 480px; gap:4rem; padding:7rem 0 5rem; }
+    .hero-eyebrow {
+      display:inline-flex; align-items:center; gap:0.5rem;
+      background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.25);
+      color:#4ade80; font-size:0.72rem; font-weight:700; letter-spacing:2px;
+      text-transform:uppercase; padding:0.4rem 1rem; border-radius:99px;
+      margin-bottom:1.75rem;
+    }
+    .hero-eyebrow span { width:6px;height:6px;border-radius:50%;background:#4ade80;animation:pulse 1.5s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+    .hero-text h1 {
+      font-size: clamp(3.2rem, 6vw, 5.5rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -4px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 1.75rem;
+    }
+    .hero-text h1 .line-accent {
       display:block;
+      background: linear-gradient(90deg, #4ade80, #84cc16, #22c55e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200%;
+      animation: gradShift 4s linear infinite;
     }
-    .step h3 { font-size:1rem; font-weight:700; color:var(--text-light); margin-bottom:0.6rem; letter-spacing:-0.2px; }
-    .step p { font-size:0.85rem; color:var(--muted-light); line-height:1.75; }
-    .step-connector {
-      position:absolute;
-      top:50%;
-      right:-1.1rem;
-      transform:translateY(-50%);
-      width:2.2rem;
-      height:1px;
-      background:rgba(255,255,255,0.1);
-      z-index:1;
+    @keyframes gradShift { 0%{background-position:0%} 100%{background-position:200%} }
+    .hero-text p { font-size:1.05rem; max-width:440px; }
+    .hero-cta { margin-bottom:3rem; }
+    .btn-hero {
+      font-size:0.95rem !important;
+      padding:0.9rem 2.2rem !important;
+      border-radius:12px !important;
+      box-shadow:0 8px 32px rgba(22,163,74,0.4) !important;
     }
-    .step:last-child .step-connector { display:none; }
+    .btn-hero:hover { transform:translateY(-2px) !important; box-shadow:0 14px 48px rgba(22,163,74,0.55) !important; }
 
-    /* ── Social proof strip ── */
-    .proof-strip {
-      background:var(--bg-2);
-      padding:3rem 0;
-      border-top:1px solid var(--border);
-      border-bottom:1px solid var(--border);
-    }
-    .proof-inner {
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:2rem;
-      text-align:center;
-    }
-    .proof-item strong {
-      display:block;
-      font-size:2.4rem;
-      font-weight:900;
-      letter-spacing:-2px;
-      color:var(--text);
-      line-height:1;
-      background:var(--grad-main);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      background-clip:text;
-    }
-    .proof-item span { font-size:0.78rem; color:var(--muted); font-weight:500; margin-top:0.4rem; display:block; text-transform:uppercase; letter-spacing:0.8px; }
-
-    /* ── Trainers section ── */
-    .trainers-section { padding:7rem 0; background:var(--bg); }
-
-    /* ── Testimonials ── */
-    .testimonials-section { padding:7rem 0; background:var(--bg-2); }
-    .testimonials-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
-    .testimonial-card {
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:14px;
+    /* ── Hero visual card ── */
+    .hero-visual { position:relative; display:flex; align-items:center; justify-content:center; }
+    .hero-card-wrap { position:relative; width:100%; max-width:340px; }
+    .profile-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-top: 3px solid #4ade80;
+      border-radius:20px;
       padding:1.75rem;
-      box-shadow:var(--shadow-sm);
-      transition:box-shadow var(--t),transform var(--t);
+      backdrop-filter:blur(24px);
+      box-shadow:0 40px 100px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+      animation: cardFloat 5s ease-in-out infinite alternate;
     }
-    .testimonial-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
-    .t-stars { color:var(--gold-l); font-size:0.85rem; margin-bottom:1rem; }
-    .t-text { font-size:0.88rem; color:var(--text-2); line-height:1.75; margin-bottom:1.25rem; font-style:italic; }
-    .t-author { display:flex; align-items:center; gap:0.75rem; }
-    .t-author .avatar { width:36px; height:36px; font-size:0.75rem; }
-    .t-author-name { font-size:0.82rem; font-weight:700; color:var(--text); }
-    .t-author-role { font-size:0.72rem; color:var(--muted); }
+    @keyframes cardFloat {
+      from { transform:translateY(0) rotate(-0.5deg); }
+      to   { transform:translateY(-12px) rotate(0.5deg); }
+    }
+    .progress-bar-wrap { background:rgba(255,255,255,0.08); border-radius:99px; height:5px; margin-top:0.4rem; overflow:hidden; }
+    .progress-bar-fill { height:100%; border-radius:99px; background:var(--grad-main); animation:barGrow 2s ease forwards; }
+    @keyframes barGrow { from{width:0} to{width:var(--w)} }
+    .mini-stat-row { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-top:1.1rem; }
+    .mini-stat { background:rgba(22,163,74,0.08); border:1px solid rgba(22,163,74,0.15); border-radius:10px; padding:0.7rem; text-align:center; }
+    .mini-stat strong { display:block; font-size:1.1rem; font-weight:900; color:#4ade80; letter-spacing:-0.5px; }
+    .mini-stat span { font-size:0.62rem; color:rgba(180,200,180,0.7); text-transform:uppercase; letter-spacing:0.5px; }
+    .chip-1 { top:-18px; right:-20px; }
+    .chip-2 { bottom:24px; left:-32px; }
 
-    /* ── Pricing preview ── */
-    .pricing-section { padding:7rem 0; background:var(--dark-cta); position:relative; overflow:hidden; }
-    .pricing-section::before {
-      content:'';position:absolute;inset:0;
-      background:radial-gradient(ellipse 60% 70% at 50% 50%, rgba(22,163,74,0.08),transparent 70%);
-      pointer-events:none;
-    }
-    .pricing-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:3.5rem; }
-    .pricing-card {
-      background:rgba(255,255,255,0.04);
-      border:1px solid rgba(255,255,255,0.07);
-      border-radius:16px;
-      padding:2rem;
-      position:relative;
-      transition:border-color var(--t),transform var(--t);
-    }
-    .pricing-card:hover { border-color:rgba(22,163,74,0.25); transform:translateY(-2px); }
-    .pricing-card.featured {
-      border-color:rgba(22,163,74,0.4);
-      background:rgba(22,163,74,0.06);
-      transform:translateY(-6px);
-    }
-    .pricing-card.featured:hover { transform:translateY(-8px); }
-    .featured-badge {
-      position:absolute;
-      top:-12px; left:50%; transform:translateX(-50%);
-      background:var(--grad-main);
-      color:#fff;
-      font-size:0.65rem;
-      font-weight:700;
-      text-transform:uppercase;
-      letter-spacing:1px;
-      padding:0.2rem 0.85rem;
-      border-radius:99px;
-      white-space:nowrap;
-    }
-    .pricing-plan { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--green-l); margin-bottom:0.75rem; }
-    .pricing-price { font-size:2.8rem; font-weight:900; letter-spacing:-2.5px; color:var(--text-light); line-height:1; margin-bottom:0.3rem; }
-    .pricing-price span { font-size:1rem; font-weight:400; color:var(--muted-light); letter-spacing:0; }
-    .pricing-sub { font-size:0.78rem; color:var(--muted-light); margin-bottom:1.5rem; }
-    .pricing-features { list-style:none; display:flex; flex-direction:column; gap:0.6rem; margin-bottom:2rem; }
-    .pricing-features li { font-size:0.83rem; color:var(--muted-light); display:flex; align-items:center; gap:0.6rem; }
-    .pricing-features li::before { content:'✓'; color:var(--green-l); font-weight:700; font-size:0.8rem; flex-shrink:0; }
+    /* ── Scroll reveal ── */
+    .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-delay-1 { transition-delay:0.1s; }
+    .reveal-delay-2 { transition-delay:0.2s; }
+    .reveal-delay-3 { transition-delay:0.3s; }
+    .reveal-delay-4 { transition-delay:0.4s; }
 
     /* ── Ticker ── */
-    .ticker-wrap { overflow:hidden; background:var(--dark-hero); border-top:1px solid rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.05); padding:1rem 0; }
-    .ticker-inner { display:flex; gap:4rem; animation:ticker 20s linear infinite; white-space:nowrap; }
-    .ticker-inner:hover { animation-play-state:paused; }
-    .ticker-item { font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted-light); display:flex; align-items:center; gap:0.75rem; }
-    .ticker-dot { width:4px; height:4px; border-radius:50%; background:var(--green-l); flex-shrink:0; }
+    .ticker-wrap { overflow:hidden; background:var(--dark-hero); border-top:1px solid rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.05); padding:0.9rem 0; }
+    .ticker-inner { display:flex; gap:4rem; animation:ticker 24s linear infinite; white-space:nowrap; }
+    .ticker-item { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted-light); display:flex; align-items:center; gap:0.75rem; }
+    .ticker-dot { width:4px; height:4px; border-radius:50%; background:#4ade80; flex-shrink:0; }
     @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
+    /* ── Proof strip ── */
+    .proof-strip { background:var(--dark-hero); padding:5rem 0; border-top:1px solid rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.05); }
+    .proof-inner { display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; text-align:center; }
+    .proof-item strong {
+      display:block; font-size:3.5rem; font-weight:900; letter-spacing:-3px;
+      background:linear-gradient(135deg,#4ade80,#22c55e); -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent; background-clip:text; line-height:1;
+    }
+    .proof-item span { font-size:0.75rem; color:rgba(180,200,180,0.6); font-weight:500; margin-top:0.5rem; display:block; text-transform:uppercase; letter-spacing:1px; }
+
+    /* ── How it works ── */
+    .how-section { padding:8rem 0; background:var(--bg-2); position:relative; overflow:hidden; }
+    .steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:4rem; position:relative; }
+    .steps-grid::before {
+      content:''; position:absolute; top:2.5rem; left:calc(16.67% + 1rem); right:calc(16.67% + 1rem);
+      height:1px; background:linear-gradient(90deg,transparent,rgba(22,163,74,0.4),transparent);
+    }
+    .step {
+      padding:2.5rem 2rem; text-align:center; position:relative;
+      border:1px solid transparent; border-radius:16px;
+      transition:border-color 0.2s, background 0.2s;
+    }
+    .step:hover { border-color:rgba(22,163,74,0.2); background:rgba(22,163,74,0.03); }
+    .step-num-wrap {
+      width:52px; height:52px; border-radius:50%; background:var(--grad-main);
+      display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;
+      font-size:1.1rem; font-weight:900; color:#fff; box-shadow:0 4px 20px rgba(22,163,74,0.35);
+    }
+    .step h3 { font-size:1rem; font-weight:800; color:var(--text); margin-bottom:0.75rem; letter-spacing:-0.3px; }
+    .step p { font-size:0.85rem; color:var(--muted); line-height:1.8; }
+
+    /* ── Bento features ── */
+    .features-section { padding:8rem 0; background:var(--bg); }
+    .bento-grid {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      grid-template-rows:auto auto;
+      gap:1rem;
+      margin-top:3.5rem;
+    }
+    .bento-card {
+      background:var(--card); border:1px solid var(--border); border-radius:16px;
+      padding:2rem; position:relative; overflow:hidden;
+      transition:border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+    }
+    .bento-card:hover { border-color:rgba(22,163,74,0.3); transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,0.1); }
+    .bento-card::after { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:var(--grad-main); transform:scaleX(0); transform-origin:left; transition:transform 0.2s; }
+    .bento-card:hover::after { transform:scaleX(1); }
+    .bento-card.bento-wide { grid-column:span 2; }
+    .bento-card.bento-tall { grid-row:span 2; }
+    .bento-icon { font-size:2rem; margin-bottom:1rem; display:block; }
+    .bento-card h3 { font-size:0.95rem; font-weight:800; letter-spacing:-0.3px; margin-bottom:0.5rem; color:var(--text); }
+    .bento-card p { font-size:0.84rem; color:var(--muted); line-height:1.75; }
+    .bento-bg-num { position:absolute; bottom:-0.5rem; right:0.75rem; font-size:5rem; font-weight:900; color:rgba(22,163,74,0.04); line-height:1; pointer-events:none; }
+    .bento-chat-preview { margin-top:1.25rem; display:flex; flex-direction:column; gap:0.5rem; }
+    .chat-bubble { padding:0.55rem 0.85rem; border-radius:10px; font-size:0.78rem; max-width:85%; }
+    .chat-bubble.trainer { background:rgba(22,163,74,0.1); border:1px solid rgba(22,163,74,0.2); color:var(--text-2); }
+    .chat-bubble.client  { background:var(--grad-main); color:#fff; margin-left:auto; border-radius:10px 2px 10px 10px; }
+    .bento-macro-row { display:flex; gap:0.5rem; margin-top:1rem; }
+    .macro-pill { flex:1; text-align:center; background:var(--bg-2); border:1px solid var(--border); border-radius:10px; padding:0.6rem 0.4rem; }
+    .macro-pill strong { display:block; font-size:1rem; font-weight:900; color:var(--text); }
+    .macro-pill span { font-size:0.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; }
+
+    /* ── Trainers ── */
+    .trainers-section { padding:8rem 0; background:var(--bg-2); }
+
+    /* ── Testimonials ── */
+    .testimonials-section { padding:8rem 0; background:var(--dark-hero); position:relative; overflow:hidden; }
+    .testimonials-section::before {
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(ellipse 60% 70% at 50% 50%, rgba(22,163,74,0.06), transparent 70%);
+      pointer-events:none;
+    }
+    .testimonials-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+    .testimonial-card {
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07);
+      border-radius:16px; padding:2rem;
+      transition:border-color 0.18s, transform 0.18s;
+    }
+    .testimonial-card:hover { border-color:rgba(34,197,94,0.25); transform:translateY(-3px); }
+    .t-stars { color:#f59e0b; font-size:0.85rem; margin-bottom:1rem; letter-spacing:2px; }
+    .t-text { font-size:0.88rem; color:rgba(200,220,200,0.8); line-height:1.8; margin-bottom:1.5rem; font-style:italic; }
+    .t-author { display:flex; align-items:center; gap:0.75rem; }
+    .t-author-name { font-size:0.82rem; font-weight:700; color:var(--text-light); }
+    .t-author-role { font-size:0.72rem; color:rgba(180,200,180,0.6); margin-top:0.05rem; }
+
+    /* ── Pricing ── */
+    .pricing-section { padding:8rem 0; background:var(--bg); }
+    .pricing-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:3.5rem; }
+    .pricing-card {
+      background:var(--card); border:1.5px solid var(--border); border-radius:20px;
+      padding:2.25rem; position:relative; transition:border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+    }
+    .pricing-card:hover { transform:translateY(-4px); box-shadow:0 20px 60px rgba(0,0,0,0.1); }
+    .pricing-card.featured {
+      border-color:var(--green); background:rgba(22,163,74,0.04);
+      box-shadow:0 0 0 4px rgba(22,163,74,0.08), 0 20px 60px rgba(22,163,74,0.12);
+      transform:translateY(-8px);
+    }
+    .pricing-card.featured:hover { transform:translateY(-12px); }
+    .featured-badge {
+      position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+      background:var(--grad-main); color:#fff; font-size:0.65rem; font-weight:700;
+      text-transform:uppercase; letter-spacing:1px; padding:0.25rem 1rem;
+      border-radius:99px; white-space:nowrap; box-shadow:0 4px 16px rgba(22,163,74,0.4);
+    }
+    .pricing-plan { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; margin-bottom:0.75rem; }
+    .pricing-price { font-size:3rem; font-weight:900; letter-spacing:-3px; color:var(--text); line-height:1; margin-bottom:0.3rem; }
+    .pricing-price span { font-size:1rem; font-weight:400; color:var(--muted); letter-spacing:0; }
+    .pricing-sub { font-size:0.78rem; color:var(--muted); margin-bottom:1.75rem; }
+    .pricing-features { list-style:none; display:flex; flex-direction:column; gap:0.65rem; margin-bottom:2rem; }
+    .pricing-features li { font-size:0.83rem; color:var(--text-2); display:flex; align-items:center; gap:0.6rem; }
+    .pricing-features li::before { content:'✓'; color:var(--green); font-weight:700; font-size:0.8rem; flex-shrink:0; }
+
+    /* ── CTA final ── */
+    .cta-section {
+      padding:8rem 0; position:relative; overflow:hidden;
+      background:linear-gradient(135deg, #0b1f14 0%, #0f2318 50%, #091a0f 100%);
+    }
+    .cta-section::before {
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(ellipse 70% 80% at 50% 50%, rgba(22,163,74,0.12), transparent 70%);
+      pointer-events:none;
+    }
+    .cta-inner { position:relative; z-index:1; text-align:center; max-width:600px; margin:0 auto; }
+    .cta-inner h2 { font-size:clamp(2.4rem,5vw,4rem); margin-bottom:1.25rem; }
+    .cta-inner p { color:rgba(180,200,180,0.7); font-size:1rem; margin-bottom:2.5rem; line-height:1.75; }
+
+    /* ── Responsive ── */
+    @media(max-width:1024px) {
+      .hero-grid { grid-template-columns:1fr; gap:3rem; padding:5rem 0 4rem; }
+      .hero-visual { display:flex; justify-content:center; }
+      .hero-text h1 { font-size:clamp(2.8rem,8vw,4rem); }
+    }
     @media(max-width:900px) {
       .steps-grid,.pricing-cards { grid-template-columns:1fr; }
+      .steps-grid::before { display:none; }
       .proof-inner { grid-template-columns:repeat(2,1fr); }
       .testimonials-grid { grid-template-columns:1fr; }
-      .step-connector { display:none; }
+      .bento-grid { grid-template-columns:1fr 1fr; }
+      .bento-card.bento-wide { grid-column:span 2; }
+      .bento-card.bento-tall { grid-row:span 1; }
       .pricing-card.featured { transform:none; }
     }
     @media(max-width:640px) {
       .proof-inner { grid-template-columns:repeat(2,1fr); gap:1.25rem; }
+      .proof-item strong { font-size:2.5rem; }
+      .bento-grid { grid-template-columns:1fr; }
+      .bento-card.bento-wide { grid-column:span 1; }
+      .hero-card-wrap { max-width:290px; }
+      .container { padding:0 1.25rem; }
+      .menu-toggle { display:flex; }
+      nav {
+        display:none; position:fixed; top:64px; left:0; right:0;
+        background:rgba(248,250,248,0.98); flex-direction:column;
+        padding:0.75rem; border-bottom:1px solid var(--border);
+        backdrop-filter:blur(24px); box-shadow:var(--shadow-lg);
+      }
+      nav.open { display:flex; }
+      nav a { width:100%; padding:0.7rem 1rem; }
+      .hero-text h1 { font-size:2.6rem; letter-spacing:-2px; }
+      .cta-inner h2 { font-size:2rem; }
     }
   </style>
 </head>
@@ -184,16 +293,23 @@
 
   <!-- ===== HERO ===== -->
   <section class="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
     <div class="speed-lines"></div>
     <div class="container">
       <div class="hero-grid">
         <div class="hero-text">
-          <span class="badge">🥗 Nutrición · 💪 Entrenamiento · 📈 Resultados</span>
-          <h1>Tu cuerpo,<br><span class="highlight">tu mejor</span><br>versión</h1>
+          <div class="hero-eyebrow"><span></span>Plataforma de entrenamiento personal</div>
+          <h1>
+            Tu cuerpo,<br>
+            <span class="line-accent">tu mejor</span>
+            versión
+          </h1>
           <p>Conecta con entrenadores certificados que combinan entrenamiento y nutrición personalizada. Resultados reales, metodología profesional.</p>
           <div class="hero-cta">
-            <a href="registro.html" class="btn btn-primary" style="font-size:0.9rem;padding:0.8rem 1.8rem;">Empezar gratis →</a>
-            <a href="cliente/buscar.html" class="btn btn-light" style="font-size:0.9rem;padding:0.8rem 1.8rem;">Ver entrenadores</a>
+            <a href="registro.html" class="btn btn-primary btn-hero">Empezar gratis →</a>
+            <a href="cliente/buscar.html" class="btn btn-light btn-hero">Ver entrenadores</a>
           </div>
           <div class="hero-stats">
             <div class="hero-stat"><strong id="statEntrenadores">…</strong><small>Entrenadores</small></div>
@@ -203,31 +319,38 @@
         </div>
 
         <div class="hero-visual">
-          <div class="profile-card">
-            <div class="profile-card-head">
-              <div class="avatar" style="width:46px;height:46px;font-size:0.9rem;">CR</div>
-              <div>
-                <h3>Carlos Ruiz</h3>
-                <p>Entrenador & Nutricionista · Madrid</p>
+          <div class="hero-card-wrap">
+            <div class="profile-card">
+              <div class="profile-card-head">
+                <div class="avatar" style="width:46px;height:46px;font-size:0.9rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);">CR</div>
+                <div>
+                  <h3 style="color:var(--text-light);font-size:0.9rem;font-weight:700;">Carlos Ruiz</h3>
+                  <p style="color:rgba(180,200,180,0.6);font-size:0.72rem;">Entrenador & Nutricionista · Madrid</p>
+                </div>
+                <span class="profile-verified">👑 Elite</span>
               </div>
-              <span class="profile-verified">✓ Elite</span>
+              <div class="stars" style="margin-bottom:1rem;">★★★★★ <span>4.9 · 128 reseñas</span></div>
+
+              <div style="font-size:0.72rem;color:rgba(180,200,180,0.5);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.4rem;">Progreso mensual</div>
+              <div style="font-size:0.82rem;color:var(--text-light);font-weight:600;margin-bottom:0.35rem;">Pérdida de grasa <span style="color:#4ade80;margin-left:auto;">−4.2 kg</span></div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="--w:78%;"></div></div>
+              <div style="font-size:0.82rem;color:var(--text-light);font-weight:600;margin:0.65rem 0 0.35rem;">Masa muscular <span style="color:#60a5fa;">+1.8 kg</span></div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="--w:55%;background:linear-gradient(90deg,#2563eb,#60a5fa);"></div></div>
+
+              <div class="mini-stat-row">
+                <div class="mini-stat"><strong>12</strong><span>semanas</span></div>
+                <div class="mini-stat"><strong>39€</strong><span>/mes</span></div>
+              </div>
+
+              <a href="registro.html" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:1.25rem;font-size:0.82rem;">Contratar entrenador →</a>
             </div>
-            <div class="stars">★★★★★ <span>4.9 · 128 reseñas</span></div>
-            <div class="profile-tags">
-              <span class="tag">Musculación</span>
-              <span class="tag">Nutrición</span>
-              <span class="tag">Pérdida de grasa</span>
+
+            <div class="floating-chip chip-1">
+              <span class="chip-dot" style="background:#22c55e;"></span>Plan nutricional incluido
             </div>
-            <div class="profile-price-row">
-              <div class="profile-price">39€ <small>/ mes</small></div>
-              <a href="registro.html" class="btn btn-primary" style="padding:0.55rem 1.1rem;font-size:0.78rem;">Contratar</a>
+            <div class="floating-chip chip-2">
+              🔥 Rutina semanal actualizada
             </div>
-          </div>
-          <div class="floating-chip chip-1">
-            <span class="chip-dot" style="background:#22c55e;"></span>Plan nutricional incluido
-          </div>
-          <div class="floating-chip chip-2">
-            🔥 Rutina semanal actualizada
           </div>
         </div>
       </div>
@@ -243,16 +366,15 @@
       <span class="ticker-item"><span class="ticker-dot"></span>Seguimiento de progreso</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Entrenadores certificados</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Pago seguro con PayPal</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>Sin compromiso de permanencia</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Sin permanencia</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Resultados medibles</span>
-      <!-- Duplicate for seamless loop -->
       <span class="ticker-item"><span class="ticker-dot"></span>Rutinas personalizadas</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Planes de nutrición</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Chat en tiempo real</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Seguimiento de progreso</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Entrenadores certificados</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Pago seguro con PayPal</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>Sin compromiso de permanencia</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Sin permanencia</span>
       <span class="ticker-item"><span class="ticker-dot"></span>Resultados medibles</span>
     </div>
   </div>
@@ -261,10 +383,10 @@
   <div class="proof-strip">
     <div class="container">
       <div class="proof-inner">
-        <div class="proof-item"><strong id="ps1">…</strong><span>Entrenadores activos</span></div>
-        <div class="proof-item"><strong id="ps2">…</strong><span>Clientes satisfechos</span></div>
-        <div class="proof-item"><strong>100%</strong><span>Conexión segura</span></div>
-        <div class="proof-item"><strong>100%</strong><span>Pago seguro</span></div>
+        <div class="proof-item reveal"><strong class="count-up" data-target-id="ps1">…</strong><span>Entrenadores activos</span></div>
+        <div class="proof-item reveal reveal-delay-1"><strong class="count-up" data-target-id="ps2">…</strong><span>Clientes satisfechos</span></div>
+        <div class="proof-item reveal reveal-delay-2"><strong>100%</strong><span>Conexión segura SSL</span></div>
+        <div class="proof-item reveal reveal-delay-3"><strong>4.9★</strong><span>Valoración media</span></div>
       </div>
     </div>
   </div>
@@ -272,24 +394,21 @@
   <!-- ===== HOW IT WORKS ===== -->
   <section class="how-section">
     <div class="container">
-      <span class="section-label" style="color:var(--green-l);">Así funciona</span>
-      <h2 class="section-title" style="color:var(--text-light);">De cero a resultados<br><span class="highlight">en 3 pasos</span></h2>
-
+      <span class="section-label reveal">Así funciona</span>
+      <h2 class="section-title reveal">De cero a resultados<br><span class="highlight">en 3 pasos</span></h2>
       <div class="steps-grid">
-        <div class="step">
-          <span class="step-num">01</span>
+        <div class="step reveal">
+          <div class="step-num-wrap">1</div>
           <h3>Crea tu cuenta gratis</h3>
           <p>Regístrate en menos de 2 minutos. Sin tarjeta de crédito. Elige si eres cliente buscando entrenador o entrenador que quiere hacer crecer su negocio.</p>
-          <div class="step-connector"></div>
         </div>
-        <div class="step">
-          <span class="step-num">02</span>
+        <div class="step reveal reveal-delay-1">
+          <div class="step-num-wrap">2</div>
           <h3>Encuentra tu entrenador</h3>
           <p>Filtra por especialidad, precio y valoraciones. Lee perfiles detallados y contrata directamente con un solo clic a través de PayPal seguro.</p>
-          <div class="step-connector"></div>
         </div>
-        <div class="step">
-          <span class="step-num">03</span>
+        <div class="step reveal reveal-delay-2">
+          <div class="step-num-wrap">3</div>
           <h3>Empieza a transformarte</h3>
           <p>Recibe tu rutina y plan nutricional personalizado. Registra tu progreso cada semana y chatea con tu entrenador cuando lo necesites.</p>
         </div>
@@ -297,49 +416,106 @@
     </div>
   </section>
 
-  <!-- ===== FEATURES ===== -->
+  <!-- ===== BENTO FEATURES ===== -->
   <section class="features-section">
     <div class="container">
-      <span class="section-label">Plataforma completa</span>
-      <h2 class="section-title">Todo lo que necesitas<br>en un solo lugar</h2>
-      <p class="section-sub">MomentFit une entrenamiento y nutrición en una sola plataforma. Sin apps extra, sin WhatsApp, sin papel.</p>
+      <span class="section-label reveal">Plataforma completa</span>
+      <h2 class="section-title reveal">Todo lo que necesitas<br>en un solo lugar</h2>
+      <p class="section-sub reveal">Sin apps extra, sin WhatsApp, sin papel. MomentFit une entrenamiento y nutrición en una sola plataforma.</p>
 
-      <div class="features-grid">
-        <div class="feature-card">
-          <span class="feature-icon">📋</span>
+      <div class="bento-grid">
+        <!-- Tall card -->
+        <div class="bento-card bento-tall reveal">
+          <span class="bento-icon">📋</span>
           <h3>Rutinas personalizadas</h3>
-          <p>Tu entrenador diseña un plan semanal adaptado exactamente a tus objetivos, nivel y equipamiento disponible.</p>
-          <span class="feature-num">01</span>
+          <p>Tu entrenador diseña un plan semanal adaptado exactamente a tus objetivos, nivel y equipamiento. Ejercicios con series, reps y descansos.</p>
+          <div style="margin-top:1.5rem; background:var(--bg-2); border-radius:10px; padding:1rem; border:1px solid var(--border);">
+            <div style="font-size:0.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.75rem;">Día 1 — Pecho & Tríceps</div>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;">
+              <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;">
+                <span style="width:22px;height:22px;border-radius:50%;background:rgba(22,163,74,0.15);color:var(--green);font-size:0.65rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>
+                <span style="flex:1;font-weight:600;color:var(--text);">Press banca</span>
+                <span style="color:var(--muted);font-size:0.75rem;">4×8 · 90s</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;">
+                <span style="width:22px;height:22px;border-radius:50%;background:rgba(22,163,74,0.15);color:var(--green);font-size:0.65rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>
+                <span style="flex:1;font-weight:600;color:var(--text);">Fondos en paralelas</span>
+                <span style="color:var(--muted);font-size:0.75rem;">3×12 · 60s</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;">
+                <span style="width:22px;height:22px;border-radius:50%;background:rgba(22,163,74,0.15);color:var(--green);font-size:0.65rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</span>
+                <span style="flex:1;font-weight:600;color:var(--text);">Aperturas con mancuernas</span>
+                <span style="color:var(--muted);font-size:0.75rem;">3×15 · 60s</span>
+              </div>
+            </div>
+          </div>
+          <span class="bento-bg-num">01</span>
         </div>
-        <div class="feature-card">
-          <span class="feature-icon">🥗</span>
-          <h3>Plan nutricional</h3>
-          <p>Dietas personalizadas con calorías, macros y recomendaciones semanales. Nutrición real, no dietas genéricas.</p>
-          <span class="feature-num">02</span>
-        </div>
-        <div class="feature-card">
-          <span class="feature-icon">💬</span>
+
+        <!-- Wide card: chat -->
+        <div class="bento-card bento-wide reveal reveal-delay-1">
+          <span class="bento-icon">💬</span>
           <h3>Chat en tiempo real</h3>
-          <p>Comunicación directa con tu entrenador sin intermediarios. Resuelve dudas al instante con mensajería WebSocket.</p>
-          <span class="feature-num">03</span>
+          <p>Comunicación directa con tu entrenador sin intermediarios. WebSocket instantáneo.</p>
+          <div class="bento-chat-preview">
+            <div class="chat-bubble trainer">¡Hoy hiciste un PR en sentadilla! 🎉 Subimos 5kg la próxima semana.</div>
+            <div class="chat-bubble client">¡Gracias! Me siento con mucha más energía que el primer mes.</div>
+            <div class="chat-bubble trainer">Es el trabajo constante. Revisa el plan nutricional de mañana 💪</div>
+          </div>
+          <span class="bento-bg-num">03</span>
         </div>
-        <div class="feature-card">
-          <span class="feature-icon">📊</span>
+
+        <!-- Nutrition card -->
+        <div class="bento-card reveal reveal-delay-2">
+          <span class="bento-icon">🥗</span>
+          <h3>Plan nutricional</h3>
+          <p>Dietas con calorías, macros y comidas semana a semana.</p>
+          <div class="bento-macro-row">
+            <div class="macro-pill"><strong style="color:#22c55e;">2400</strong><span>kcal</span></div>
+            <div class="macro-pill"><strong style="color:#60a5fa;">180g</strong><span>proteína</span></div>
+            <div class="macro-pill"><strong style="color:#f59e0b;">250g</strong><span>carbs</span></div>
+            <div class="macro-pill"><strong style="color:#a78bfa;">70g</strong><span>grasa</span></div>
+          </div>
+          <span class="bento-bg-num">02</span>
+        </div>
+
+        <!-- Progress card -->
+        <div class="bento-card reveal reveal-delay-1">
+          <span class="bento-icon">📊</span>
           <h3>Seguimiento de progreso</h3>
-          <p>Registra peso, medidas y check-ins semanales. Tu entrenador ajusta el plan en tiempo real según tus avances.</p>
-          <span class="feature-num">04</span>
+          <p>Check-ins semanales de peso y medidas. Tu entrenador ajusta el plan en tiempo real.</p>
+          <div style="margin-top:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;">
+              <span style="color:var(--muted);">Semana 1</span>
+              <span style="font-weight:700;color:var(--text);">82.3 kg</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;">
+              <span style="color:var(--muted);">Semana 4</span>
+              <span style="font-weight:700;color:var(--text);">80.1 kg</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;">
+              <span style="color:var(--muted);">Semana 8</span>
+              <span style="font-weight:700;color:#22c55e;">78.1 kg ↓</span>
+            </div>
+          </div>
+          <span class="bento-bg-num">04</span>
         </div>
-        <div class="feature-card">
-          <span class="feature-icon">📅</span>
-          <h3>Agenda de sesiones</h3>
-          <p>Calendario semanal para organizar y confirmar sesiones. Notificaciones automáticas para que nunca faltes.</p>
-          <span class="feature-num">05</span>
-        </div>
-        <div class="feature-card">
-          <span class="feature-icon">🏋️</span>
-          <h3>Biblioteca de ejercicios</h3>
-          <p>Catálogo completo de ejercicios con instrucciones, grupos musculares y nivel. Tu entrenador puede añadir los suyos.</p>
-          <span class="feature-num">06</span>
+
+        <!-- Wide bottom: agenda + library -->
+        <div class="bento-card bento-wide reveal reveal-delay-2">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+            <div>
+              <span class="bento-icon">📅</span>
+              <h3>Agenda de sesiones</h3>
+              <p>Calendario semanal para organizar y confirmar sesiones con tu entrenador.</p>
+            </div>
+            <div>
+              <span class="bento-icon">🏋️</span>
+              <h3>Biblioteca de ejercicios</h3>
+              <p>Catálogo completo con instrucciones, grupos musculares y nivel de dificultad.</p>
+            </div>
+          </div>
+          <span class="bento-bg-num">05</span>
         </div>
       </div>
     </div>
@@ -348,17 +524,15 @@
   <!-- ===== TRAINERS ===== -->
   <section class="trainers-section">
     <div class="container">
-      <span class="section-label">Entrenadores destacados</span>
-      <h2 class="section-title">Profesionales<br>verificados</h2>
-      <p class="section-sub">Cada entrenador está certificado y verificado. Filtra por especialidad, precio y ubicación para encontrar el tuyo.</p>
-
+      <span class="section-label reveal">Entrenadores destacados</span>
+      <h2 class="section-title reveal">Profesionales<br>verificados</h2>
+      <p class="section-sub reveal">Cada entrenador está certificado y verificado. Filtra por especialidad, precio y ubicación.</p>
       <div class="trainers-grid" id="trainersGrid">
-        <div class="skeleton" style="height:180px;border-radius:14px;"></div>
-        <div class="skeleton" style="height:180px;border-radius:14px;"></div>
-        <div class="skeleton" style="height:180px;border-radius:14px;"></div>
+        <div class="skeleton" style="height:200px;border-radius:16px;"></div>
+        <div class="skeleton" style="height:200px;border-radius:16px;"></div>
+        <div class="skeleton" style="height:200px;border-radius:16px;"></div>
       </div>
-
-      <div style="text-align:center;margin-top:2.5rem;">
+      <div style="text-align:center;margin-top:2.5rem;" class="reveal">
         <a href="cliente/buscar.html" class="btn btn-outline" style="font-size:0.87rem;">Ver todos los entrenadores →</a>
       </div>
     </div>
@@ -366,38 +540,37 @@
 
   <!-- ===== TESTIMONIALS ===== -->
   <section class="testimonials-section">
-    <div class="container">
-      <span class="section-label">Lo que dicen</span>
-      <h2 class="section-title">Resultados reales,<br>personas reales</h2>
-
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
+    <div class="container" style="position:relative;z-index:1;">
+      <span class="section-label reveal" style="color:var(--green-l);">Lo que dicen</span>
+      <h2 class="section-title reveal" style="color:var(--text-light);">Resultados reales,<br><span class="highlight">personas reales</span></h2>
+      <div class="testimonials-grid" style="margin-top:3.5rem;">
+        <div class="testimonial-card reveal">
           <div class="t-stars">★★★★★</div>
           <p class="t-text">"En 3 meses perdí 12 kg siguiendo el plan de nutrición y las rutinas de mi entrenador. Nunca pensé que sería tan fácil tener todo en una app."</p>
           <div class="t-author">
-            <div class="avatar" style="width:36px;height:36px;font-size:0.72rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);">ML</div>
+            <div class="avatar" style="width:38px;height:38px;font-size:0.72rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);">ML</div>
             <div>
               <div class="t-author-name">María L.</div>
               <div class="t-author-role">Cliente · Pérdida de peso</div>
             </div>
           </div>
         </div>
-        <div class="testimonial-card">
+        <div class="testimonial-card reveal reveal-delay-1">
           <div class="t-stars">★★★★★</div>
           <p class="t-text">"Como entrenador, MomentFit me ha permitido gestionar 15 clientes de forma profesional. Las estadísticas ELITE son un antes y un después."</p>
           <div class="t-author">
-            <div class="avatar" style="width:36px;height:36px;font-size:0.72rem;">AR</div>
+            <div class="avatar" style="width:38px;height:38px;font-size:0.72rem;">AR</div>
             <div>
               <div class="t-author-name">Alejandro R.</div>
               <div class="t-author-role">Entrenador · Plan ELITE</div>
             </div>
           </div>
         </div>
-        <div class="testimonial-card">
+        <div class="testimonial-card reveal reveal-delay-2">
           <div class="t-stars">★★★★★</div>
           <p class="t-text">"El chat en tiempo real con mi entrenador marca la diferencia. Le mando fotos de mis comidas y me corrige al momento. Es como tenerlo al lado."</p>
           <div class="t-author">
-            <div class="avatar" style="width:36px;height:36px;font-size:0.72rem;background:linear-gradient(135deg,#d97706,#f59e0b);">JG</div>
+            <div class="avatar" style="width:38px;height:38px;font-size:0.72rem;background:linear-gradient(135deg,#d97706,#f59e0b);">JG</div>
             <div>
               <div class="t-author-name">Javier G.</div>
               <div class="t-author-role">Cliente · Ganancia muscular</div>
@@ -411,51 +584,48 @@
   <!-- ===== PRICING ===== -->
   <section class="pricing-section">
     <div class="container">
-      <div style="position:relative;z-index:1;">
-        <span class="section-label" style="color:var(--green-l);">Planes de entrenador</span>
-        <h2 class="section-title" style="color:var(--text-light);">Precios claros,<br><span class="highlight">sin sorpresas</span></h2>
-        <p class="section-sub" style="color:var(--muted-light);">Empieza gratis como cliente. Si eres entrenador, elige el plan que mejor se adapta a tu negocio.</p>
-
-        <div class="pricing-cards">
-          <div class="pricing-card">
-            <div class="pricing-plan" style="color:#4ade80;">Free</div>
-            <div class="pricing-price">0€<span>/mes</span></div>
-            <div class="pricing-sub">Para empezar</div>
-            <ul class="pricing-features">
-              <li>Hasta 3 clientes</li>
-              <li>Rutinas ilimitadas</li>
-              <li>Chat en tiempo real</li>
-              <li>Seguimiento de progreso</li>
-            </ul>
-            <a href="registro.html" class="btn btn-outline" style="width:100%;justify-content:center;color:#eef7f1;border-color:rgba(255,255,255,0.15);">Empezar gratis</a>
-          </div>
-          <div class="pricing-card featured">
-            <div class="featured-badge">Más popular</div>
-            <div class="pricing-plan" style="color:#60a5fa;">Pro</div>
-            <div class="pricing-price">10€<span>/mes</span></div>
-            <div class="pricing-sub">Para entrenadores en crecimiento</div>
-            <ul class="pricing-features">
-              <li>Clientes ilimitados</li>
-              <li>Planes de nutrición</li>
-              <li>Posición destacada en búsqueda</li>
-              <li>Todo lo del plan Free</li>
-            </ul>
-            <a href="registro.html" class="btn btn-blue" style="width:100%;justify-content:center;">Empezar con Pro</a>
-          </div>
-          <div class="pricing-card">
-            <div class="pricing-plan" style="color:#a78bfa;">Elite</div>
-            <div class="pricing-price">25€<span>/mes</span></div>
-            <div class="pricing-sub">Para profesionales top</div>
-            <ul class="pricing-features">
-              <li>Posición #1 en búsquedas</li>
-              <li>Estadísticas avanzadas</li>
-              <li>Fichas completas de clientes</li>
-              <li>Notas privadas por cliente</li>
-              <li>Exportar PDF de progreso</li>
-              <li>Todo lo del plan Pro</li>
-            </ul>
-            <a href="registro.html" class="btn" style="width:100%;justify-content:center;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;box-shadow:0 4px 20px rgba(124,58,237,0.35);">Empezar con Elite</a>
-          </div>
+      <span class="section-label reveal">Planes</span>
+      <h2 class="section-title reveal">Precios claros,<br><span class="highlight">sin sorpresas</span></h2>
+      <p class="section-sub reveal">Empieza gratis como cliente. Si eres entrenador, elige el plan que mejor se adapta a tu negocio.</p>
+      <div class="pricing-cards">
+        <div class="pricing-card reveal">
+          <div class="pricing-plan" style="color:#4ade80;">Free</div>
+          <div class="pricing-price">0€<span>/mes</span></div>
+          <div class="pricing-sub">Para empezar sin riesgo</div>
+          <ul class="pricing-features">
+            <li>Hasta 3 clientes</li>
+            <li>Rutinas ilimitadas</li>
+            <li>Chat en tiempo real</li>
+            <li>Seguimiento de progreso</li>
+          </ul>
+          <a href="registro.html" class="btn btn-outline" style="width:100%;justify-content:center;">Empezar gratis</a>
+        </div>
+        <div class="pricing-card featured reveal reveal-delay-1">
+          <div class="featured-badge">⭐ Más popular</div>
+          <div class="pricing-plan" style="color:#60a5fa;">Pro</div>
+          <div class="pricing-price">10€<span>/mes</span></div>
+          <div class="pricing-sub">Para entrenadores en crecimiento</div>
+          <ul class="pricing-features">
+            <li>Clientes ilimitados</li>
+            <li>Planes de nutrición</li>
+            <li>Posición destacada en búsqueda</li>
+            <li>Todo lo del plan Free</li>
+          </ul>
+          <a href="registro.html" class="btn btn-blue" style="width:100%;justify-content:center;">Empezar con Pro</a>
+        </div>
+        <div class="pricing-card reveal reveal-delay-2">
+          <div class="pricing-plan" style="color:#a78bfa;">Elite</div>
+          <div class="pricing-price">25€<span>/mes</span></div>
+          <div class="pricing-sub">Para profesionales top</div>
+          <ul class="pricing-features">
+            <li>Posición #1 en búsquedas</li>
+            <li>Estadísticas avanzadas</li>
+            <li>Fichas completas de clientes</li>
+            <li>Notas privadas por cliente</li>
+            <li>Exportar PDF de progreso</li>
+            <li>Todo lo del plan Pro</li>
+          </ul>
+          <a href="registro.html" class="btn" style="width:100%;justify-content:center;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;box-shadow:0 4px 20px rgba(124,58,237,0.35);">Empezar con Elite</a>
         </div>
       </div>
     </div>
@@ -463,14 +633,15 @@
 
   <!-- ===== CTA FINAL ===== -->
   <section class="cta-section">
+    <div class="orb orb-1" style="opacity:0.1;"></div>
     <div class="container">
-      <div class="cta-inner">
-        <span class="badge badge-blue">🚀 Empieza hoy</span>
+      <div class="cta-inner reveal">
+        <span class="badge badge-blue" style="margin-bottom:2rem;">🚀 Empieza hoy, gratis</span>
         <h2 class="section-title" style="color:var(--text-light);">¿Listo para<br><span class="highlight">transformarte?</span></h2>
         <p>Únete a los entrenadores y clientes que ya usan MomentFit para conseguir resultados reales.</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-          <a href="registro.html" class="btn btn-primary" style="font-size:0.95rem;padding:0.85rem 2.2rem;">Crear cuenta gratis →</a>
-          <a href="cliente/buscar.html" class="btn btn-light" style="font-size:0.95rem;padding:0.85rem 2.2rem;">Ver entrenadores</a>
+          <a href="registro.html" class="btn btn-primary btn-hero">Crear cuenta gratis →</a>
+          <a href="cliente/buscar.html" class="btn btn-light btn-hero">Ver entrenadores</a>
         </div>
       </div>
     </div>
@@ -482,29 +653,54 @@
 
 <script src="js/config.js"></script>
 <script>
-  // Stats
+  // ── Scroll reveal ──
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── Animated counter ──
+  function animateCount(el, target) {
+    let start = 0;
+    const duration = 1600;
+    const step = timestamp => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(ease * target) + (target >= 100 ? '+' : '');
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  // ── Stats ──
   fetch(`${API}/api/entrenadores/stats`)
     .then(r => r.json())
     .then(d => {
-      ['statEntrenadores','ps1'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = d.entrenadores || '—';
-      });
-      ['statClientes','ps2'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = d.clientesActivos || '—';
-      });
-      const sv = document.getElementById('statValoracion');
-      if (sv) sv.textContent = (d.valoracionMedia || '—') + '★';
+      const entEl = document.getElementById('statEntrenadores');
+      const cliEl = document.getElementById('statClientes');
+      if (entEl) { entEl.textContent = d.entrenadores || '—'; }
+      if (cliEl) { cliEl.textContent = d.clientesActivos || '—'; }
+
+      const ps1 = document.getElementById('ps1');
+      const ps2 = document.getElementById('ps2');
+      if (ps1 && d.entrenadores) {
+        const obs2 = new IntersectionObserver(entries => {
+          if (entries[0].isIntersecting) { animateCount(ps1, d.entrenadores); animateCount(ps2, d.clientesActivos || 0); obs2.disconnect(); }
+        }, { threshold: 0.5 });
+        obs2.observe(ps1);
+      } else {
+        if (ps1) ps1.textContent = d.entrenadores || '—';
+        if (ps2) ps2.textContent = d.clientesActivos || '—';
+      }
     })
     .catch(() => {
-      ['statEntrenadores','statClientes','statValoracion','ps1','ps2'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = '—';
+      ['statEntrenadores','statClientes','ps1','ps2'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.textContent = '—';
       });
     });
 
-  // Trainers
+  // ── Trainers ──
   fetch(`${API}/api/entrenadores`)
     .then(r => r.json())
     .then(lista => {
@@ -524,11 +720,11 @@
           ? '<span style="font-size:0.62rem;background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.2);color:#60a5fa;border-radius:99px;padding:0.1rem 0.5rem;font-weight:700;">⭐ Pro</span>'
           : '';
         return `
-          <div class="trainer-card">
+          <div class="trainer-card reveal">
             <div class="trainer-head">
               ${e.fotoUrl
-                ? `<div class="avatar" style="width:44px;height:44px;overflow:hidden;"><img src="${e.fotoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`
-                : `<div class="avatar" style="width:44px;height:44px;font-size:0.85rem;">${iniciales}</div>`}
+                ? `<div class="avatar" style="width:46px;height:46px;overflow:hidden;"><img src="${e.fotoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`
+                : `<div class="avatar" style="width:46px;height:46px;font-size:0.88rem;">${iniciales}</div>`}
               <div>
                 <div style="display:flex;align-items:center;gap:0.4rem;">
                   <h3>${e.nombre} ${e.apellido||''}</h3>
@@ -537,14 +733,15 @@
                 <p>${e.ciudad || 'España'}</p>
               </div>
             </div>
-            <div style="padding-left:0.75rem;font-size:0.8rem;color:var(--gold-l);margin-bottom:0.65rem;">${stars} <span style="color:var(--muted);font-size:0.72rem;">(${e.totalResenas||0})</span></div>
+            <div style="padding-left:0.75rem;font-size:0.8rem;color:#f59e0b;margin-bottom:0.65rem;">${stars} <span style="color:var(--muted);font-size:0.72rem;">(${e.totalResenas||0})</span></div>
             <div class="trainer-tags">${tags || '<span class="tag">Entrenamiento</span>'}</div>
             <div class="trainer-bottom">
               <div class="trainer-price">${e.precioMensual||'—'}€ <small>/mes</small></div>
-              <a href="cliente/perfil.html?id=${e.id}" class="btn btn-primary" style="padding:0.45rem 1rem;font-size:0.76rem;">Ver perfil</a>
+              <a href="cliente/perfil.html?id=${e.id}" class="btn btn-primary" style="padding:0.5rem 1.1rem;font-size:0.78rem;">Ver perfil</a>
             </div>
           </div>`;
       }).join('');
+      document.querySelectorAll('.trainer-card.reveal').forEach(el => observer.observe(el));
     })
     .catch(() => {
       document.getElementById('trainersGrid').innerHTML = '<p style="color:var(--muted);padding:2rem;grid-column:1/-1;">No se pudo cargar la lista.</p>';
