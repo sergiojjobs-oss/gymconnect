@@ -1,6 +1,6 @@
-import { neon } from '@neondatabase/serverless';
+const { neon } = require('@neondatabase/serverless');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   try {
     const sql = neon(process.env.DATABASE_URL);
@@ -12,11 +12,11 @@ export default async function handler(req, res) {
     `;
     const r = rows[0];
     res.json({
-      entrenadores:   Number(r.entrenadores),
+      entrenadores:    Number(r.entrenadores),
       clientesActivos: Number(r.clientes),
       valoracionMedia: Number(r.rating_medio) || 5.0
     });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
-}
+};
