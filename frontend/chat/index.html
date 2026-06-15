@@ -451,6 +451,11 @@ async function abrirChat(contacto) {
     </div>
   `;
 
+  // Marcar mensajes como leídos
+  fetch(`${API}/api/chat/${contacto.id}/leer`, {
+    method: 'POST', headers: { Authorization: 'Bearer ' + token }
+  }).catch(() => {});
+
   // Cargar historial
   try {
     const res = await fetch(`${API}/api/chat/${contacto.id}`, {

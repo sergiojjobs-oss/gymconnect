@@ -36,6 +36,12 @@ public class ChatService {
         return mensajeRepo.countByDestinatarioIdAndLeidoFalse(usuarioId);
     }
 
+    public void marcarLeidos(Long destinatarioId, Long remitenteId) {
+        List<Mensaje> pendientes = mensajeRepo.findByRemitenteIdAndDestinatarioIdAndLeidoFalse(remitenteId, destinatarioId);
+        pendientes.forEach(m -> m.setLeido(true));
+        mensajeRepo.saveAll(pendientes);
+    }
+
     public MensajeDto toDto(Mensaje m) {
         MensajeDto dto = new MensajeDto();
         dto.setId(m.getId());

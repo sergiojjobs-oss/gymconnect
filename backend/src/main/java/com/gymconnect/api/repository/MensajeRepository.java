@@ -18,6 +18,8 @@ public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
 
     long countByDestinatarioIdAndLeidoFalse(Long destinatarioId);
 
+    List<Mensaje> findByRemitenteIdAndDestinatarioIdAndLeidoFalse(Long remitenteId, Long destinatarioId);
+
     @Query("""
         SELECT DISTINCT CASE
             WHEN m.remitenteId = :userId THEN m.destinatarioId

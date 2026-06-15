@@ -153,4 +153,17 @@ public class ChatController {
 
         return ResponseEntity.ok(Map.of("total", chatService.noLeidos(yo.getId())));
     }
+
+    // REST: marcar mensajes de una conversación como leídos
+    @PostMapping("/api/chat/{otroId}/leer")
+    public ResponseEntity<Void> marcarLeidos(
+            @PathVariable Long otroId,
+            @AuthenticationPrincipal UserDetails ud) {
+
+        Usuario yo = usuarioRepo.findByEmail(ud.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        chatService.marcarLeidos(yo.getId(), otroId);
+        return ResponseEntity.ok().build();
+    }
 }
