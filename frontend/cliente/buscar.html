@@ -683,25 +683,40 @@
       filtrar();
     }
 
+    let _retryTimer = null;
+    let _retryCount = 0;
+
     async function cargarEntrenadores() {
+      clearTimeout(_retryTimer);
       try {
-        const res = await fetch(`${API}/api/entrenadores`);
+        const ctrl = new AbortController();
+        const tid = setTimeout(() => ctrl.abort(), 60000);
+        const res = await fetch(`${API}/api/entrenadores`, { signal: ctrl.signal });
+        clearTimeout(tid);
         if (!res.ok) throw new Error();
+        _retryCount = 0;
         todosEntrenadores = await res.json();
         filtrar();
-        // Stats
         fetch(`${API}/api/entrenadores/stats`).then(r=>r.json()).then(d => {
           document.getElementById('statEnt').textContent = d.entrenadores||'—';
           document.getElementById('statCli').textContent = d.clientesActivos||'—';
         }).catch(()=>{});
       } catch {
+        _retryCount++;
+        const secsLeft = Math.min(15 * _retryCount, 30);
         document.getElementById('grid').innerHTML =
           `<div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--muted);">
             <div style="font-size:2rem;margin-bottom:1rem;opacity:0.4;">⚡</div>
             <p style="font-weight:600;margin-bottom:0.5rem;">El servidor está arrancando…</p>
-            <p style="font-size:0.82rem;">Puede tardar 30 segundos la primera vez. <a href="javascript:location.reload()" style="color:var(--green);font-weight:600;">Reintentar</a></p>
+            <p style="font-size:0.82rem;">Puede tardar 30 segundos la primera vez.</p>
+            <button onclick="cargarEntrenadores()" style="margin-top:1rem;background:var(--green);color:#fff;border:none;border-radius:8px;padding:0.6rem 1.5rem;font-weight:700;font-size:0.85rem;cursor:pointer;">Reintentar ahora</button>
+            <p id="autoRetryMsg" style="font-size:0.75rem;color:var(--muted);margin-top:0.5rem;">Reintentando automáticamente en <span id="countdown">${secsLeft}</span>s…</p>
           </div>`;
         document.getElementById('countLabel').textContent = '';
+        let secs = secsLeft;
+        const cd = document.getElementById('countdown');
+        const interval = setInterval(() => { secs--; if (cd) cd.textContent = secs; }, 1000);
+        _retryTimer = setTimeout(() => { clearInterval(interval); cargarEntrenadores(); }, secsLeft * 1000);
       }
     }
 
