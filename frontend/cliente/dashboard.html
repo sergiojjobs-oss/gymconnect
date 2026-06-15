@@ -136,14 +136,16 @@
         <p class="sec-label">Mi entrenador</p>
         <div id="entrenadorBlock"></div>
       </div>
-      <div>
+      <div id="rutinaSection">
         <p class="sec-label">Rutina actual</p>
         <div id="rutinaBlock"></div>
       </div>
     </div>
 
+    <div id="nutricionSection">
     <p class="sec-label">Plan nutricional</p>
     <div id="nutricionBlock"></div>
+    </div>
 
     <p class="sec-label" style="margin-top:1.25rem">Historial de progreso</p>
     <div id="progresoBlock"></div>
@@ -177,6 +179,10 @@ async function cargarEntrenador(){
     const res=await fetch(`${API}/api/entrenadores/mi-entrenador`,{headers:h()});
     if(res.status===204||!res.ok){
       blk.innerHTML=`<div class="sin-entrenador"><span style="font-size:2rem">🏋️</span><p>Aun no tienes entrenador.<br>Busca uno y empieza hoy!</p><a href="buscar.html" class="btn btn-primary" style="margin-top:1rem;font-size:.85rem">Buscar entrenador</a></div>`;
+      // Ocultar secciones que dependen del entrenador
+      ['rutinaSection','nutricionSection'].forEach(id=>{
+        const el=document.getElementById(id); if(el) el.style.display='none';
+      });
       return;
     }
     const ent=await res.json();
