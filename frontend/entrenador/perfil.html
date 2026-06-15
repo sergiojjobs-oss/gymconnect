@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -15,202 +15,178 @@
   <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
 </head>
 <body>
-
   <style>
-    .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
-    .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
-    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--muted-light); padding:0 0.75rem; margin:1rem 0 0.4rem; }
-    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--muted-light); transition:background var(--t),color var(--t); }
-    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text-light); }
-    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--green-l); font-weight:700; }
-    .main-content { padding:2.5rem; overflow-y:auto; }
-    @media (max-width:768px) {
-      .dashboard-layout { grid-template-columns:1fr; }
-      .sidebar { display:none; }
-      .main-content { padding:1rem 0.85rem 5.5rem; }
-      .stats-grid-3 { grid-template-columns:1fr 1fr !important; }
-      .header-perfil { flex-direction:column; align-items:flex-start !important; }
+    .dashboard-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 70px)}
+    .sidebar{background:var(--dark-hero);border-right:1px solid rgba(255,255,255,0.06);padding:2rem 1rem;display:flex;flex-direction:column;gap:.25rem}
+    .sidebar-label{font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:var(--muted-light);padding:0 .75rem;margin:1rem 0 .4rem}
+    .sidebar a{display:flex;align-items:center;gap:.6rem;padding:.65rem .75rem;border-radius:8px;font-size:.85rem;font-weight:600;color:var(--muted-light);transition:background var(--t),color var(--t)}
+    .sidebar a:hover{background:rgba(255,255,255,.06);color:var(--text-light)}
+    .sidebar a.active{background:rgba(22,163,74,.15);color:var(--green-l);font-weight:700}
+    .main-content{padding:2.5rem;overflow-y:auto;background:#0d1f15}
+    .perfil-hero{background:linear-gradient(135deg,rgba(22,163,74,.18) 0%,rgba(13,31,21,.95) 65%);border:1px solid rgba(74,222,128,.2);border-radius:18px;padding:2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.75rem;position:relative;overflow:hidden}
+    .perfil-hero::before{content:"";position:absolute;top:-40px;right:-40px;width:220px;height:220px;background:radial-gradient(circle,rgba(74,222,128,.1),transparent 70%);border-radius:50%;pointer-events:none}
+    .perfil-hero-avatar{width:88px;height:88px;border-radius:50%;border:3px solid rgba(74,222,128,.45);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#fff;flex-shrink:0;box-shadow:0 0 0 6px rgba(74,222,128,.08),0 8px 24px rgba(0,0,0,.4);overflow:hidden}
+    .perfil-hero-avatar img{width:100%;height:100%;object-fit:cover}
+    .perfil-hero-info{flex:1;min-width:0}
+    .perfil-hero-name{font-size:1.65rem;font-weight:900;color:#eef7f1;letter-spacing:-.5px;line-height:1.1}
+    .perfil-hero-sub{color:rgba(160,210,170,.7);font-size:.88rem;margin-top:.35rem}
+    .perfil-hero-rating{margin-top:.6rem;display:flex;align-items:center;gap:.6rem}
+    .perfil-hero-stars{color:#fbbf24;font-size:1.05rem;letter-spacing:1px}
+    .perfil-hero-rating-text{color:rgba(160,210,170,.55);font-size:.8rem}
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+    .stat-pill{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1.35rem 1rem;text-align:center;position:relative;overflow:hidden;transition:border-color .2s,transform .15s}
+    .stat-pill:hover{border-color:rgba(255,255,255,.18);transform:translateY(-1px)}
+    .stat-pill::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+    .stat-pill.green::before{background:linear-gradient(90deg,#16a34a,#4ade80)}
+    .stat-pill.amber::before{background:linear-gradient(90deg,#d97706,#fbbf24)}
+    .stat-pill.blue::before{background:linear-gradient(90deg,#2563eb,#60a5fa)}
+    .stat-pill-icon{font-size:1.3rem;margin-bottom:.4rem;display:block}
+    .stat-pill-val{font-size:2rem;font-weight:900;line-height:1;margin-bottom:.3rem;letter-spacing:-1px}
+    .stat-pill.green .stat-pill-val{color:#4ade80}
+    .stat-pill.amber .stat-pill-val{color:#fbbf24}
+    .stat-pill.blue .stat-pill-val{color:#60a5fa}
+    .stat-pill-label{font-size:.73rem;color:rgba(160,210,170,.55);font-weight:600}
+    .section-card{background:rgba(255,255,255,.036);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:1.5rem;margin-bottom:1rem}
+    .section-card h3{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1.8px;color:#4ade80;margin-bottom:1rem;display:flex;align-items:center;gap:.6rem}
+    .section-card h3::after{content:"";flex:1;height:1px;background:rgba(74,222,128,.15)}
+    .section-card p{color:rgba(200,225,210,.82);font-size:.9rem;line-height:1.8}
+    .tag{display:inline-flex;background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.22);color:#4ade80;padding:.28rem .8rem;border-radius:99px;font-size:.78rem;font-weight:700}
+    .service-item{display:flex;gap:.75rem;align-items:flex-start;font-size:.88rem;color:rgba(200,225,210,.8);padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
+    .service-item:last-child{border-bottom:none}
+    .service-check{color:#4ade80;font-weight:900;font-size:.9rem;margin-top:1px;flex-shrink:0}
+    @media(max-width:768px){
+      .dashboard-layout{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .main-content{padding:1rem .85rem 5.5rem}
+      .stats-row{grid-template-columns:1fr 1fr}
+      .stats-row .stat-pill:last-child{grid-column:span 2}
+      .perfil-hero{flex-direction:column;align-items:flex-start;gap:1.1rem;padding:1.5rem}
+      .perfil-hero-name{font-size:1.35rem}
     }
   </style>
-
   <header>
     <div class="container">
       <a href="../index.html" class="logo">Moment<span>Fit</span></a>
-      <nav>
-        <button class="btn btn-outline" style="font-size:0.82rem;" onclick="logout()">Cerrar sesión</button>
-      </nav>
+      <nav><button class="btn btn-outline" style="font-size:.82rem" onclick="logout()">Cerrar sesion</button></nav>
     </div>
   </header>
-
   <div class="dashboard-layout">
     <aside class="sidebar">
       <span class="sidebar-label">Panel</span>
       <a href="perfil.html" class="active">👤 Mi perfil</a>
       <a href="rutinas.html">📋 Rutinas</a>
-      <a href="nutricion.html">🥗 Nutrición</a>
+      <a href="nutricion.html">🥗 Nutricion</a>
       <a href="../chat/index.html">💬 Mensajes</a>
       <a href="clientes.html">👥 Clientes</a>
-    <a href="ficha-cliente.html">📋 Fichas de clientes</a>\n    <a href="agenda.html">📅 Agenda</a>\n    <a href="ejercicios.html">🏋️ Ejercicios</a>
+      <a href="ficha-cliente.html">📋 Fichas de clientes</a>
+      <a href="agenda.html">📅 Agenda</a>
+      <a href="ejercicios.html">🏋&#xfe0f; Ejercicios</a>
       <a href="resultados.html">📈 Progreso clientes</a>
-    <a href="estadisticas.html">📊 Estadísticas</a>
+      <a href="estadisticas.html">📊 Estadisticas</a>
       <span class="sidebar-label">Cuenta</span>
-      <a href="planes.html">💳 Mi suscripción</a>
-      <a href="ajustes.html">⚙️ Ajustes</a>
+      <a href="planes.html">💳 Mi suscripcion</a>
+      <a href="ajustes.html">&#x2699;&#xfe0f; Ajustes</a>
       <a href="../login.html" onclick="localStorage.clear()">🚪 Salir</a>
     </aside>
-
-  <main class="main-content">
-
-    <div id="cargando" style="text-align:center;padding:4rem;color:var(--muted);">Cargando perfil…</div>
-
-    <div id="contenido" style="display:none;">
-      <!-- Cabecera del perfil -->
-      <div class="header-perfil" style="display:flex; align-items:center; gap:1.5rem; margin-bottom:2.5rem; flex-wrap:wrap;">
-        <div id="avatar" style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:#fff;flex-shrink:0;"></div>
-        <div>
-          <h1 id="nombre" style="font-size:1.6rem; font-weight:800;"></h1>
-          <p id="ciudad" style="color:var(--muted); margin-top:0.2rem;"></p>
-          <div id="rating" style="margin-top:0.5rem;color:#d97706;"></div>
+    <main class="main-content">
+      <div id="cargando" style="text-align:center;padding:4rem;color:rgba(160,210,170,.5)">Cargando perfil...</div>
+      <div id="contenido" style="display:none">
+        <div class="perfil-hero">
+          <div class="perfil-hero-avatar" id="avatar"></div>
+          <div class="perfil-hero-info">
+            <div class="perfil-hero-name" id="nombre"></div>
+            <div class="perfil-hero-sub" id="ciudad"></div>
+            <div class="perfil-hero-rating">
+              <span class="perfil-hero-stars" id="starsDisplay"></span>
+              <span class="perfil-hero-rating-text" id="ratingText"></span>
+            </div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-pill green">
+            <span class="stat-pill-icon">💶</span>
+            <div class="stat-pill-val" id="precio"></div>
+            <div class="stat-pill-label">Precio mensual</div>
+          </div>
+          <div class="stat-pill amber">
+            <span class="stat-pill-icon">&#x2b50;</span>
+            <div class="stat-pill-val" id="ratingNum"></div>
+            <div class="stat-pill-label">Valoracion</div>
+          </div>
+          <div class="stat-pill blue">
+            <span class="stat-pill-icon">🏅</span>
+            <div class="stat-pill-val" id="experiencia"></div>
+            <div class="stat-pill-label">Experiencia</div>
+          </div>
+        </div>
+        <div class="section-card">
+          <h3>Sobre mi</h3>
+          <p id="bio"></p>
+          <div id="tags" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.1rem"></div>
+        </div>
+        <div class="section-card">
+          <h3>Servicios incluidos</h3>
+          <ul id="servicios" style="list-style:none"></ul>
+        </div>
+        <div class="section-card" id="certCard" style="display:none">
+          <h3>Certificaciones</h3>
+          <div id="certificaciones" style="display:flex;gap:.5rem;flex-wrap:wrap"></div>
+        </div>
+        <div class="section-card" id="idiomasCard" style="display:none">
+          <h3>Idiomas</h3>
+          <div id="idiomas" style="display:flex;gap:.5rem;flex-wrap:wrap"></div>
+        </div>
+        <div class="section-card" id="metCard" style="display:none">
+          <h3>Mi metodologia</h3>
+          <p id="metodologia"></p>
+        </div>
+        <div class="section-card" id="redesCard" style="display:none">
+          <h3>Redes sociales</h3>
+          <div id="redes" style="display:flex;gap:1rem;flex-wrap:wrap"></div>
         </div>
       </div>
-
-      <!-- Grid de stats -->
-      <div class="stats-grid-3" style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2.5rem;">
-        <div class="card" style="text-align:center;">
-          <div id="precio" style="font-size:1.8rem; font-weight:800; color:var(--green);"></div>
-          <div style="font-size:0.85rem; color:var(--muted);">Precio mensual</div>
-        </div>
-        <div class="card" style="text-align:center;">
-          <div id="ratingNum" style="font-size:1.8rem; font-weight:800; color:var(--green);"></div>
-          <div style="font-size:0.85rem; color:var(--muted);">Valoración</div>
-        </div>
-        <div class="card" style="text-align:center;">
-          <div id="experiencia" style="font-size:1.8rem; font-weight:800; color:var(--green);"></div>
-          <div style="font-size:0.85rem; color:var(--muted);">Experiencia</div>
-        </div>
-      </div>
-
-      <!-- Bio y especialidades -->
-      <div class="card" style="margin-bottom:1.25rem;">
-        <h3 style="margin-bottom:0.75rem;">Sobre mí</h3>
-        <p id="bio" style="color:var(--text-2); font-size:0.92rem; line-height:1.8;"></p>
-        <div id="tags" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.25rem;"></div>
-      </div>
-
-      <!-- Servicios -->
-      <div class="card" style="margin-bottom:1.25rem;">
-        <h3 style="margin-bottom:0.75rem;">Servicios incluidos</h3>
-        <ul id="servicios" style="list-style:none;display:flex;flex-direction:column;gap:0.5rem;"></ul>
-      </div>
-
-      <!-- Certificaciones -->
-      <div class="card" id="certCard" style="margin-bottom:1.25rem;display:none;">
-        <h3 style="margin-bottom:0.75rem;">Certificaciones</h3>
-        <div id="certificaciones" style="display:flex;gap:0.5rem;flex-wrap:wrap;"></div>
-      </div>
-
-      <!-- Idiomas -->
-      <div class="card" id="idiomasCard" style="margin-bottom:1.25rem;display:none;">
-        <h3 style="margin-bottom:0.75rem;">Idiomas</h3>
-        <div id="idiomas" style="display:flex;gap:0.5rem;flex-wrap:wrap;"></div>
-      </div>
-
-      <!-- Metodología -->
-      <div class="card" id="metCard" style="margin-bottom:1.25rem;display:none;">
-        <h3 style="margin-bottom:0.75rem;">Mi metodología</h3>
-        <p id="metodologia" style="color:var(--text-2);font-size:0.92rem;line-height:1.8;"></p>
-      </div>
-
-      <!-- Redes sociales -->
-      <div class="card" id="redesCard" style="margin-bottom:1.25rem;display:none;">
-        <h3 style="margin-bottom:0.75rem;">Redes sociales</h3>
-        <div id="redes" style="display:flex;gap:1rem;flex-wrap:wrap;"></div>
-      </div>
-    </div>
-
-  </main>
-  </div><!-- end dashboard-layout -->
-
+    </main>
+  </div>
   <footer><p>&copy; 2026 <strong>MomentFit</strong></p></footer>
-
   <script>
-    const token = localStorage.getItem('gc_token');
-
-    function logout() {
-      localStorage.clear();
-      window.location.href = '../login.html';
+    const token=localStorage.getItem("gc_token");
+    function logout(){localStorage.clear();window.location.href="../login.html"}
+    async function cargarPerfil(){
+      try{
+        const res=await fetch(`${API}/api/entrenadores/mi-perfil`,{headers:{Authorization:"Bearer "+token}});
+        if(!res.ok)throw new Error();
+        const ent=await res.json();
+        document.getElementById("cargando").style.display="none";
+        document.getElementById("contenido").style.display="block";
+        const ini=(ent.nombre.charAt(0)+ent.apellido.charAt(0)).toUpperCase();
+        const av=document.getElementById("avatar");
+        if(ent.fotoUrl){av.style.background="none";av.innerHTML=`<img src="${ent.fotoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;}
+        else{av.textContent=ini;av.style.background=ent.avatarColor||"linear-gradient(135deg,#16a34a,#84cc16)";}
+        document.getElementById("nombre").textContent=ent.nombre+" "+ent.apellido;
+        document.getElementById("ciudad").textContent="Entrenador certificado · "+(ent.ciudad||"—");
+        const s=Math.floor(ent.rating||5);
+        document.getElementById("starsDisplay").textContent="★".repeat(s);
+        document.getElementById("ratingText").textContent=`${ent.rating} puntos · ${ent.totalResenas} reseñas`;
+        document.getElementById("precio").textContent=(ent.precioMensual||0)+"€";
+        document.getElementById("ratingNum").textContent=(ent.rating||5)+"★";
+        document.getElementById("experiencia").textContent=(ent.aniosExperiencia||0)+" años";
+        document.getElementById("bio").textContent=ent.bio||"Aún no has añadido una descripción.";
+        document.getElementById("tags").innerHTML=(ent.especialidades||[]).map(t=>`<span class="tag">${t}</span>`).join("");
+        document.getElementById("servicios").innerHTML=(ent.servicios||[]).map(s=>`<li class="service-item"><span class="service-check">✓</span>${s}</li>`).join("");
+        const certs=ent.certificaciones||[];
+        if(certs.length){document.getElementById("certCard").style.display="";document.getElementById("certificaciones").innerHTML=certs.map(c=>`<span style="background:rgba(124,58,237,.12);color:#a78bfa;border:1px solid rgba(124,58,237,.25);border-radius:20px;padding:.25rem .8rem;font-size:.8rem;font-weight:700">🏅 ${c}</span>`).join("");}
+        const ids=ent.idiomas||[];
+        if(ids.length){document.getElementById("idiomasCard").style.display="";document.getElementById("idiomas").innerHTML=ids.map(i=>`<span style="background:rgba(14,165,233,.1);color:#38bdf8;border:1px solid rgba(14,165,233,.22);border-radius:20px;padding:.25rem .8rem;font-size:.8rem;font-weight:700">🌐 ${i}</span>`).join("");}
+        if(ent.metodologia){document.getElementById("metCard").style.display="";document.getElementById("metodologia").textContent=ent.metodologia;}
+        const rds=[];
+        if(ent.instagram)rds.push(`<a href="https://instagram.com/${ent.instagram}" target="_blank" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:700;color:#e1306c;text-decoration:none">📷 @${ent.instagram}</a>`);
+        if(ent.youtube)rds.push(`<a href="${ent.youtube}" target="_blank" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:700;color:#f00;text-decoration:none">▶ YouTube</a>`);
+        if(rds.length){document.getElementById("redesCard").style.display="";document.getElementById("redes").innerHTML=rds.join("");}
+        document.title=ent.nombre+" — MomentFit";
+      }catch(e){document.getElementById("cargando").textContent="Error al cargar el perfil.";}
     }
-
-    async function cargarPerfil() {
-      try {
-        const res = await fetch(`${API}/api/entrenadores/mi-perfil`, {
-          headers: { Authorization: 'Bearer ' + token }
-        });
-        if (!res.ok) throw new Error();
-        const ent = await res.json();
-
-        document.getElementById('cargando').style.display = 'none';
-        document.getElementById('contenido').style.display = 'block';
-
-        const iniciales = (ent.nombre.charAt(0) + ent.apellido.charAt(0)).toUpperCase();
-        const avatar = document.getElementById('avatar');
-        if (ent.fotoUrl) {
-          avatar.style.background = 'none';
-          avatar.innerHTML = `<img src="${ent.fotoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
-        } else {
-          avatar.textContent = iniciales;
-          avatar.style.background = ent.avatarColor || 'linear-gradient(135deg,#16a34a,#84cc16)';
-        }
-
-        document.getElementById('nombre').textContent = ent.nombre + ' ' + ent.apellido;
-        document.getElementById('ciudad').textContent = 'Entrenador certificado · ' + (ent.ciudad || '—');
-        document.getElementById('rating').innerHTML = '★'.repeat(Math.floor(ent.rating || 5)) +
-          ` <span style="color:var(--muted)">${ent.rating} · ${ent.totalResenas} reseñas</span>`;
-        document.getElementById('precio').textContent = (ent.precioMensual || 0) + '€';
-        document.getElementById('ratingNum').textContent = (ent.rating || 5) + '★';
-        document.getElementById('experiencia').textContent = (ent.aniosExperiencia || 0) + ' años';
-        document.getElementById('bio').textContent = ent.bio || 'Aún no has añadido una descripción.';
-        document.getElementById('tags').innerHTML = (ent.especialidades || [])
-          .map(t => `<span class="tag">${t}</span>`).join('');
-        document.getElementById('servicios').innerHTML = (ent.servicios || [])
-          .map(s => `<li style="display:flex;gap:.6rem;font-size:.88rem;color:var(--text-2);">
-            <span style="color:var(--green);font-weight:700;">✓</span>${s}</li>`).join('');
-
-        const certs = ent.certificaciones || [];
-        if (certs.length) {
-          document.getElementById('certCard').style.display = '';
-          document.getElementById('certificaciones').innerHTML = certs
-            .map(c => `<span style="background:rgba(124,58,237,0.1);color:#7c3aed;border:1px solid rgba(124,58,237,0.2);border-radius:20px;padding:0.2rem 0.75rem;font-size:0.8rem;font-weight:700;">🏅 ${c}</span>`).join('');
-        }
-
-        const idiomas = ent.idiomas || [];
-        if (idiomas.length) {
-          document.getElementById('idiomasCard').style.display = '';
-          document.getElementById('idiomas').innerHTML = idiomas
-            .map(i => `<span style="background:rgba(14,165,233,0.1);color:#0284c7;border:1px solid rgba(14,165,233,0.2);border-radius:20px;padding:0.2rem 0.75rem;font-size:0.8rem;font-weight:700;">🌐 ${i}</span>`).join('');
-        }
-
-        if (ent.metodologia) {
-          document.getElementById('metCard').style.display = '';
-          document.getElementById('metodologia').textContent = ent.metodologia;
-        }
-
-        const redes = [];
-        if (ent.instagram) redes.push(`<a href="https://instagram.com/${ent.instagram}" target="_blank" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.88rem;font-weight:700;color:#e1306c;">📷 @${ent.instagram}</a>`);
-        if (ent.youtube) redes.push(`<a href="${ent.youtube}" target="_blank" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.88rem;font-weight:700;color:#ff0000;">▶ YouTube</a>`);
-        if (redes.length) {
-          document.getElementById('redesCard').style.display = '';
-          document.getElementById('redes').innerHTML = redes.join('');
-        }
-
-        document.title = ent.nombre + ' — MomentFit';
-      } catch (e) {
-        document.getElementById('cargando').textContent = 'Error al cargar el perfil.';
-      }
-    }
-
     cargarPerfil();
   </script>
-<script src="../js/sidebar-user.js"></script>
+  <script src="../js/sidebar-user.js"></script>
 </body>
 </html>
