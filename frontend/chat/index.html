@@ -328,15 +328,30 @@ let stompClient = null;
 let contactoActivo = null;
 
 // ── Conexión WebSocket ──────────────────────────────────────────
+let wakeAttempted = false;
+
+async function wakeBackend() {
+  if (wakeAttempted) return;
+  wakeAttempted = true;
+  try { await fetch(`${API}/api/auth/ping`, { signal: AbortSignal.timeout(5000) }); } catch {}
+}
+
+function setStatus(text, cls) {
+  const el = document.getElementById('ws-status');
+  if (el) { el.textContent = text; el.className = 'ws-status ' + cls; }
+}
+
 function conectarWS() {
+  setStatus('● Conectando…', 'disconnected');
+
   stompClient = new StompJs.Client({
     webSocketFactory: () => new SockJS(`${API}/ws`),
     connectHeaders: { Authorization: 'Bearer ' + token },
-    reconnectDelay: 5000,
+    reconnectDelay: 4000,
 
     onConnect: () => {
-      document.getElementById('ws-status').textContent = '● Conectado';
-      document.getElementById('ws-status').className = 'ws-status connected';
+      wakeAttempted = false;
+      setStatus('● Conectado', 'connected');
 
       stompClient.subscribe(`/user/${user.email}/queue/mensajes`, (frame) => {
         const msg = JSON.parse(frame.body);
@@ -345,14 +360,19 @@ function conectarWS() {
     },
 
     onDisconnect: () => {
-      document.getElementById('ws-status').textContent = '● Desconectado';
-      document.getElementById('ws-status').className = 'ws-status disconnected';
+      setStatus('● Reconectando…', 'disconnected');
+      wakeBackend();
     },
 
     onStompError: (frame) => {
       console.error('STOMP error:', frame.headers['message']);
-      document.getElementById('ws-status').textContent = '● Error de conexión';
-      document.getElementById('ws-status').className = 'ws-status disconnected';
+      setStatus('● Reconectando…', 'disconnected');
+      wakeBackend();
+    },
+
+    onWebSocketError: () => {
+      setStatus('● Reconectando…', 'disconnected');
+      wakeBackend();
     }
   });
 
@@ -452,7 +472,8 @@ function enviar() {
   if (!texto || !contactoActivo) return;
 
   if (!stompClient || !stompClient.connected) {
-    mostrarMensajeSistema('Sin conexión — ¿está el servidor iniciado?');
+    wakeBackend();
+    mostrarMensajeSistema('Reconectando… espera unos segundos e inténtalo de nuevo');
     return;
   }
 
