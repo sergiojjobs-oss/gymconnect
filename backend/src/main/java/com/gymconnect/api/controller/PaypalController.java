@@ -36,7 +36,7 @@ public class PaypalController {
         try {
             String plan = body.get("plan"); // PRO o ELITE
             String importe = plan.equalsIgnoreCase("ELITE") ? "25.00" : "10.00";
-            String descripcion = "GymConnect Plan " + plan + " — mensual";
+            String descripcion = "MomentFit Plan " + plan + " — mensual";
 
             JsonNode orden = paypalService.crearOrden(descripcion, importe, "EUR");
             String orderId = orden.get("id").asText();
@@ -88,7 +88,7 @@ public class PaypalController {
             String entrenadorNombre = body.get("entrenadorNombre");
             String entrenadorId     = body.get("entrenadorId");
             String importe          = body.get("importe");
-            String descripcion      = "GymConnect — Entrenador: " + entrenadorNombre;
+            String descripcion      = "MomentFit — Entrenador: " + entrenadorNombre;
 
             // Buscar PayPal del entrenador para que el dinero vaya a su cuenta
             String payeeEmail = null;

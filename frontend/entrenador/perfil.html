@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi perfil — GymConnect</title>
+  <title>Mi perfil — MomentFit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -28,7 +28,7 @@
 
   <header>
     <div class="container">
-      <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+      <a href="../index.html" class="logo">Moment<span>Fit</span></a>
       <nav>
         <button class="btn btn-outline" style="font-size:0.82rem;" onclick="logout()">Cerrar sesión</button>
       </nav>
@@ -124,7 +124,7 @@
   </main>
   </div><!-- end dashboard-layout -->
 
-  <footer><p>&copy; 2026 <strong>GymConnect</strong></p></footer>
+  <footer><p>&copy; 2026 <strong>MomentFit</strong></p></footer>
 
   <script>
     const token = localStorage.getItem('gc_token');
@@ -196,7 +196,7 @@
           document.getElementById('redes').innerHTML = redes.join('');
         }
 
-        document.title = ent.nombre + ' — GymConnect';
+        document.title = ent.nombre + ' — MomentFit';
       } catch (e) {
         document.getElementById('cargando').textContent = 'Error al cargar el perfil.';
       }

@@ -67,7 +67,7 @@ public class PaypalService {
                 "application_context", Map.of(
                         "return_url", "http://localhost:3000/paypal-ok.html",
                         "cancel_url", "http://localhost:3000/paypal-cancel.html",
-                        "brand_name", "GymConnect",
+                        "brand_name", "MomentFit",
                         "user_action", "PAY_NOW"
                 )
         );
@@ -89,7 +89,7 @@ public class PaypalService {
                 "application_context", Map.of(
                         "return_url", "http://localhost:3000/paypal-ok.html",
                         "cancel_url", "http://localhost:3000/paypal-cancel.html",
-                        "brand_name", "GymConnect",
+                        "brand_name", "MomentFit",
                         "user_action", "PAY_NOW"
                 )
         );

@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Progreso clientes — GymConnect</title>
+  <title>Progreso clientes — MomentFit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -53,7 +53,7 @@
 <body>
 <header>
   <div class="container">
-    <a href="../index.html" class="logo">Gym<span>Connect</span></a>
+    <a href="../index.html" class="logo">Moment<span>Fit</span></a>
     <nav>
       <button class="btn btn-outline" style="font-size:0.82rem;" onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
     </nav>
@@ -250,7 +250,7 @@ async function exportarPDF() {
   // Logo
   doc.setTextColor(...C.white);
   doc.setFontSize(28); doc.setFont('helvetica', 'bold');
-  doc.text('GymConnect', PL, 28);
+  doc.text('MomentFit', PL, 28);
   doc.setFontSize(11); doc.setFont('helvetica', 'normal');
   doc.setTextColor(...C.purpleL);
   doc.text('Plataforma de entrenamiento personal', PL, 36);
@@ -312,7 +312,7 @@ async function exportarPDF() {
   const drawPageHeader = () => {
     doc.setFillColor(...C.purple); doc.rect(0, 0, W, 16, 'F');
     doc.setTextColor(...C.white); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-    doc.text('GymConnect · Informe de Progreso', PL, 10);
+    doc.text('MomentFit · Informe de Progreso', PL, 10);
     doc.text(nombre, PR, 10, { align:'right' });
   };
 
@@ -320,7 +320,7 @@ async function exportarPDF() {
     doc.setDrawColor(...C.border); doc.setLineWidth(0.3);
     doc.line(PL, 286, PR, 286);
     doc.setFontSize(7); doc.setTextColor(...C.gray); doc.setFont('helvetica', 'normal');
-    doc.text('Generado por GymConnect · Plan Elite', PL, 291);
+    doc.text('Generado por MomentFit · Plan Elite', PL, 291);
     doc.text(`Pág. ${page}`, PR, 291, { align:'right' });
   };
 
