@@ -174,20 +174,18 @@ async function init(){
 async function cargarEntrenador(){
   const blk=document.getElementById("entrenadorBlock");
   try{
-    const contactos=await fetch(`${API}/api/chat/contactos`,{headers:h()}).then(r=>r.json());
-    if(!contactos.length){
+    const res=await fetch(`${API}/api/entrenadores/mi-entrenador`,{headers:h()});
+    if(res.status===204||!res.ok){
       blk.innerHTML=`<div class="sin-entrenador"><span style="font-size:2rem">🏋️</span><p>Aun no tienes entrenador.<br>Busca uno y empieza hoy!</p><a href="buscar.html" class="btn btn-primary" style="margin-top:1rem;font-size:.85rem">Buscar entrenador</a></div>`;
       return;
     }
-    const c=contactos[0];
-    const ents=await fetch(`${API}/api/entrenadores`).then(r=>r.json());
-    const ent=ents.find(e=>String(e.usuarioId)===String(c.id))||null;
-    const ini=(c.nombre||"?").split(" ").map(n=>n[0]).join("").toUpperCase().slice(0,2);
-    const avHtml=ent&&ent.fotoUrl
+    const ent=await res.json();
+    const nombre=ent.nombre||"Entrenador";
+    const ini=nombre.split(" ").map(n=>n[0]).join("").toUpperCase().slice(0,2);
+    const avHtml=ent.fotoUrl
       ?`<div class="ent-avatar"><img src="${ent.fotoUrl}"/></div>`
-      :`<div class="ent-avatar" style="background:${ent?.avatarColor||"var(--grad-main)"}">${ini}</div>`;
-    const entId = ent ? ent.id : null;
-    blk.innerHTML=`<div class="entrenador-card">${avHtml}<div class="ent-info"><h3>${c.nombre}</h3><p>${ent?(ent.ciudad||"Entrenador personal"):"Entrenador personal"}</p>${ent?`<div style="color:#fbbf24;font-size:.8rem;margin-top:.25rem">${"★".repeat(Math.floor(ent.rating||5))} ${(ent.rating||5).toFixed(1)}</div>`:""}<div class="ent-actions"><a href="../chat/index.html" class="btn btn-primary" style="font-size:.78rem;padding:.45rem 1rem">💬 Mensaje</a>${ent?`<a href="perfil.html?id=${ent.id}" class="btn btn-outline" style="font-size:.78rem;padding:.45rem 1rem">Ver perfil</a>`:""}<button onclick="cancelarEntrenador(${entId})" class="btn" style="font-size:.78rem;padding:.45rem 1rem;background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.25)">🚫 Cancelar</button></div></div></div>`;
+      :`<div class="ent-avatar" style="background:var(--grad-main)">${ini}</div>`;
+    blk.innerHTML=`<div class="entrenador-card">${avHtml}<div class="ent-info"><h3>${nombre}</h3><p>${ent.ciudad||"Entrenador personal"}</p><div style="color:#fbbf24;font-size:.8rem;margin-top:.25rem">${"★".repeat(Math.floor(ent.rating||5))} ${(ent.rating||5).toFixed(1)}</div><div class="ent-actions"><a href="../chat/index.html" class="btn btn-primary" style="font-size:.78rem;padding:.45rem 1rem">💬 Mensaje</a><a href="perfil.html?id=${ent.id}" class="btn btn-outline" style="font-size:.78rem;padding:.45rem 1rem">Ver perfil</a><button onclick="cancelarEntrenador(${ent.id})" class="btn" style="font-size:.78rem;padding:.45rem 1rem;background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.25)">🚫 Cancelar</button></div></div></div>`;
   }catch{blk.innerHTML=`<div class="sin-entrenador">No se pudo cargar</div>`;}
 }
 

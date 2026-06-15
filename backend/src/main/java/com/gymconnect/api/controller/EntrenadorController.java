@@ -91,6 +91,19 @@ public class EntrenadorController {
         ));
     }
 
+    // Cliente: obtener su entrenador activo
+    @GetMapping("/mi-entrenador")
+    public ResponseEntity<?> miEntrenador(@AuthenticationPrincipal UserDetails ud) {
+        Usuario cliente = usuarioRepo.findByEmail(ud.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        List<Relacion> activas = relacionRepo.findByClienteIdAndEstado(cliente.getId(), Relacion.Estado.ACTIVA);
+        if (activas.isEmpty()) return ResponseEntity.noContent().build(); // 204
+
+        Entrenador ent = activas.get(0).getEntrenador();
+        return ResponseEntity.ok(EntrenadorDto.from(ent));
+    }
+
     @GetMapping("/mi-perfil")
     public ResponseEntity<?> miPerfil(@AuthenticationPrincipal UserDetails ud) {
         if (ud == null) return ResponseEntity.status(401).body("Token expirado o inválido");
