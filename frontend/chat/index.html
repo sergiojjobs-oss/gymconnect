@@ -243,17 +243,14 @@
     .emoji-picker button:hover { background: rgba(74,222,128,0.1); }
 
     /* ── Acciones del mensaje (hover) ── */
-    .msg-actions {
-      display: none; gap: 0.25rem; align-items: center;
-      position: absolute; top: 50%; transform: translateY(-50%);
-    }
-    .msg.mine .msg-actions  { left: -80px; }
-    .msg.theirs .msg-actions { right: -80px; }
+    .msg-row { display: flex; align-items: flex-end; gap: 0.35rem; }
+    .msg.mine .msg-row { flex-direction: row-reverse; }
+    .msg-actions { display: none; gap: 0.2rem; align-items: center; flex-shrink: 0; }
     .msg:hover .msg-actions { display: flex; }
     .msg-action-btn {
       background: #1a3524; border: 1px solid rgba(74,222,128,0.15);
-      border-radius: 8px; padding: 0.3rem 0.45rem; font-size: 0.8rem;
-      cursor: pointer; color: rgba(160,210,175,0.7); transition: all 0.15s;
+      border-radius: 7px; padding: 0.28rem 0.4rem; font-size: 0.72rem;
+      cursor: pointer; color: rgba(160,210,175,0.6); transition: all 0.15s;
       line-height: 1;
     }
     .msg-action-btn:hover { background: rgba(74,222,128,0.15); color: #4ade80; }
@@ -625,12 +622,14 @@ function mostrarMensaje(msg, esMio) {
   div.dataset.esMio = esMio ? '1' : '0';
   const textoEscapado = escapeHtml(msg.contenido).replace(/"/g,'&quot;');
   div.innerHTML = `
-    <div class="msg-actions">
-      <button class="msg-action-btn" onclick="responderMsg('${id}','${textoEscapado}')" title="Responder">↩</button>
-      <button class="msg-action-btn" onclick="copiarMsg('${textoEscapado}')" title="Copiar">📋</button>
-      <button class="msg-action-btn del" onclick="this.closest('.msg').remove()" title="Eliminar">🗑</button>
+    <div class="msg-row">
+      <div class="msg-bubble">${quoteHtml}${escapeHtml(msg.contenido)}</div>
+      <div class="msg-actions">
+        <button class="msg-action-btn" onclick="responderMsg('${id}','${textoEscapado}')" title="Responder">↩</button>
+        <button class="msg-action-btn" onclick="copiarMsg('${textoEscapado}')" title="Copiar">📋</button>
+        <button class="msg-action-btn del" onclick="this.closest('.msg').remove()" title="Eliminar">🗑</button>
+      </div>
     </div>
-    <div class="msg-bubble">${quoteHtml}${escapeHtml(msg.contenido)}</div>
     <span class="msg-time">${hora} ${tick}</span>
   `;
 
