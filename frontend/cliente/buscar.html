@@ -1,6 +1,5 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
-<!-- v2 -->
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,223 +9,387 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/main.css" />
   <style>
-    /* Barra de filtros */
-    .filters {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-      align-items: center;
-    }
-    .filter-input {
-      flex: 1;
-      min-width: 220px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.7rem 1rem 0.7rem 2.6rem;
-      color: var(--text);
-      font-size: 0.9rem;
+    /* ── Hero search ── */
+    .search-hero {
+      background: var(--dark-hero);
+      padding: 3.5rem 0 2.5rem;
       position: relative;
+      overflow: hidden;
     }
-    .filter-input:focus { outline: none; border-color: var(--green); }
-    .search-wrap { position: relative; flex: 1; min-width: 220px; }
-    .search-wrap::before {
-      content: '🔍';
+    .search-hero::before {
+      content: '';
       position: absolute;
-      left: 0.9rem;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.85rem;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 55% 80% at 70% 50%, rgba(22,163,74,0.08), transparent 60%),
+        radial-gradient(ellipse 40% 60% at 20% 50%, rgba(132,204,22,0.05), transparent 55%);
       pointer-events: none;
     }
-    .filter-select {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.7rem 1rem;
-      color: var(--text);
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
+    .search-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
     }
-    .filter-select:focus { outline: none; border-color: var(--green); }
+    .search-hero .container { position: relative; z-index: 1; }
+    .search-hero-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--green-l);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+    .search-hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      color: #eef7f1;
+      line-height: 1.05;
+      margin-bottom: 0.6rem;
+    }
+    .search-hero p {
+      font-size: 0.92rem;
+      color: rgba(122,170,132,0.8);
+      margin-bottom: 2rem;
+      font-weight: 400;
+    }
 
-    /* Chips de filtro activo */
-    .filter-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; min-height: 28px; }
-    .chip-active {
-      display: inline-flex;
+    /* ── Search bar ── */
+    .search-bar {
+      display: flex;
+      gap: 0;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+      overflow: hidden;
+      max-width: 680px;
+    }
+    .search-bar input {
+      flex: 1;
+      border: none;
+      padding: 0.95rem 1.25rem;
+      font-size: 0.92rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: transparent;
+    }
+    .search-bar input:focus { outline: none; }
+    .search-bar input::placeholder { color: #9ca3af; }
+    .search-bar button {
+      background: var(--grad-main);
+      border: none;
+      padding: 0 1.5rem;
+      color: #fff;
+      font-size: 0.88rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: filter var(--t);
+      white-space: nowrap;
+    }
+    .search-bar button:hover { filter: brightness(1.08); }
+
+    /* ── Stats strip below hero ── */
+    .stats-strip {
+      background: rgba(11,31,20,0.7);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 0.85rem 0;
+    }
+    .stats-strip-inner {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .strip-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: rgba(122,170,132,0.8);
+    }
+    .strip-stat strong { color: #4ade80; font-weight: 700; }
+
+    /* ── Filters bar ── */
+    .filters-bar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+      position: sticky;
+      top: 64px;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .filters-inner {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-pill {
+      display: flex;
       align-items: center;
       gap: 0.4rem;
-      padding: 0.25rem 0.75rem;
-      background: rgba(22,163,74,0.1);
-      border: 1px solid rgba(22,163,74,0.25);
+      padding: 0.45rem 0.9rem;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
       border-radius: 99px;
-      font-size: 0.75rem;
-      font-weight: 700;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: border-color var(--t), background var(--t), color var(--t);
+      white-space: nowrap;
+      font-family: 'Inter', sans-serif;
+    }
+    .filter-pill:hover { border-color: var(--green); color: var(--green); background: rgba(22,163,74,0.05); }
+    .filter-pill.active { border-color: var(--green); background: rgba(22,163,74,0.08); color: var(--green); font-weight: 700; }
+    .filter-pill select {
+      border: none;
+      background: transparent;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: inherit;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      appearance: none;
+      padding-right: 1rem;
+    }
+    .filter-pill select:focus { outline: none; }
+    .filter-pill-arrow { font-size: 0.65rem; opacity: 0.6; }
+    .filter-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+    .sort-wrap { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; }
+    .sort-label { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
+    .sort-select {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--bg);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .sort-select:focus { outline: none; border-color: var(--green); }
+
+    /* ── Active filter chips ── */
+    .active-chips {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+      min-height: 0;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.7rem;
+      background: rgba(22,163,74,0.08);
+      border: 1px solid rgba(22,163,74,0.22);
+      border-radius: 99px;
+      font-size: 0.74rem;
+      font-weight: 600;
       color: var(--green);
       cursor: pointer;
+      transition: background var(--t);
     }
-    .chip-active:hover { background: rgba(22,163,74,0.18); }
+    .chip:hover { background: rgba(22,163,74,0.15); }
+    .chip-x { font-size: 0.7rem; opacity: 0.7; }
 
-    /* Contador de resultados */
+    /* ── Results header ── */
     .results-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 1.5rem;
-      flex-wrap: wrap;
       gap: 0.5rem;
+      flex-wrap: wrap;
     }
-    .results-count { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+    .results-count { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
 
-    /* Orden */
-    .sort-select {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.45rem 0.75rem;
-      color: var(--text-2);
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* Grid de tarjetas */
+    /* ── Grid ── */
     .trainers-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 1.25rem;
     }
 
-    /* Tarjeta */
+    /* ── Card ── */
     .trainer-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 14px;
       overflow: hidden;
-      transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+      transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
       cursor: pointer;
+      box-shadow: var(--shadow-sm);
     }
     .trainer-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(22,163,74,0.12);
-      border-color: rgba(22,163,74,0.3);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-md);
     }
+    .trainer-card.tier-elite { border-color: rgba(124,58,237,0.3); }
+    .trainer-card.tier-elite:hover { border-color: rgba(124,58,237,0.5); box-shadow: 0 12px 40px rgba(124,58,237,0.12); }
+    .trainer-card.tier-pro { border-color: rgba(202,138,4,0.3); }
+    .trainer-card.tier-pro:hover { border-color: rgba(202,138,4,0.5); box-shadow: 0 12px 40px rgba(202,138,4,0.1); }
 
-    /* Cabecera coloreada */
-    .card-header {
-      padding: 1.5rem 1.5rem 0;
+    /* Card top accent bar */
+    .card-accent {
+      height: 3px;
+      background: var(--grad-main);
+    }
+    .tier-elite .card-accent { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+    .tier-pro .card-accent { background: linear-gradient(90deg, #d97706, #f59e0b); }
+
+    .card-body { padding: 1.25rem 1.25rem 0; }
+    .card-top {
       display: flex;
       align-items: flex-start;
-      gap: 1rem;
+      gap: 0.9rem;
+      margin-bottom: 1rem;
     }
     .card-avatar {
-      width: 56px; height: 56px;
-      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
       background: var(--grad-main);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.1rem;
-      font-weight: 900;
+      font-weight: 800;
       color: #fff;
       flex-shrink: 0;
-      border: 3px solid var(--bg);
+      overflow: hidden;
     }
-    .card-info { flex: 1; }
-    .card-info h3 {
+    .card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .card-meta { flex: 1; min-width: 0; }
+    .card-name {
       font-size: 0.95rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
+      font-weight: 700;
       color: var(--text);
+      letter-spacing: -0.3px;
       margin-bottom: 0.15rem;
-    }
-    .card-info p { font-size: 0.78rem; color: var(--muted); }
-    .card-badge {
-      padding: 0.2rem 0.55rem;
-      border-radius: 4px;
-      font-size: 0.65rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .card-badge-elite {
-      background: rgba(139,92,246,0.12);
-      border: 1px solid rgba(139,92,246,0.4);
-      color: #7c3aed;
+    .card-location { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.35rem; }
+    .card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 99px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
     }
-    .card-badge-pro {
-      background: rgba(234,179,8,0.12);
-      border: 1px solid rgba(234,179,8,0.45);
-      color: #ca8a04;
+    .badge-elite { background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.25); color: #7c3aed; }
+    .badge-pro   { background: rgba(202,138,4,0.1); border: 1px solid rgba(202,138,4,0.25); color: #92400e; }
+    .badge-free  { background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.2); color: var(--green); }
+
+    .card-stars {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      margin-bottom: 0.75rem;
     }
-    .card-badge-free {
-      background: rgba(22,163,74,0.1);
-      border: 1px solid rgba(22,163,74,0.35);
-      color: #16a34a;
-    }
-    .trainer-card.tier-elite {
-      border-color: rgba(139,92,246,0.35);
-      box-shadow: 0 0 0 1px rgba(139,92,246,0.12);
-    }
-    .trainer-card.tier-pro {
-      border-color: rgba(234,179,8,0.35);
-      box-shadow: 0 0 0 1px rgba(234,179,8,0.1);
-    }
-    .trainer-card.tier-free {
-      border-color: rgba(22,163,74,0.25);
-    }
-    .trainer-card.tier-elite .card-footer {
-      background: rgba(139,92,246,0.04);
-    }
-    .trainer-card.tier-pro .card-footer {
-      background: rgba(234,179,8,0.04);
+    .stars-val { color: var(--gold); font-weight: 700; }
+    .stars-count { color: var(--muted); font-size: 0.72rem; }
+
+    .card-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.85rem; }
+    .card-tag {
+      padding: 0.18rem 0.6rem;
+      border-radius: 99px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: rgba(22,163,74,0.07);
+      border: 1px solid rgba(22,163,74,0.15);
+      color: var(--green-d);
     }
 
-    .card-body { padding: 1rem 1.5rem; }
-
-    .card-stars { color: #d97706; font-size: 0.82rem; margin-bottom: 0.6rem; }
-    .card-stars span { color: var(--muted); font-size: 0.76rem; }
-
-    .card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
-
-    .card-desc {
-      font-size: 0.82rem;
-      color: var(--text-2);
+    .card-bio {
+      font-size: 0.8rem;
+      color: var(--muted);
       line-height: 1.6;
-      margin-bottom: 1rem;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      margin-bottom: 1.1rem;
     }
 
     .card-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1rem 1.5rem;
+      padding: 0.9rem 1.25rem;
       border-top: 1px solid var(--border);
-      background: rgba(22,163,74,0.02);
+      background: var(--bg);
     }
-    .card-price { font-size: 1.25rem; font-weight: 900; color: var(--text); }
-    .card-price small { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+    .card-price {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+    .card-price small { font-size: 0.7rem; color: var(--muted); font-weight: 400; }
 
-    /* Sin resultados */
+    /* ── Skeleton ── */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f4f1 25%, #e4ede6 50%, #f0f4f1 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .skel-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ── No results ── */
     .no-results {
+      grid-column: 1/-1;
       text-align: center;
       padding: 4rem 2rem;
-      color: var(--muted);
       display: none;
     }
-    .no-results span { font-size: 2.5rem; display: block; margin-bottom: 1rem; }
+    .no-results-icon { font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.4; }
+    .no-results h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+    .no-results p { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
 
-    @media (max-width: 640px) {
-      .filters { flex-direction: column; }
-      .filter-input, .search-wrap { min-width: 100%; }
+    /* ── Example separator ── */
+    .example-sep {
+      grid-column: 1/-1;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 0.5rem 0;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+    }
+    .example-sep::before, .example-sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    @media (max-width: 768px) {
+      .filters-inner { flex-wrap: wrap; }
+      .sort-wrap { margin-left: 0; width: 100%; justify-content: flex-end; }
+      .trainers-grid { grid-template-columns: 1fr; }
+      .stats-strip-inner { flex-wrap: wrap; gap: 1rem; }
     }
   </style>
 </head>
@@ -235,7 +398,7 @@
   <header>
     <div class="container">
       <a href="../index.html" class="logo">Gym<span>Connect</span></a>
-      <button class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('open')">
+      <button class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('open')" aria-label="Menú">
         <span></span><span></span><span></span>
       </button>
       <nav id="mainNav">
@@ -246,87 +409,129 @@
         (function() {
           const u = JSON.parse(localStorage.getItem('gc_user') || 'null');
           if (u && u.rol === 'CLIENTE') {
-            document.getElementById('mainNav').innerHTML =
-              '<a href="dashboard.html" class="nav-cta">← Mi dashboard</a>';
+            document.getElementById('mainNav').innerHTML = '<a href="dashboard.html" class="nav-cta">← Mi dashboard</a>';
           } else if (u && u.rol === 'ENTRENADOR') {
-            document.getElementById('mainNav').innerHTML =
-              '<a href="../entrenador/perfil.html" class="nav-cta">← Mi panel</a>';
+            document.getElementById('mainNav').innerHTML = '<a href="../entrenador/perfil.html" class="nav-cta">← Mi panel</a>';
           }
         })();
       </script>
     </div>
   </header>
 
-  <main style="padding: 3rem 0 5rem; min-height: calc(100vh - 70px);">
+  <!-- ===== HERO SEARCH ===== -->
+  <section class="search-hero">
+    <div class="container">
+      <span class="search-hero-label">Directorio de profesionales</span>
+      <h1>Encuentra tu<br>entrenador ideal</h1>
+      <p>Entrenadores certificados en entrenamiento y nutrición. Filtra y encuentra el tuyo.</p>
+      <div class="search-bar">
+        <input type="text" id="q" placeholder="Busca por nombre, especialidad o ciudad…" oninput="filtrar()" />
+        <button onclick="filtrar()">Buscar →</button>
+      </div>
+    </div>
+    <div class="stats-strip" style="margin-top:2rem;">
+      <div class="container">
+        <div class="stats-strip-inner">
+          <div class="strip-stat">💪 <strong id="statEnt">—</strong> entrenadores activos</div>
+          <div class="strip-stat">👥 <strong id="statCli">—</strong> clientes satisfechos</div>
+          <div class="strip-stat">🔒 Pago <strong>100% seguro</strong> con PayPal</div>
+          <div class="strip-stat">✓ Sin permanencia, <strong>cancela cuando quieras</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STICKY FILTERS ===== -->
+  <div class="filters-bar">
+    <div class="container">
+      <div class="filters-inner">
+
+        <div class="filter-pill" id="pillEsp">
+          <select id="especialidad" onchange="actualizarPills(); filtrar()">
+            <option value="">🏷️ Especialidad</option>
+            <option>Musculación / Hipertrofia</option>
+            <option>Pérdida de grasa</option>
+            <option>Nutrición deportiva</option>
+            <option>Fuerza y potencia</option>
+            <option>Entrenamiento funcional</option>
+            <option>HIIT / Cardio intenso</option>
+            <option>Crossfit</option>
+            <option>Calistenia</option>
+            <option>Yoga</option>
+            <option>Pilates</option>
+            <option>Flexibilidad y movilidad</option>
+            <option>Running / Atletismo</option>
+            <option>Ciclismo</option>
+            <option>Natación</option>
+            <option>Deportes de combate</option>
+            <option>Rehabilitación física</option>
+            <option>Entrenamiento para mayores</option>
+            <option>Preparación física deportiva</option>
+            <option>Entrenamiento online</option>
+            <option>Pérdida de peso post-parto</option>
+          </select>
+          <span class="filter-pill-arrow">▾</span>
+        </div>
+
+        <div class="filter-pill" id="pillPrecio">
+          <select id="precio" onchange="actualizarPills(); filtrar()">
+            <option value="">💶 Precio</option>
+            <option value="low">Menos de 30€/mes</option>
+            <option value="mid">30€ – 50€/mes</option>
+            <option value="high">Más de 50€/mes</option>
+          </select>
+          <span class="filter-pill-arrow">▾</span>
+        </div>
+
+        <div class="filter-pill" id="pillPlan">
+          <select id="plan" onchange="actualizarPills(); filtrar()">
+            <option value="">👑 Plan</option>
+            <option value="ELITE">Elite</option>
+            <option value="PRO">Pro</option>
+            <option value="FREE">Free</option>
+          </select>
+          <span class="filter-pill-arrow">▾</span>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <button class="filter-pill" id="btnReset" onclick="resetFiltros()" style="display:none;color:#dc2626;border-color:rgba(220,38,38,0.2);background:rgba(220,38,38,0.04);">
+          ✕ Limpiar filtros
+        </button>
+
+        <div class="sort-wrap">
+          <span class="sort-label">Ordenar:</span>
+          <select class="sort-select" id="orden" onchange="filtrar()">
+            <option value="plan">Recomendados</option>
+            <option value="rating">Mejor valorados</option>
+            <option value="precio-asc">Precio ↑</option>
+            <option value="precio-desc">Precio ↓</option>
+            <option value="nombre">Nombre A–Z</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main style="padding: 2rem 0 5rem; min-height: 60vh; background: var(--bg);">
     <div class="container">
 
-      <div style="margin-bottom: 2rem;">
-        <span class="section-label">Directorio de profesionales</span>
-        <h1 class="section-title">Encuentra tu<br>entrenador ideal</h1>
-        <p class="section-sub" style="margin-bottom:0;">Más de 500 entrenadores certificados en entrenamiento y nutrición. Filtra y encuentra el tuyo.</p>
-      </div>
+      <div class="active-chips" id="activeChips"></div>
 
-      <!-- Filtros -->
-      <div class="filters">
-        <div class="search-wrap">
-          <input class="filter-input" type="text" id="q" placeholder="Nombre, especialidad, ciudad…" oninput="filtrar()" />
-        </div>
-        <select class="filter-select" id="especialidad" onchange="filtrar()">
-          <option value="">Todas las especialidades</option>
-          <option>Musculación / Hipertrofia</option>
-          <option>Pérdida de grasa</option>
-          <option>Nutrición deportiva</option>
-          <option>Fuerza y potencia</option>
-          <option>Entrenamiento funcional</option>
-          <option>HIIT / Cardio intenso</option>
-          <option>Crossfit</option>
-          <option>Calistenia</option>
-          <option>Yoga</option>
-          <option>Pilates</option>
-          <option>Flexibilidad y movilidad</option>
-          <option>Running / Atletismo</option>
-          <option>Ciclismo</option>
-          <option>Natación</option>
-          <option>Deportes de combate</option>
-          <option>Rehabilitación física</option>
-          <option>Entrenamiento para mayores</option>
-          <option>Preparación física deportiva</option>
-          <option>Entrenamiento online</option>
-          <option>Pérdida de peso post-parto</option>
-        </select>
-        <select class="filter-select" id="precio" onchange="filtrar()">
-          <option value="">Cualquier precio</option>
-          <option value="low">Menos de 30€/mes</option>
-          <option value="mid">30€ – 50€/mes</option>
-          <option value="high">Más de 50€/mes</option>
-        </select>
-        <select class="filter-select" id="valoracion" onchange="filtrar()">
-          <option value="">Cualquier valoración</option>
-          <option value="5">⭐ 5 estrellas</option>
-          <option value="4">⭐ 4+ estrellas</option>
-        </select>
-      </div>
-
-      <!-- Chips de filtros activos -->
-      <div class="filter-chips" id="activeChips"></div>
-
-      <!-- Cabecera de resultados -->
       <div class="results-header">
-        <span class="results-count" id="countLabel">Mostrando todos los entrenadores</span>
-        <select class="sort-select" id="orden" onchange="filtrar()">
-          <option value="rating">Mejor valorados</option>
-          <option value="precio-asc">Precio: menor a mayor</option>
-          <option value="precio-desc">Precio: mayor a menor</option>
-          <option value="nombre">Nombre A–Z</option>
-        </select>
+        <span class="results-count" id="countLabel">Cargando entrenadores…</span>
       </div>
 
-      <!-- Grid de resultados -->
-      <div class="trainers-grid" id="grid"></div>
+      <div class="trainers-grid" id="grid" aria-live="polite">
+        <!-- skeletons generados por JS -->
+      </div>
+
       <div class="no-results" id="noResults">
-        <span>🔍</span>
-        No hay entrenadores con esos filtros.<br>
-        <button class="btn btn-outline" style="margin-top:1.25rem;font-size:0.85rem;" onclick="resetFiltros()">Limpiar filtros</button>
+        <span class="no-results-icon">🔍</span>
+        <h3>Sin resultados</h3>
+        <p>No hay entrenadores que coincidan con tus filtros.</p>
+        <button class="btn btn-outline" style="font-size:0.85rem;" onclick="resetFiltros()">Limpiar filtros</button>
       </div>
 
     </div>
@@ -340,131 +545,163 @@
   <script>
     let todosEntrenadores = [];
 
-    function labelTag(t) { return t; }
+    const SKEL = `<div class="skel-card">
+      <div style="height:3px;" class="skeleton"></div>
+      <div style="padding:1.25rem;">
+        <div style="display:flex;gap:0.9rem;margin-bottom:1rem;">
+          <div class="skeleton" style="width:56px;height:56px;border-radius:12px;flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <div class="skeleton" style="height:14px;width:70%;margin-bottom:0.5rem;"></div>
+            <div class="skeleton" style="height:11px;width:45%;"></div>
+          </div>
+        </div>
+        <div class="skeleton" style="height:11px;width:40%;margin-bottom:0.75rem;"></div>
+        <div style="display:flex;gap:0.4rem;margin-bottom:0.85rem;">
+          <div class="skeleton" style="height:20px;width:80px;border-radius:99px;"></div>
+          <div class="skeleton" style="height:20px;width:70px;border-radius:99px;"></div>
+        </div>
+        <div class="skeleton" style="height:11px;width:100%;margin-bottom:0.35rem;"></div>
+        <div class="skeleton" style="height:11px;width:80%;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:0.9rem 1.25rem;border-top:1px solid var(--border);background:var(--bg-2);">
+        <div class="skeleton" style="height:22px;width:60px;border-radius:6px;"></div>
+        <div class="skeleton" style="height:32px;width:90px;border-radius:8px;"></div>
+      </div>
+    </div>`;
+    document.getElementById('grid').innerHTML = SKEL.repeat(6);
 
     function iniciales(nombre, apellido) {
-      return (nombre.charAt(0) + apellido.charAt(0)).toUpperCase();
+      return ((nombre||'?').charAt(0) + (apellido||'?').charAt(0)).toUpperCase();
     }
 
     function renderCard(e) {
-
-      const stars = '★'.repeat(Math.floor(e.rating)) + (e.rating % 1 >= 0.5 ? '½' : '');
-      const tagsHtml = (e.especialidades || []).map(t => `<span class="tag">${labelTag(t)}</span>`).join('');
-      const color = e.avatarColor || 'linear-gradient(135deg,#16a34a,#84cc16)';
-      const avatarHtml = e.fotoUrl
-        ? `<div class="card-avatar" style="overflow:hidden;"><img src="${e.fotoUrl}" style="width:100%;height:100%;object-fit:cover;" /></div>`
-        : `<div class="card-avatar" style="background:${color}">${iniciales(e.nombre, e.apellido)}</div>`;
       const tier = (e.planTier || 'FREE').toUpperCase();
-      const badgeHtml = tier === 'ELITE'
-        ? '<span class="card-badge card-badge-elite">👑 Elite verificado</span>'
-        : tier === 'PRO'
-          ? '<span class="card-badge card-badge-pro">⭐ Pro</span>'
-          : '<span class="card-badge card-badge-free">✓ Free</span>';
       const tierClass = tier === 'ELITE' ? 'tier-elite' : tier === 'PRO' ? 'tier-pro' : 'tier-free';
+      const badgeHtml = tier === 'ELITE'
+        ? '<span class="card-badge badge-elite">👑 Elite</span>'
+        : tier === 'PRO'
+          ? '<span class="card-badge badge-pro">⭐ Pro</span>'
+          : '<span class="card-badge badge-free">✓ Free</span>';
+      const avatarHtml = e.fotoUrl
+        ? `<div class="card-avatar"><img src="${e.fotoUrl}" alt="${e.nombre}" /></div>`
+        : `<div class="card-avatar" style="background:${e.avatarColor||'linear-gradient(135deg,#16a34a,#84cc16)'}">${iniciales(e.nombre,e.apellido)}</div>`;
+      const starsHtml = '★'.repeat(Math.floor(e.rating||0)) + (((e.rating||0) % 1) >= 0.5 ? '½' : '☆'.repeat(5-Math.ceil(e.rating||0)));
+      const tagsHtml = (e.especialidades||[]).slice(0,3).map(t => `<span class="card-tag">${t}</span>`).join('');
+
       return `
-        <div class="trainer-card ${tierClass}" onclick="window.location.href='perfil.html?id=${e.id}'">
-          <div class="card-header">
-            ${avatarHtml}
-            <div class="card-info">
-              <h3>${e.nombre} ${e.apellido}</h3>
-              <p>📍 ${e.ciudad}</p>
-            </div>
-            ${badgeHtml}
-          </div>
+        <div class="trainer-card ${tierClass}" onclick="location.href='perfil.html?id=${e.id}'">
+          <div class="card-accent"></div>
           <div class="card-body">
-            <div class="card-stars">${stars} <span>${e.rating.toFixed(1)} · ${e.totalResenas} reseñas</span></div>
-            <div class="card-tags">${tagsHtml}</div>
-            <p class="card-desc">${e.bio || ''}</p>
+            <div class="card-top">
+              ${avatarHtml}
+              <div class="card-meta">
+                <div class="card-name">${e.nombre} ${e.apellido||''}</div>
+                <div class="card-location">📍 ${e.ciudad||'España'}</div>
+                ${badgeHtml}
+              </div>
+            </div>
+            <div class="card-stars">
+              <span class="stars-val">${starsHtml}</span>
+              <span class="stars-count">${(e.rating||0).toFixed(1)} · ${e.totalResenas||0} reseñas</span>
+            </div>
+            <div class="card-tags">${tagsHtml || '<span class="card-tag">Entrenamiento</span>'}</div>
+            ${e.bio ? `<p class="card-bio">${e.bio}</p>` : ''}
           </div>
           <div class="card-footer">
-            <div class="card-price">${e.precioMensual}€ <small>/mes</small></div>
-            <span class="btn btn-primary" style="padding:0.5rem 1.1rem;font-size:0.8rem;">Ver perfil →</span>
+            <div class="card-price">${e.precioMensual||'—'}€ <small>/mes</small></div>
+            <span class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.78rem;">Ver perfil →</span>
           </div>
         </div>`;
     }
 
+    function actualizarPills() {
+      const hasEsp   = !!document.getElementById('especialidad').value;
+      const hasPrecio = !!document.getElementById('precio').value;
+      const hasPlan  = !!document.getElementById('plan').value;
+      document.getElementById('pillEsp').classList.toggle('active', hasEsp);
+      document.getElementById('pillPrecio').classList.toggle('active', hasPrecio);
+      document.getElementById('pillPlan').classList.toggle('active', hasPlan);
+      document.getElementById('btnReset').style.display = (hasEsp || hasPrecio || hasPlan || document.getElementById('q').value) ? 'flex' : 'none';
+    }
+
     function filtrar() {
-      const q    = document.getElementById('q').value.toLowerCase();
+      actualizarPills();
+      const q    = document.getElementById('q').value.toLowerCase().trim();
       const esp  = document.getElementById('especialidad').value;
       const prec = document.getElementById('precio').value;
-      const val  = document.getElementById('valoracion').value;
+      const plan = document.getElementById('plan').value;
       const ord  = document.getElementById('orden').value;
 
       let lista = todosEntrenadores.filter(e => {
-        const nombreCompleto = (e.nombre + ' ' + e.apellido).toLowerCase();
-        const matchQ   = !q || nombreCompleto.includes(q) || (e.ciudad||'').toLowerCase().includes(q) ||
-                         (e.especialidades||[]).some(t => labelTag(t).toLowerCase().includes(q));
+        const nombre = ((e.nombre||'') + ' ' + (e.apellido||'')).toLowerCase();
+        const matchQ   = !q || nombre.includes(q) || (e.ciudad||'').toLowerCase().includes(q)
+                         || (e.especialidades||[]).some(t => t.toLowerCase().includes(q));
         const matchEsp = !esp || (e.especialidades||[]).includes(esp);
         const matchPrv = !prec ||
           (prec === 'low'  && e.precioMensual < 30)  ||
           (prec === 'mid'  && e.precioMensual >= 30 && e.precioMensual <= 50) ||
           (prec === 'high' && e.precioMensual > 50);
-        const matchVal = !val ||
-          (val === '5' && e.rating === 5.0) ||
-          (val === '4' && e.rating >= 4.0);
-        return matchQ && matchEsp && matchPrv && matchVal;
+        const matchPlan = !plan || (e.planTier||'FREE').toUpperCase() === plan;
+        return matchQ && matchEsp && matchPrv && matchPlan;
       });
 
       lista.sort((a, b) => {
-        if (ord === 'rating')      return b.rating - a.rating;
-        if (ord === 'precio-asc')  return a.precioMensual - b.precioMensual;
-        if (ord === 'precio-desc') return b.precioMensual - a.precioMensual;
-        if (ord === 'nombre')      return a.nombre.localeCompare(b.nombre);
+        if (ord === 'plan') {
+          const planOrder = { ELITE:0, PRO:1, FREE:2 };
+          const pa = planOrder[(a.planTier||'FREE').toUpperCase()]??2;
+          const pb = planOrder[(b.planTier||'FREE').toUpperCase()]??2;
+          return pa !== pb ? pa - pb : (b.rating||0) - (a.rating||0);
+        }
+        if (ord === 'rating')      return (b.rating||0) - (a.rating||0);
+        if (ord === 'precio-asc')  return (a.precioMensual||0) - (b.precioMensual||0);
+        if (ord === 'precio-desc') return (b.precioMensual||0) - (a.precioMensual||0);
+        if (ord === 'nombre')      return (a.nombre||'').localeCompare(b.nombre||'');
         return 0;
       });
 
-      const grid = document.getElementById('grid');
       const reales   = lista.filter(e => !e.esEjemplo);
       const ejemplos = lista.filter(e => e.esEjemplo);
-      let html = '';
-      if (reales.length) {
-        html += reales.map(renderCard).join('');
-      }
+      let html = reales.map(renderCard).join('');
       if (ejemplos.length) {
-        html += `<div style="grid-column:1/-1;margin-top:${reales.length?'2rem':'0'};padding-bottom:0.5rem;border-bottom:1px dashed var(--border);">
-          <p style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);">
-            ${reales.length ? '— Perfiles de ejemplo —' : 'Perfiles de ejemplo (aún no hay entrenadores reales)'}
-          </p></div>`;
+        html += `<div class="example-sep">Perfiles de ejemplo</div>`;
         html += ejemplos.map(renderCard).join('');
       }
-      grid.innerHTML = html || '';
+
+      document.getElementById('grid').innerHTML = html || '';
       document.getElementById('noResults').style.display = lista.length === 0 ? 'block' : 'none';
       document.getElementById('countLabel').textContent =
         lista.length === todosEntrenadores.length
-          ? `Mostrando todos los entrenadores (${lista.length})`
+          ? `${lista.length} entrenadores disponibles`
           : `${lista.length} entrenador${lista.length !== 1 ? 'es' : ''} encontrado${lista.length !== 1 ? 's' : ''}`;
-
-      const chips = [];
-      if (q)    chips.push({ label: `"${q}"`,   clear: () => { document.getElementById('q').value = ''; filtrar(); } });
-      if (esp)  chips.push({ label: labelTag(esp), clear: () => { document.getElementById('especialidad').value = ''; filtrar(); } });
-      if (prec) chips.push({ label: { low:'< 30€', mid:'30–50€', high:'> 50€' }[prec], clear: () => { document.getElementById('precio').value = ''; filtrar(); } });
-      if (val)  chips.push({ label: val === '5' ? '5 estrellas' : '4+ estrellas', clear: () => { document.getElementById('valoracion').value = ''; filtrar(); } });
-
-      document.getElementById('activeChips').innerHTML =
-        chips.map((c, i) => `<span class="chip-active" onclick="activeChipClick(${i})">✕ ${c.label}</span>`).join('');
-      window._chips = chips;
     }
-
-    function activeChipClick(i) { window._chips[i].clear(); }
 
     function resetFiltros() {
       document.getElementById('q').value = '';
       document.getElementById('especialidad').value = '';
       document.getElementById('precio').value = '';
-      document.getElementById('valoracion').value = '';
+      document.getElementById('plan').value = '';
       filtrar();
     }
 
     async function cargarEntrenadores() {
-      const grid = document.getElementById('grid');
-      grid.innerHTML = '<p style="padding:2rem;color:var(--muted);">Cargando entrenadores…</p>';
       try {
         const res = await fetch(`${API}/api/entrenadores`);
-        if (!res.ok) throw new Error('Error ' + res.status);
+        if (!res.ok) throw new Error();
         todosEntrenadores = await res.json();
         filtrar();
-      } catch (e) {
-        grid.innerHTML = '<p style="padding:2rem;color:#dc2626;">No se pudieron cargar los entrenadores. Inténtalo más tarde.</p>';
+        // Stats
+        fetch(`${API}/api/entrenadores/stats`).then(r=>r.json()).then(d => {
+          document.getElementById('statEnt').textContent = d.entrenadores||'—';
+          document.getElementById('statCli').textContent = d.clientesActivos||'—';
+        }).catch(()=>{});
+      } catch {
+        document.getElementById('grid').innerHTML =
+          `<div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--muted);">
+            <div style="font-size:2rem;margin-bottom:1rem;opacity:0.4;">⚡</div>
+            <p style="font-weight:600;margin-bottom:0.5rem;">El servidor está arrancando…</p>
+            <p style="font-size:0.82rem;">Puede tardar 30 segundos la primera vez. <a href="javascript:location.reload()" style="color:var(--green);font-weight:600;">Reintentar</a></p>
+          </div>`;
+        document.getElementById('countLabel').textContent = '';
       }
     }
 
