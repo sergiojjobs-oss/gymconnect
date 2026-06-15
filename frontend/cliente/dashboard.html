@@ -62,7 +62,15 @@
     .hist-peso { font-weight:800; font-size:1rem; color:var(--text); width:60px; }
     .hist-stars { color:#d97706; font-size:0.85rem; }
     .mensaje-badge { display:inline-flex; align-items:center; justify-content:center; background:#dc2626; color:#fff; border-radius:99px; font-size:0.65rem; font-weight:900; min-width:18px; height:18px; padding:0 4px; }
-    @media(max-width:768px){ .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1.25rem} .grid-2{grid-template-columns:1fr} .grid-3{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:768px){
+      .dashboard-layout{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .main{padding:1rem 0.85rem 5.5rem}
+      .grid-2{grid-template-columns:1fr}
+      .grid-3{grid-template-columns:repeat(2,1fr)}
+      .entrenador-card{flex-direction:column; align-items:flex-start}
+      .ent-avatar{width:48px;height:48px}
+    }
   </style>
 </head>
 <body>

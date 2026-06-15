@@ -64,7 +64,14 @@
     .btn-danger:hover { background:rgba(220,38,38,0.2); }
 
     @media(max-width:900px){ .calendario{grid-template-columns:repeat(7,minmax(100px,1fr)); overflow-x:auto;} }
-    @media(max-width:768px){ .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1.25rem} }
+    @media(max-width:768px){
+      .dashboard-layout{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .main{padding:1rem 0.85rem 5.5rem}
+      .calendario{grid-template-columns:repeat(7,minmax(40px,1fr)); font-size:0.68rem; overflow-x:auto;}
+      .cal-day{padding:0.25rem 0.15rem; min-height:44px;}
+      .sesion-chip{font-size:0.58rem; padding:0.1rem 0.25rem;}
+    }
   </style>
 </head>
 <body>

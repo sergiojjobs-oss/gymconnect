@@ -177,12 +177,6 @@
    ============================================= */
 .mobile-nav {
   display: none;
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: var(--dark-hero);
-  border-top: 1px solid rgba(255,255,255,0.07);
-  z-index: 200;
-  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 .mobile-nav-inner {
   display: flex;
@@ -226,7 +220,16 @@
 .sidebar-backdrop.open { display: block; }
 
 @media (max-width: 768px) {
-  .mobile-nav { display: flex; flex-direction: column; }
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--dark-hero);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    z-index: 200;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
   .dashboard-layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
   .main-content, .main { padding: 1.25rem 1rem 5.5rem !important; }
