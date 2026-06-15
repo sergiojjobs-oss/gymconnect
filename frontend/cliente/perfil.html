@@ -399,7 +399,10 @@
 
       document.getElementById('heroNombre').textContent = e.nombre + ' ' + e.apellido;
       document.getElementById('heroCiudad').textContent = (e.ciudad ? '📍 ' + e.ciudad : '');
-      document.getElementById('heroStars').innerHTML = '★'.repeat(Math.floor(e.rating)) + ` <span>${e.rating} · ${e.totalResenas} reseñas</span>`;
+      const hasRating = e.totalResenas > 0;
+      document.getElementById('heroStars').innerHTML = hasRating
+        ? '★'.repeat(Math.floor(e.rating)) + ` <span>${e.rating} · ${e.totalResenas} reseñas</span>`
+        : '<span style="color:var(--muted-light);font-size:0.83rem;">Sin valoraciones aún</span>';
       document.getElementById('heroPrecio').innerHTML = e.precioMensual + '€ <small>/mes</small>';
       document.getElementById('sidebarPrecio').innerHTML = e.precioMensual + '€ <small style="font-size:.75rem;color:var(--muted);font-weight:400">/mes</small>';
       document.title = e.nombre + ' ' + e.apellido + ' — GymConnect';
@@ -407,7 +410,7 @@
       // Stats
       document.getElementById('statRow').innerHTML = `
         <div class="stat-box"><strong>${e.totalResenas}</strong><span>Reseñas</span></div>
-        <div class="stat-box"><strong>${e.rating}★</strong><span>Valoración</span></div>
+        <div class="stat-box"><strong>${e.totalResenas > 0 ? e.rating + '★' : '—'}</strong><span>Valoración</span></div>
         <div class="stat-box"><strong>${e.aniosExperiencia || '—'} años</strong><span>Experiencia</span></div>`;
 
       // Idiomas e Instagram/YouTube en hero
