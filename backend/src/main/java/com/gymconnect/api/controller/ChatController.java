@@ -34,6 +34,17 @@ public class ChatController {
     private final MensajeRepository mensajeRepo;
     private final SimpMessagingTemplate broker;
 
+    // WebSocket: indicador de escritura
+    @MessageMapping("/chat.typing")
+    public void typing(@Payload java.util.Map<String, Object> payload,
+                       java.security.Principal principal) {
+        Usuario yo = usuarioRepo.findByEmail(principal.getName()).orElseThrow();
+        Long destId = Long.parseLong(payload.get("destinatarioId").toString());
+        Usuario dest = usuarioRepo.findById(destId).orElseThrow();
+        broker.convertAndSendToUser(dest.getEmail(), "/queue/typing",
+            java.util.Map.of("remitenteId", yo.getId(), "escribiendo", payload.get("escribiendo")));
+    }
+
     // WebSocket: cliente envía a /app/chat.enviar
     @MessageMapping("/chat.enviar")
     public void enviarMensaje(@Payload MensajeInput input,
