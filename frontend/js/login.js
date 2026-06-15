@@ -1,4 +1,7 @@
 // API definida en js/config.js
+if (new URLSearchParams(location.search).get('expired')) {
+  document.getElementById('expiredAlert').style.display = 'block';
+}
 
 function showToast(msg, type) {
   const t = document.getElementById('toast');

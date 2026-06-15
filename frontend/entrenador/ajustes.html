@@ -414,6 +414,11 @@
             idiomas:          idiomasTags
           })
         });
+        if (res.status === 401) {
+          localStorage.clear();
+          location.href = '../login.html?expired=1';
+          return;
+        }
         if (!res.ok) {
           const txt = await res.text();
           console.error('Error guardando:', res.status, txt);

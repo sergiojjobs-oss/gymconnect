@@ -87,6 +87,7 @@ public class EntrenadorController {
 
     @GetMapping("/mi-perfil")
     public ResponseEntity<?> miPerfil(@AuthenticationPrincipal UserDetails ud) {
+        if (ud == null) return ResponseEntity.status(401).body("Token expirado o inválido");
         return entrenadorRepo.findByUsuarioEmail(ud.getUsername())
                 .map(e -> ResponseEntity.ok(EntrenadorDto.from(e)))
                 .orElse(ResponseEntity.notFound().build());
@@ -96,6 +97,7 @@ public class EntrenadorController {
     @PutMapping("/mi-perfil")
     public ResponseEntity<?> actualizarMiPerfil(@AuthenticationPrincipal UserDetails ud,
                                                  @RequestBody Map<String, Object> body) {
+        if (ud == null) return ResponseEntity.status(401).body("Token expirado o inválido");
         Entrenador e = entrenadorRepo.findByUsuarioEmail(ud.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("Entrenador no encontrado"));
 
