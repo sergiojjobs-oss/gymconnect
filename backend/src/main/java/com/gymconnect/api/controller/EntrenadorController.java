@@ -22,7 +22,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class EntrenadorController {
 
-    static final Set<String> ESPECIALIDADES_VALIDAS = Set.of(
+    public static final Set<String> ESPECIALIDADES_VALIDAS = Set.of(
         "Musculación / Hipertrofia",
         "Pérdida de grasa",
         "Nutrición deportiva",
