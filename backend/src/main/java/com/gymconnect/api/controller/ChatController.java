@@ -163,10 +163,11 @@ public class ChatController {
         Usuario yo = usuarioRepo.findByEmail(ud.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        return mensajeRepo.findById(mensajeId)
-                .filter(m -> m.getRemitenteId().equals(yo.getId()))
-                .map(m -> { mensajeRepo.delete(m); return ResponseEntity.<Void>ok().build(); })
-                .orElse(ResponseEntity.notFound().build());
+        var opt = mensajeRepo.findById(mensajeId);
+        if (opt.isEmpty() || !opt.get().getRemitenteId().equals(yo.getId()))
+            return ResponseEntity.notFound().build();
+        mensajeRepo.delete(opt.get());
+        return ResponseEntity.ok().build();
     }
 
     // REST: eliminar conversación (todos los mensajes entre dos usuarios)
