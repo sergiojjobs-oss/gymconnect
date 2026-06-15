@@ -3,6 +3,7 @@ package com.gymconnect.api.repository;
 import com.gymconnect.api.model.Mensaje;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,5 +34,6 @@ public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
     @Query("SELECT COUNT(DISTINCT m.remitenteId) FROM Mensaje m WHERE m.destinatarioId IN (SELECT e.usuario.id FROM Entrenador e)")
     long countClientesConMensajes();
 
+    @Transactional
     void deleteByRemitenteIdAndDestinatarioId(Long remitenteId, Long destinatarioId);
 }
