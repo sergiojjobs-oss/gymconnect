@@ -7,161 +7,192 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/main.css" />
   <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { overflow-x:hidden; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0b1f14;
+      color: #eef7f1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .orb { position:fixed; border-radius:50%; filter:blur(90px); opacity:0.15; pointer-events:none; animation:orbFloat 9s ease-in-out infinite alternate; }
+    .orb-1 { width:500px;height:500px;background:#22c55e;top:-150px;right:-100px; }
+    .orb-2 { width:300px;height:300px;background:#16a34a;bottom:-80px;left:-60px;animation-duration:11s;animation-delay:-4s; }
+    @keyframes orbFloat { from{transform:translateY(0)} to{transform:translateY(-30px)} }
+
+    header {
+      position:relative; z-index:10; padding:0 2rem; height:64px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,0.06); backdrop-filter:blur(12px);
+    }
+    .logo { font-size:1.2rem; font-weight:800; letter-spacing:-0.5px; color:#eef7f1; text-decoration:none; }
+    .logo span { color:#4ade80; }
+    .header-link { font-size:0.82rem; color:rgba(180,200,180,0.7); text-decoration:none; transition:color 0.15s; }
+    .header-link:hover { color:#4ade80; }
+    .header-link strong { color:#4ade80; }
+
+    .auth-wrap {
+      flex:1; display:flex; align-items:center; justify-content:center;
+      padding:2rem 1.25rem; position:relative; z-index:1;
+    }
+
+    .auth-card {
+      width:100%; max-width:500px;
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+      border-radius:20px; padding:2.5rem; backdrop-filter:blur(24px);
+      box-shadow:0 32px 80px rgba(0,0,0,0.4);
+    }
+
+    /* Stepper */
+    .steps { display:flex; align-items:center; gap:0; margin-bottom:2rem; }
+    .step { display:flex; align-items:center; gap:0.5rem; font-size:0.73rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:rgba(120,160,130,0.5); }
+    .step-num {
+      width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.06);
+      border:2px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center;
+      font-size:0.72rem; font-weight:900; flex-shrink:0; color:rgba(120,160,130,0.5);
+      transition:all 0.2s;
+    }
+    .step.active { color:#eef7f1; }
+    .step.active .step-num { background:#4ade80; border-color:#4ade80; color:#0b1f14; }
+    .step.done .step-num { background:#4ade80; border-color:#4ade80; color:#0b1f14; }
+    .step-line { flex:1; height:2px; background:rgba(255,255,255,0.08); margin:0 0.5rem; transition:background 0.2s; }
+    .step-line.done { background:#4ade80; }
+
+    .step-panel { display:none; }
+    .step-panel.active { display:block; }
+
+    h2 { font-size:1.6rem; font-weight:900; letter-spacing:-1px; color:#eef7f1; margin-bottom:0.35rem; }
+    .sub { font-size:0.85rem; color:rgba(120,160,130,0.7); margin-bottom:1.5rem; }
+
+    /* Role cards */
+    .role-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1rem; }
+    .role-card {
+      padding:1.25rem; border-radius:12px; border:1.5px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.03); cursor:pointer; text-align:center;
+      transition:border-color 0.18s, background 0.18s;
+    }
+    .role-card span { font-size:1.75rem; display:block; margin-bottom:0.5rem; }
+    .role-card strong { display:block; font-size:0.88rem; font-weight:700; color:#eef7f1; margin-bottom:0.2rem; }
+    .role-card small { font-size:0.72rem; color:rgba(120,160,130,0.6); }
+    .role-card.active { border-color:#4ade80; background:rgba(74,222,128,0.08); }
+
+    /* Info box */
+    .info-box {
+      background:rgba(74,222,128,0.07); border:1px solid rgba(74,222,128,0.15);
+      border-radius:10px; padding:0.85rem 1rem; font-size:0.82rem;
+      color:rgba(200,230,210,0.8); margin-bottom:1.25rem; line-height:1.75;
+    }
+
+    /* Form */
+    .form-group { margin-bottom:0.85rem; }
+    .form-group label {
+      display:block; font-size:0.67rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:1px; color:rgba(120,160,130,0.7); margin-bottom:0.4rem;
+    }
+    .form-group input {
+      width:100%; background:rgba(255,255,255,0.05); border:1.5px solid rgba(255,255,255,0.1);
+      border-radius:10px; padding:0.7rem 1rem; font-size:0.875rem; color:#eef7f1;
+      font-family:'Inter',sans-serif; transition:border-color 0.15s, box-shadow 0.15s;
+      color-scheme: dark;
+    }
+    .form-group input::placeholder { color:rgba(120,160,130,0.4); }
+    .form-group input:focus { outline:none; border-color:#4ade80; box-shadow:0 0 0 3px rgba(74,222,128,0.12); }
+    .form-group input.error { border-color:#f87171; }
+    .form-group input.valid { border-color:#4ade80; }
+    .error-msg { display:none; font-size:0.72rem; color:#f87171; font-weight:600; margin-top:0.25rem; }
+    .form-group input.error + .error-msg { display:block; }
+
+    .form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+
+    /* Password strength */
+    .strength-bar { height:3px; border-radius:2px; background:rgba(255,255,255,0.08); margin-top:0.4rem; overflow:hidden; }
+    .strength-fill { height:100%; border-radius:2px; width:0%; transition:width 0.3s, background 0.3s; }
+    .strength-label { font-size:0.7rem; font-weight:700; margin-top:0.2rem; color:rgba(120,160,130,0.5); }
+
+    /* Buttons */
+    .btn-primary {
+      padding:0.75rem 1.25rem; border-radius:10px; border:none; cursor:pointer;
+      font-family:'Inter',sans-serif; font-size:0.875rem; font-weight:700;
+      background:linear-gradient(135deg,#16a34a,#22c55e); color:#fff;
+      box-shadow:0 4px 20px rgba(22,163,74,0.3); transition:all 0.18s;
+    }
+    .btn-primary:hover { box-shadow:0 8px 32px rgba(22,163,74,0.45); transform:translateY(-1px); }
+    .btn-primary:disabled { opacity:0.6; transform:none; cursor:not-allowed; }
+    .btn-outline {
+      padding:0.75rem 1.25rem; border-radius:10px; cursor:pointer;
+      font-family:'Inter',sans-serif; font-size:0.875rem; font-weight:600;
+      background:rgba(255,255,255,0.05); border:1.5px solid rgba(255,255,255,0.12);
+      color:rgba(200,225,210,0.8); transition:all 0.18s;
+    }
+    .btn-outline:hover { border-color:rgba(74,222,128,0.4); color:#4ade80; background:rgba(74,222,128,0.06); }
+    .btn-row { display:flex; gap:0.75rem; margin-top:0.5rem; }
+    .btn-row .btn-outline { flex:1; justify-content:center; }
+    .btn-row .btn-primary { flex:2; justify-content:center; }
+
+    /* Review box */
+    .review-box {
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+      border-radius:10px; padding:1.25rem; margin-bottom:1.25rem;
+      font-size:0.875rem; display:flex; flex-direction:column; gap:0.65rem;
+    }
+    .review-row { display:flex; justify-content:space-between; align-items:center; }
+    .review-row .lbl { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:rgba(120,160,130,0.6); }
+    .review-row .val { font-weight:700; color:#eef7f1; }
+    .review-row .val-green { color:#4ade80; }
+
+    /* Checkbox */
+    .check-label {
+      display:flex; align-items:flex-start; gap:0.6rem; font-size:0.82rem;
+      color:rgba(180,200,180,0.7); cursor:pointer; margin-bottom:1.25rem;
+    }
+    .check-label input[type="checkbox"] { width:16px; height:16px; flex-shrink:0; accent-color:#4ade80; margin-top:2px; }
+    .check-label a { color:#4ade80; font-weight:700; text-decoration:none; }
+
+    .auth-footer { text-align:center; margin-top:1.25rem; font-size:0.82rem; color:rgba(120,160,130,0.6); }
+    .auth-footer a { color:#4ade80; font-weight:700; text-decoration:none; }
+
     /* Toast */
     .toast {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--text);
-      color: var(--text-light);
-      padding: 0.85rem 1.5rem;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      opacity: 0;
-      transition: opacity 0.3s, transform 0.3s;
-      z-index: 999;
-      border-left: 4px solid var(--green);
-      white-space: nowrap;
-      pointer-events: none;
+      position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(20px);
+      background:#132a1c; color:#eef7f1; padding:0.85rem 1.5rem; border-radius:10px;
+      font-size:0.85rem; font-weight:600; box-shadow:0 8px 32px rgba(0,0,0,0.4);
+      opacity:0; transition:opacity 0.25s, transform 0.25s; z-index:999;
+      border-left:4px solid #4ade80; white-space:nowrap; pointer-events:none;
     }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .toast-error { border-left-color: #dc2626; }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    .toast.toast-error { border-left-color:#f87171; }
 
-    /* Input con estado de error */
-    .form-group input.error { border-color: #dc2626; background: rgba(220,38,38,0.04); }
-    .form-group .error-msg {
-      display: none;
-      font-size: 0.74rem;
-      color: #dc2626;
-      font-weight: 600;
-      margin-top: 0.3rem;
+    @media(max-width:480px) {
+      .auth-card { padding:1.5rem 1rem; }
+      .form-row-2 { grid-template-columns:1fr; }
+      .role-grid { grid-template-columns:1fr 1fr; }
     }
-    .form-group input.error + .error-msg { display: block; }
-
-    /* Input válido */
-    .form-group input.valid { border-color: var(--green); }
-
-    /* Barra de fuerza de contraseña */
-    .strength-bar {
-      height: 4px;
-      border-radius: 2px;
-      background: var(--bg-2);
-      margin-top: 0.4rem;
-      overflow: hidden;
-    }
-    .strength-fill {
-      height: 100%;
-      border-radius: 2px;
-      width: 0%;
-      transition: width 0.3s, background 0.3s;
-    }
-    .strength-label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      margin-top: 0.25rem;
-      color: var(--muted);
-    }
-
-    /* Paso activo del stepper */
-    .steps {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      margin-bottom: 2rem;
-    }
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--muted);
-    }
-    .step-num {
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      background: var(--bg-2);
-      border: 2px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.72rem;
-      font-weight: 900;
-      flex-shrink: 0;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
-    }
-    .step.active .step-num {
-      background: var(--green);
-      border-color: var(--green);
-      color: #fff;
-    }
-    .step.done .step-num {
-      background: var(--green);
-      border-color: var(--green);
-      color: #fff;
-    }
-    .step.active { color: var(--text); }
-    .step-line { flex: 1; height: 2px; background: var(--border); margin: 0 0.5rem; }
-    .step-line.done { background: var(--green); }
-
-    /* Panel de paso */
-    .step-panel { display: none; }
-    .step-panel.active { display: block; }
-
-    /* Checkbox de términos */
-    .check-label {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.6rem;
-      font-size: 0.83rem;
-      color: var(--text-2);
-      cursor: pointer;
-      margin-top: 0.5rem;
-    }
-    .check-label input[type="checkbox"] {
-      width: 16px; height: 16px;
-      flex-shrink: 0;
-      accent-color: var(--green);
-      margin-top: 2px;
-    }
-    .check-label a { color: var(--green); font-weight: 700; }
   </style>
 </head>
 <body>
 
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
   <header>
-    <div class="container">
-      <a href="index.html" class="logo">Moment<span>Fit</span></a>
-      <nav>
-        <a href="login.html">¿Ya tienes cuenta? <strong>Inicia sesión</strong></a>
-      </nav>
-    </div>
+    <a href="index.html" class="logo">Moment<span>Fit</span></a>
+    <a href="login.html" class="header-link">¿Ya tienes cuenta? <strong>Inicia sesión</strong></a>
   </header>
 
-  <div class="form-page">
-    <div class="form-box" style="max-width:500px;">
+  <div class="auth-wrap">
+    <div class="auth-card">
 
       <!-- Stepper -->
       <div class="steps">
-        <div class="step active" id="s1">
-          <div class="step-num">1</div>
-          <span>Tu rol</span>
-        </div>
+        <div class="step active" id="s1"><div class="step-num">1</div><span>Tu rol</span></div>
         <div class="step-line" id="line-1"></div>
-        <div class="step" id="s2">
-          <div class="step-num">2</div>
-          <span>Tus datos</span>
-        </div>
+        <div class="step" id="s2"><div class="step-num">2</div><span>Tus datos</span></div>
         <div class="step-line" id="line-2"></div>
-        <div class="step" id="s3">
-          <div class="step-num">3</div>
-          <span>Confirmar</span>
-        </div>
+        <div class="step" id="s3"><div class="step-num">3</div><span>Confirmar</span></div>
       </div>
 
       <!-- PASO 1: Rol -->
@@ -188,50 +219,47 @@
           </label>
         </div>
 
-        <!-- Info según rol -->
-        <div id="info-cliente" style="background:rgba(22,163,74,0.06);border:1px solid var(--border);border-radius:8px;padding:1rem;font-size:0.83rem;color:var(--text-2);margin-bottom:1.5rem;">
-          ✅ Acceso a +500 entrenadores verificados<br>
+        <div id="info-cliente" class="info-box">
+          ✅ Acceso a entrenadores verificados<br>
           ✅ Plan de entrenamiento y nutrición personalizado<br>
           ✅ Chat directo con tu entrenador
         </div>
-        <div id="info-entrenador" style="display:none;background:rgba(22,163,74,0.06);border:1px solid var(--border);border-radius:8px;padding:1rem;font-size:0.83rem;color:var(--text-2);margin-bottom:1.5rem;">
+        <div id="info-entrenador" class="info-box" style="display:none;">
           ✅ Publica tu perfil y llega a miles de clientes<br>
           ✅ Gestiona rutinas, dietas y mensajes<br>
           ✅ Cobra de forma segura con PayPal
         </div>
 
-        <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="irPaso(2)">
-          Continuar →
-        </button>
+        <button class="btn-primary" style="width:100%;" onclick="irPaso(2)">Continuar →</button>
       </div>
 
-      <!-- PASO 2: Datos personales -->
+      <!-- PASO 2: Datos -->
       <div class="step-panel" id="panel-2">
         <h2>Tus datos</h2>
         <p class="sub">Rellena tu información personal</p>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+        <div class="form-row-2">
           <div class="form-group">
             <label>Nombre</label>
-            <input type="text" id="nombre" placeholder="Ana" />
+            <input type="text" id="nombre" placeholder="Ana" autocomplete="given-name" />
             <span class="error-msg">Introduce tu nombre</span>
           </div>
           <div class="form-group">
             <label>Apellido</label>
-            <input type="text" id="apellido" placeholder="García" />
+            <input type="text" id="apellido" placeholder="García" autocomplete="family-name" />
             <span class="error-msg">Introduce tu apellido</span>
           </div>
         </div>
 
         <div class="form-group">
           <label>Correo electrónico</label>
-          <input type="email" id="email" placeholder="tu@email.com" />
+          <input type="email" id="email" placeholder="tu@email.com" autocomplete="email" />
           <span class="error-msg">Introduce un email válido</span>
         </div>
 
         <div class="form-group">
           <label>Contraseña</label>
-          <input type="password" id="password" placeholder="Mínimo 8 caracteres" oninput="checkStrength(this.value)" />
+          <input type="password" id="password" placeholder="Mínimo 8 caracteres" oninput="checkStrength(this.value)" autocomplete="new-password" />
           <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
           <div class="strength-label" id="strengthLabel">Escribe una contraseña</div>
           <span class="error-msg">Mínimo 8 caracteres</span>
@@ -239,57 +267,47 @@
 
         <div class="form-group">
           <label>Confirmar contraseña</label>
-          <input type="password" id="password2" placeholder="Repite la contraseña" />
+          <input type="password" id="password2" placeholder="Repite la contraseña" autocomplete="new-password" />
           <span class="error-msg">Las contraseñas no coinciden</span>
         </div>
 
-        <div style="display:flex;gap:0.75rem;margin-top:0.5rem;">
-          <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="irPaso(1)">← Atrás</button>
-          <button class="btn btn-primary" style="flex:2;justify-content:center;" onclick="validarPaso2()">Continuar →</button>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="irPaso(1)">← Atrás</button>
+          <button class="btn-primary" onclick="validarPaso2()">Continuar →</button>
         </div>
       </div>
 
-      <!-- PASO 3: Confirmación -->
+      <!-- PASO 3: Confirmar -->
       <div class="step-panel" id="panel-3">
         <h2>Casi listo</h2>
         <p class="sub">Revisa tus datos antes de crear la cuenta</p>
 
-        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-bottom:1.5rem;font-size:0.88rem;display:flex;flex-direction:column;gap:0.6rem;">
-          <div style="display:flex;justify-content:space-between;">
-            <span style="color:var(--muted);font-weight:700;text-transform:uppercase;font-size:0.73rem;">Rol</span>
-            <span id="res-rol" style="font-weight:700;color:var(--green);">—</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;">
-            <span style="color:var(--muted);font-weight:700;text-transform:uppercase;font-size:0.73rem;">Nombre</span>
-            <span id="res-nombre" style="font-weight:600;">—</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;">
-            <span style="color:var(--muted);font-weight:700;text-transform:uppercase;font-size:0.73rem;">Email</span>
-            <span id="res-email" style="font-weight:600;">—</span>
-          </div>
+        <div class="review-box">
+          <div class="review-row"><span class="lbl">Rol</span><span class="val val-green" id="res-rol">—</span></div>
+          <div class="review-row"><span class="lbl">Nombre</span><span class="val" id="res-nombre">—</span></div>
+          <div class="review-row"><span class="lbl">Email</span><span class="val" id="res-email">—</span></div>
         </div>
 
-        <label class="check-label" style="margin-bottom:1.5rem;">
+        <label class="check-label">
           <input type="checkbox" id="terminos" />
           Acepto los <a href="#">términos de uso</a> y la <a href="#">política de privacidad</a>
         </label>
 
-        <div style="display:flex;gap:0.75rem;">
-          <button class="btn btn-outline" style="flex:1;justify-content:center;" onclick="irPaso(2)">← Atrás</button>
-          <button class="btn btn-primary" style="flex:2;justify-content:center;" onclick="registrar()">Crear cuenta ✓</button>
+        <div class="btn-row">
+          <button class="btn-outline" onclick="irPaso(2)">← Atrás</button>
+          <button class="btn-primary" id="btnRegistrar" onclick="registrar()">Crear cuenta ✓</button>
         </div>
 
-        <p class="form-footer">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+        <div class="auth-footer">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></div>
       </div>
 
-    </div><!-- /form-box -->
+    </div>
   </div>
 
   <div id="toast" class="toast"></div>
 
   <script src="js/config.js"></script>
   <script>
-    /* ---- Selector de rol ---- */
     document.querySelectorAll('input[name="rol"]').forEach(radio => {
       radio.addEventListener('change', () => {
         document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
@@ -299,125 +317,81 @@
       });
     });
 
-    /* ---- Toast ---- */
-    function showToast(msg, type = 'info') {
+    function showToast(msg, type='info') {
       const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = 'toast toast-' + type + ' show';
+      t.textContent = msg; t.className = 'toast toast-' + type + ' show';
       setTimeout(() => t.classList.remove('show'), 3500);
     }
 
-    /* ---- Stepper ---- */
     function irPaso(n) {
       [1,2,3].forEach(i => {
-        document.getElementById('panel-' + i).classList.toggle('active', i === n);
-        document.getElementById('s' + i).classList.remove('active','done');
+        document.getElementById('panel-'+i).classList.toggle('active', i===n);
+        document.getElementById('s'+i).classList.remove('active','done');
       });
-      // Marcar pasos completados
-      for (let i = 1; i < n; i++) document.getElementById('s' + i).classList.add('done');
-      document.getElementById('s' + n).classList.add('active');
-      // Líneas
-      [1,2].forEach(i => {
-        const l = document.getElementById('line-' + i);
-        if (l) l.classList.toggle('done', i < n);
-      });
-
-      // Rellenar resumen en paso 3
-      if (n === 3) {
+      for (let i=1; i<n; i++) document.getElementById('s'+i).classList.add('done');
+      document.getElementById('s'+n).classList.add('active');
+      [1,2].forEach(i => { const l=document.getElementById('line-'+i); if(l) l.classList.toggle('done', i<n); });
+      if (n===3) {
         const rol = document.querySelector('input[name="rol"]:checked').value;
-        document.getElementById('res-rol').textContent    = rol === 'cliente' ? '🏃 Cliente' : '💪 Entrenador';
+        document.getElementById('res-rol').textContent    = rol==='cliente' ? '🏃 Cliente' : '💪 Entrenador';
         document.getElementById('res-nombre').textContent = document.getElementById('nombre').value + ' ' + document.getElementById('apellido').value;
         document.getElementById('res-email').textContent  = document.getElementById('email').value;
       }
     }
 
-    /* ---- Fuerza de contraseña ---- */
     function checkStrength(val) {
-      const fill  = document.getElementById('strengthFill');
-      const label = document.getElementById('strengthLabel');
-      let score = 0;
-      if (val.length >= 8) score++;
-      if (/[A-Z]/.test(val)) score++;
-      if (/[0-9]/.test(val)) score++;
-      if (/[^A-Za-z0-9]/.test(val)) score++;
-
-      const levels = [
-        { pct: '0%',   color: 'transparent', text: 'Escribe una contraseña' },
-        { pct: '25%',  color: '#dc2626',      text: 'Débil' },
-        { pct: '50%',  color: '#d97706',      text: 'Aceptable' },
-        { pct: '75%',  color: '#16a34a',      text: 'Buena' },
-        { pct: '100%', color: '#22c55e',      text: 'Muy segura ✓' },
+      const fill=document.getElementById('strengthFill'), label=document.getElementById('strengthLabel');
+      let score=0;
+      if(val.length>=8) score++; if(/[A-Z]/.test(val)) score++; if(/[0-9]/.test(val)) score++; if(/[^A-Za-z0-9]/.test(val)) score++;
+      const levels=[
+        {pct:'0%',color:'transparent',text:'Escribe una contraseña'},
+        {pct:'25%',color:'#f87171',text:'Débil'},
+        {pct:'50%',color:'#fb923c',text:'Aceptable'},
+        {pct:'75%',color:'#4ade80',text:'Buena'},
+        {pct:'100%',color:'#22c55e',text:'Muy segura ✓'},
       ];
-      const l = levels[score];
-      fill.style.width = l.pct;
-      fill.style.background = l.color;
-      label.textContent = l.text;
-      label.style.color = l.color;
+      const l=levels[score];
+      fill.style.width=l.pct; fill.style.background=l.color;
+      label.textContent=l.text; label.style.color=l.color;
     }
 
-    /* ---- Validación paso 2 ---- */
     function validarPaso2() {
-      let ok = true;
-
-      function check(id, cond) {
-        const el = document.getElementById(id);
-        el.classList.toggle('error', !cond);
-        el.classList.toggle('valid',  cond);
-        if (!cond) ok = false;
+      let ok=true;
+      function check(id,cond) {
+        const el=document.getElementById(id);
+        el.classList.toggle('error',!cond); el.classList.toggle('valid',cond);
+        if(!cond) ok=false;
       }
-
-      check('nombre',    document.getElementById('nombre').value.trim().length > 0);
-      check('apellido',  document.getElementById('apellido').value.trim().length > 0);
-      check('email',     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value));
-      check('password',  document.getElementById('password').value.length >= 8);
-      check('password2', document.getElementById('password2').value === document.getElementById('password').value && document.getElementById('password').value.length >= 8);
-
-      if (!ok) { showToast('Corrige los campos marcados en rojo', 'error'); return; }
+      check('nombre',   document.getElementById('nombre').value.trim().length>0);
+      check('apellido', document.getElementById('apellido').value.trim().length>0);
+      check('email',    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value));
+      check('password', document.getElementById('password').value.length>=8);
+      check('password2',document.getElementById('password2').value===document.getElementById('password').value && document.getElementById('password').value.length>=8);
+      if(!ok) { showToast('Corrige los campos marcados','error'); return; }
       irPaso(3);
     }
 
-    /* ---- Registro final ---- */
     async function registrar() {
-      if (!document.getElementById('terminos').checked) {
-        showToast('Acepta los términos para continuar', 'error');
-        return;
-      }
-
-      const btn = document.querySelector('#panel-3 .btn-primary');
-      btn.disabled = true;
-      btn.textContent = 'Creando cuenta…';
-
-      const rol = document.querySelector('input[name="rol"]:checked').value.toUpperCase();
-
+      if(!document.getElementById('terminos').checked) { showToast('Acepta los términos para continuar','error'); return; }
+      const btn=document.getElementById('btnRegistrar');
+      btn.disabled=true; btn.textContent='Creando cuenta…';
+      const rol=document.querySelector('input[name="rol"]:checked').value.toUpperCase();
       try {
-        const res = await fetch(`${API}/api/auth/registro`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            nombre:   document.getElementById('nombre').value.trim(),
-            apellido: document.getElementById('apellido').value.trim(),
-            email:    document.getElementById('email').value.trim(),
-            password: document.getElementById('password').value,
-            rol:      rol
+        const res=await fetch(`${API}/api/auth/registro`,{
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            nombre:document.getElementById('nombre').value.trim(),
+            apellido:document.getElementById('apellido').value.trim(),
+            email:document.getElementById('email').value.trim(),
+            password:document.getElementById('password').value, rol
           })
         });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          showToast(data.error || 'Error al crear la cuenta', 'error');
-          return;
-        }
-
-        showToast('¡Cuenta creada! Bienvenido a MomentFit 🎉', 'success');
-        setTimeout(() => window.location.href = 'login.html', 2000);
-
-      } catch (err) {
-        showToast('No se puede conectar con el servidor', 'error');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Crear cuenta ✓';
-      }
+        const data=await res.json();
+        if(!res.ok) { showToast(data.error||'Error al crear la cuenta','error'); return; }
+        showToast('¡Cuenta creada! Bienvenido a MomentFit 🎉','info');
+        setTimeout(()=>window.location.href='login.html',2000);
+      } catch { showToast('No se puede conectar con el servidor','error'); }
+      finally { btn.disabled=false; btn.textContent='Crear cuenta ✓'; }
     }
   </script>
 </body>
