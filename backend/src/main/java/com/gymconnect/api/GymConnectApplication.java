@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-public class MomentFitApplication {
+public class GymConnectApplication {
     public static void main(String[] args) {
-        SpringApplication.run(MomentFitApplication.class, args);
+        SpringApplication.run(GymConnectApplication.class, args);
     }
 
     @Bean
