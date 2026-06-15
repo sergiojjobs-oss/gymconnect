@@ -34,12 +34,16 @@
       flex-wrap: wrap;
     }
     .status-banner.free {
-      background: linear-gradient(135deg, rgba(217,119,6,0.08), rgba(245,158,11,0.04));
-      border: 1px solid rgba(217,119,6,0.25);
+      background: linear-gradient(135deg, rgba(22,163,74,0.08), rgba(74,222,128,0.04));
+      border: 1px solid rgba(22,163,74,0.25);
     }
     .status-banner.pro {
-      background: linear-gradient(135deg, rgba(22,163,74,0.08), rgba(132,204,22,0.04));
-      border: 1px solid rgba(22,163,74,0.25);
+      background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(96,165,250,0.04));
+      border: 1px solid rgba(37,99,235,0.25);
+    }
+    .status-banner.elite {
+      background: linear-gradient(135deg, rgba(124,58,237,0.10), rgba(167,139,250,0.04));
+      border: 1px solid rgba(124,58,237,0.3);
     }
     .status-icon { font-size: 2.5rem; flex-shrink: 0; }
     .status-info h2 { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; margin-bottom: 0.25rem; }
@@ -373,6 +377,69 @@
     let selectedPlan = 'pro';
     let paypalButtonsRendered = false;
 
+    /* ===== CARGA INICIAL DEL PLAN ===== */
+    async function cargarPlanActual() {
+      try {
+        const res = await fetch(`${API}/api/suscripcion/estado`, {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const plan = (data.plan || 'FREE').toUpperCase();
+
+        if (plan === 'FREE') {
+          actualizarContadorClientes();
+          return; // banner FREE ya está por defecto en el HTML
+        }
+
+        // Actualizar banner y cards según el plan activo
+        const banner = document.getElementById('statusBanner');
+        const isPro = plan === 'PRO';
+        const renovacion = new Date();
+        renovacion.setMonth(renovacion.getMonth() + 1);
+        const fechaStr = renovacion.toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric' });
+
+        if (isPro) {
+          banner.className = 'status-banner pro';
+          banner.innerHTML = `
+            <div class="status-icon">⚡</div>
+            <div class="status-info" style="flex:1;">
+              <h2>Plan Pro activo</h2>
+              <p>Tienes <strong>clientes ilimitados</strong> y acceso a todas las funciones profesionales. Tu suscripción se renueva el <strong>${fechaStr}</strong>.</p>
+            </div>
+            <div class="status-cta">
+              <button class="btn btn-outline" onclick="cancelarSuscripcion()" style="font-size:0.82rem;">Cancelar suscripción</button>
+            </div>`;
+        } else {
+          banner.className = 'status-banner elite';
+          banner.innerHTML = `
+            <div class="status-icon">👑</div>
+            <div class="status-info" style="flex:1;">
+              <h2>Plan Elite activo</h2>
+              <p>Tienes <strong>clientes ilimitados</strong> y acceso a todas las funciones Elite. Tu suscripción se renueva el <strong>${fechaStr}</strong>.</p>
+            </div>
+            <div class="status-cta">
+              <button class="btn btn-outline" onclick="cancelarSuscripcion()" style="font-size:0.82rem;">Cancelar suscripción</button>
+            </div>`;
+        }
+
+        // Marcar el plan actual en las cards
+        document.querySelectorAll('.plan-card button').forEach(b => b.disabled = false);
+        ['free','pro','elite'].forEach(p => {
+          const card = document.getElementById('card-' + p);
+          const btn = card?.querySelector('button');
+          if (!btn) return;
+          if (p === plan.toLowerCase()) {
+            btn.textContent = '✓ Plan actual';
+            btn.disabled = true;
+          } else if (p === 'free') {
+            btn.textContent = 'Plan básico';
+            btn.disabled = true;
+          }
+        });
+      } catch {}
+    }
+
     /* ===== FAQ ===== */
     function toggleFaq(btn) {
       btn.closest('.faq-item').classList.toggle('open');
@@ -556,7 +623,7 @@
       } catch {}
     }
 
-    actualizarContadorClientes();
+    cargarPlanActual();
   </script>
 <script src="../js/sidebar-user.js"></script>
 </body>
