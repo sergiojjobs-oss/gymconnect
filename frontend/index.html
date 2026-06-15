@@ -386,7 +386,7 @@
         <div class="proof-item reveal"><strong class="count-up" data-target-id="ps1">…</strong><span>Entrenadores activos</span></div>
         <div class="proof-item reveal reveal-delay-1"><strong class="count-up" data-target-id="ps2">…</strong><span>Clientes satisfechos</span></div>
         <div class="proof-item reveal reveal-delay-2"><strong>100%</strong><span>Conexión segura SSL</span></div>
-        <div class="proof-item reveal reveal-delay-3"><strong>4.9★</strong><span>Valoración media</span></div>
+        <div class="proof-item reveal reveal-delay-3"><strong id="ps3">…</strong><span>Valoración media</span></div>
       </div>
     </div>
   </div>
@@ -684,6 +684,8 @@
 
       const ps1 = document.getElementById('ps1');
       const ps2 = document.getElementById('ps2');
+      const ps3 = document.getElementById('ps3');
+      if (ps3) ps3.textContent = d.valoracionMedia ? d.valoracionMedia + '★' : '—';
       if (ps1 && d.entrenadores) {
         const obs2 = new IntersectionObserver(entries => {
           if (entries[0].isIntersecting) { animateCount(ps1, d.entrenadores); animateCount(ps2, d.clientesActivos || 0); obs2.disconnect(); }
@@ -694,8 +696,12 @@
         if (ps2) ps2.textContent = d.clientesActivos || '—';
       }
     })
+    .then(() => {
+      const ps3 = document.getElementById('ps3');
+      if (ps3 && ps3.textContent === '…') ps3.textContent = '—';
+    })
     .catch(() => {
-      ['statEntrenadores','statClientes','ps1','ps2'].forEach(id => {
+      ['statEntrenadores','statClientes','ps1','ps2','ps3'].forEach(id => {
         const el = document.getElementById(id); if (el) el.textContent = '—';
       });
     });
