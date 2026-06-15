@@ -13,9 +13,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/entrenadores")
@@ -111,17 +113,17 @@ public class EntrenadorController {
                 .filter(ESPECIALIDADES_VALIDAS::contains)
                 .distinct()
                 .limit(6)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
             e.setEspecialidades(validas);
         }
-        if (body.containsKey("servicios"))         e.setServicios((List<String>) body.get("servicios"));
+        if (body.containsKey("servicios"))         e.setServicios(new ArrayList<>((List<String>) body.get("servicios")));
         if (body.containsKey("paypalEmail"))       e.setPaypalEmail((String) body.get("paypalEmail"));
         if (body.containsKey("fotoUrl"))           e.setFotoUrl((String) body.get("fotoUrl"));
         if (body.containsKey("metodologia"))       e.setMetodologia((String) body.get("metodologia"));
         if (body.containsKey("instagram"))         e.setInstagram((String) body.get("instagram"));
         if (body.containsKey("youtube"))           e.setYoutube((String) body.get("youtube"));
-        if (body.containsKey("certificaciones"))   e.setCertificaciones((List<String>) body.get("certificaciones"));
-        if (body.containsKey("idiomas"))           e.setIdiomas((List<String>) body.get("idiomas"));
+        if (body.containsKey("certificaciones"))   e.setCertificaciones(new ArrayList<>((List<String>) body.get("certificaciones")));
+        if (body.containsKey("idiomas"))           e.setIdiomas(new ArrayList<>((List<String>) body.get("idiomas")));
 
         entrenadorRepo.save(e);
         return ResponseEntity.ok(EntrenadorDto.from(e));
