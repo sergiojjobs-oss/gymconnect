@@ -333,7 +333,11 @@ let wakeAttempted = false;
 async function wakeBackend() {
   if (wakeAttempted) return;
   wakeAttempted = true;
-  try { await fetch(`${API}/api/auth/ping`, { signal: AbortSignal.timeout(5000) }); } catch {}
+  // Cualquier request al servidor lo despierta aunque devuelva 404
+  try { await fetch(`${API}/api/chat/contactos`, {
+    headers: { Authorization: 'Bearer ' + token },
+    signal: AbortSignal.timeout(8000)
+  }); } catch {}
 }
 
 function setStatus(text, cls) {
@@ -554,6 +558,8 @@ function logout() {
 }
 
 // ── Iniciar ────────────────────────────────────────────────────
+// Despertar backend antes de intentar WebSocket
+wakeBackend();
 cargarContactos().then(() => {
   // Si viene ?userId=X desde el perfil del entrenador, abrir ese chat
   const params = new URLSearchParams(window.location.search);
