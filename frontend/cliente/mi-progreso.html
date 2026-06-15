@@ -208,9 +208,17 @@ async function cargarHistorial() {
           ${p.cumplimiento != null ? `<div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.25rem;">Cumplimiento: ${p.cumplimiento}%</div><div class="cumpl-bar"><div class="cumpl-fill" style="width:${p.cumplimiento}%"></div></div>` : ''}
           ${p.notas ? `<p class="checkin-notas" style="margin-top:0.75rem;">${p.notas}</p>` : ''}
           ${p.notasEntrenador ? `<div class="feedback-box"><strong>💬 Feedback del entrenador</strong>${p.notasEntrenador}</div>` : ''}
+          <button onclick="eliminarCheckin(${p.id})" style="margin-top:0.75rem;background:none;border:none;color:#dc2626;font-size:0.78rem;cursor:pointer;opacity:0.7;">🗑 Eliminar</button>
         </div>`;
     }).join('');
   } catch { el.innerHTML = `<p style="color:#dc2626;">Error al cargar historial.</p>`; }
+}
+
+async function eliminarCheckin(id) {
+  if (!confirm('¿Eliminar este check-in?')) return;
+  const r = await fetch(`${API}/api/progreso/${id}`, { method: 'DELETE', headers: { Authorization: 'Bearer ' + token() } });
+  if (r.ok) cargarHistorial();
+  else showMsg('Error al eliminar.', true);
 }
 
 cargarHistorial();

@@ -71,6 +71,17 @@ public class ProgresoController {
         return ResponseEntity.ok(progresoRepo.findByEntrenadorIdAndClienteIdOrderByFechaDesc(ent.getId(), clienteId));
     }
 
+    // Cliente: eliminar un check-in propio
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminar(@AuthenticationPrincipal UserDetails ud, @PathVariable Long id) {
+        Usuario cliente = usuarioRepo.findByEmail(ud.getUsername())
+                .orElseThrow(() -> new RuntimeException("No encontrado"));
+        return progresoRepo.findById(id)
+                .filter(p -> p.getCliente().getId().equals(cliente.getId()))
+                .map(p -> { progresoRepo.delete(p); return ResponseEntity.ok().build(); })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     // Entrenador: añadir feedback a un check-in
     @PutMapping("/{id}/feedback")
     public ResponseEntity<?> feedback(@AuthenticationPrincipal UserDetails ud,
