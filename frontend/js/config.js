@@ -5,4 +5,4 @@ const API = (window.location.hostname === 'localhost' || window.location.hostnam
 
 const FRONTEND_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:3000'
-  : 'https://splendid-daffodil-79285f.netlify.app';
+  : 'https://gymconnect-k07k6aany-sergio-gymconnect.vercel.app';
