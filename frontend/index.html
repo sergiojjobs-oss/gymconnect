@@ -4,19 +4,178 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GymConnect — Tu entrenador personal online</title>
+  <meta name="description" content="Conecta con entrenadores certificados. Rutinas personalizadas, nutrición y seguimiento de progreso en una sola plataforma." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css" />
+  <style>
+    /* ── How it works ── */
+    .how-section { padding:7rem 0; background:var(--dark-hero); position:relative; overflow:hidden; }
+    .how-section::before {
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 50% 60% at 80% 50%, rgba(22,163,74,0.07),transparent 60%);
+      pointer-events:none;
+    }
+    .steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:3.5rem; }
+    .step {
+      position:relative;
+      padding:2rem;
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:16px;
+      transition:border-color var(--t),background var(--t);
+    }
+    .step:hover { border-color:rgba(22,163,74,0.2); background:rgba(22,163,74,0.04); }
+    .step-num {
+      font-size:3rem;
+      font-weight:900;
+      line-height:1;
+      letter-spacing:-3px;
+      background:var(--grad-main);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      margin-bottom:1rem;
+      display:block;
+    }
+    .step h3 { font-size:1rem; font-weight:700; color:var(--text-light); margin-bottom:0.6rem; letter-spacing:-0.2px; }
+    .step p { font-size:0.85rem; color:var(--muted-light); line-height:1.75; }
+    .step-connector {
+      position:absolute;
+      top:50%;
+      right:-1.1rem;
+      transform:translateY(-50%);
+      width:2.2rem;
+      height:1px;
+      background:rgba(255,255,255,0.1);
+      z-index:1;
+    }
+    .step:last-child .step-connector { display:none; }
+
+    /* ── Social proof strip ── */
+    .proof-strip {
+      background:var(--bg-2);
+      padding:3rem 0;
+      border-top:1px solid var(--border);
+      border-bottom:1px solid var(--border);
+    }
+    .proof-inner {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:2rem;
+      text-align:center;
+    }
+    .proof-item strong {
+      display:block;
+      font-size:2.4rem;
+      font-weight:900;
+      letter-spacing:-2px;
+      color:var(--text);
+      line-height:1;
+      background:var(--grad-main);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .proof-item span { font-size:0.78rem; color:var(--muted); font-weight:500; margin-top:0.4rem; display:block; text-transform:uppercase; letter-spacing:0.8px; }
+
+    /* ── Trainers section ── */
+    .trainers-section { padding:7rem 0; background:var(--bg); }
+
+    /* ── Testimonials ── */
+    .testimonials-section { padding:7rem 0; background:var(--bg-2); }
+    .testimonials-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+    .testimonial-card {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:1.75rem;
+      box-shadow:var(--shadow-sm);
+      transition:box-shadow var(--t),transform var(--t);
+    }
+    .testimonial-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .t-stars { color:var(--gold-l); font-size:0.85rem; margin-bottom:1rem; }
+    .t-text { font-size:0.88rem; color:var(--text-2); line-height:1.75; margin-bottom:1.25rem; font-style:italic; }
+    .t-author { display:flex; align-items:center; gap:0.75rem; }
+    .t-author .avatar { width:36px; height:36px; font-size:0.75rem; }
+    .t-author-name { font-size:0.82rem; font-weight:700; color:var(--text); }
+    .t-author-role { font-size:0.72rem; color:var(--muted); }
+
+    /* ── Pricing preview ── */
+    .pricing-section { padding:7rem 0; background:var(--dark-cta); position:relative; overflow:hidden; }
+    .pricing-section::before {
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 60% 70% at 50% 50%, rgba(22,163,74,0.08),transparent 70%);
+      pointer-events:none;
+    }
+    .pricing-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:3.5rem; }
+    .pricing-card {
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.07);
+      border-radius:16px;
+      padding:2rem;
+      position:relative;
+      transition:border-color var(--t),transform var(--t);
+    }
+    .pricing-card:hover { border-color:rgba(22,163,74,0.25); transform:translateY(-2px); }
+    .pricing-card.featured {
+      border-color:rgba(22,163,74,0.4);
+      background:rgba(22,163,74,0.06);
+      transform:translateY(-6px);
+    }
+    .pricing-card.featured:hover { transform:translateY(-8px); }
+    .featured-badge {
+      position:absolute;
+      top:-12px; left:50%; transform:translateX(-50%);
+      background:var(--grad-main);
+      color:#fff;
+      font-size:0.65rem;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      padding:0.2rem 0.85rem;
+      border-radius:99px;
+      white-space:nowrap;
+    }
+    .pricing-plan { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--green-l); margin-bottom:0.75rem; }
+    .pricing-price { font-size:2.8rem; font-weight:900; letter-spacing:-2.5px; color:var(--text-light); line-height:1; margin-bottom:0.3rem; }
+    .pricing-price span { font-size:1rem; font-weight:400; color:var(--muted-light); letter-spacing:0; }
+    .pricing-sub { font-size:0.78rem; color:var(--muted-light); margin-bottom:1.5rem; }
+    .pricing-features { list-style:none; display:flex; flex-direction:column; gap:0.6rem; margin-bottom:2rem; }
+    .pricing-features li { font-size:0.83rem; color:var(--muted-light); display:flex; align-items:center; gap:0.6rem; }
+    .pricing-features li::before { content:'✓'; color:var(--green-l); font-weight:700; font-size:0.8rem; flex-shrink:0; }
+
+    /* ── Ticker ── */
+    .ticker-wrap { overflow:hidden; background:var(--dark-hero); border-top:1px solid rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.05); padding:1rem 0; }
+    .ticker-inner { display:flex; gap:4rem; animation:ticker 20s linear infinite; white-space:nowrap; }
+    .ticker-inner:hover { animation-play-state:paused; }
+    .ticker-item { font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted-light); display:flex; align-items:center; gap:0.75rem; }
+    .ticker-dot { width:4px; height:4px; border-radius:50%; background:var(--green-l); flex-shrink:0; }
+    @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+    @media(max-width:900px) {
+      .steps-grid,.pricing-cards { grid-template-columns:1fr; }
+      .proof-inner { grid-template-columns:repeat(2,1fr); }
+      .testimonials-grid { grid-template-columns:1fr; }
+      .step-connector { display:none; }
+      .pricing-card.featured { transform:none; }
+    }
+    @media(max-width:640px) {
+      .proof-inner { grid-template-columns:repeat(2,1fr); gap:1.25rem; }
+    }
+  </style>
 </head>
 <body>
 
   <header>
     <div class="container">
       <a href="index.html" class="logo">Gym<span>Connect</span></a>
-      <button class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('open')">
+      <button class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('open')" aria-label="Menú">
         <span></span><span></span><span></span>
       </button>
       <nav>
-        <a href="entrenador/perfil.html">Entrenadores</a>
-        <a href="cliente/buscar.html">Buscar</a>
+        <a href="cliente/buscar.html">Buscar entrenadores</a>
         <a href="login.html">Acceder</a>
         <a href="registro.html" class="nav-cta">Empezar gratis</a>
       </nav>
@@ -28,31 +187,30 @@
     <div class="speed-lines"></div>
     <div class="container">
       <div class="hero-grid">
-
         <div class="hero-text">
           <span class="badge">🥗 Nutrición · 💪 Entrenamiento · 📈 Resultados</span>
           <h1>Tu cuerpo,<br><span class="highlight">tu mejor</span><br>versión</h1>
-          <p>Conecta con entrenadores certificados que combinan entrenamiento y nutrición para llevarte más lejos. Resultados reales, metodología profesional.</p>
+          <p>Conecta con entrenadores certificados que combinan entrenamiento y nutrición personalizada. Resultados reales, metodología profesional.</p>
           <div class="hero-cta">
-            <a href="registro.html" class="btn btn-primary">Empezar gratis →</a>
-            <a href="cliente/buscar.html" class="btn btn-light">Ver entrenadores</a>
+            <a href="registro.html" class="btn btn-primary" style="font-size:0.9rem;padding:0.8rem 1.8rem;">Empezar gratis →</a>
+            <a href="cliente/buscar.html" class="btn btn-light" style="font-size:0.9rem;padding:0.8rem 1.8rem;">Ver entrenadores</a>
           </div>
           <div class="hero-stats">
             <div class="hero-stat"><strong id="statEntrenadores">…</strong><small>Entrenadores</small></div>
             <div class="hero-stat"><strong id="statClientes">…</strong><small>Clientes activos</small></div>
-            <div class="hero-stat"><strong id="statValoracion">…</strong><small>Valoración</small></div>
+            <div class="hero-stat"><strong id="statValoracion">…</strong><small>Valoración media</small></div>
           </div>
         </div>
 
         <div class="hero-visual">
           <div class="profile-card">
             <div class="profile-card-head">
-              <div class="avatar" style="width:54px;height:54px;font-size:1.05rem;">CR</div>
+              <div class="avatar" style="width:46px;height:46px;font-size:0.9rem;">CR</div>
               <div>
                 <h3>Carlos Ruiz</h3>
                 <p>Entrenador & Nutricionista · Madrid</p>
               </div>
-              <span class="profile-verified">✓ Pro</span>
+              <span class="profile-verified">✓ Elite</span>
             </div>
             <div class="stars">★★★★★ <span>4.9 · 128 reseñas</span></div>
             <div class="profile-tags">
@@ -62,75 +220,125 @@
             </div>
             <div class="profile-price-row">
               <div class="profile-price">39€ <small>/ mes</small></div>
-              <a href="registro.html" class="btn btn-primary" style="padding:0.6rem 1.3rem;font-size:0.8rem;">Contratar</a>
+              <a href="registro.html" class="btn btn-primary" style="padding:0.55rem 1.1rem;font-size:0.78rem;">Contratar</a>
             </div>
           </div>
           <div class="floating-chip chip-1">
             <span class="chip-dot" style="background:#22c55e;"></span>Plan nutricional incluido
           </div>
           <div class="floating-chip chip-2">
-            🔥 Rutina semanal publicada
+            🔥 Rutina semanal actualizada
           </div>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- ===== FRANJA NUTRICIÓN ===== -->
-  <div class="nutrition-strip">
-    <div class="nutrition-strip-inner">
-      <div class="nutri-item"><strong>🥩</strong><span>Planes de proteína</span></div>
-      <div class="nutri-item"><strong>🥦</strong><span>Nutrición real</span></div>
-      <div class="nutri-item"><strong>💧</strong><span>Hidratación óptima</span></div>
-      <div class="nutri-item"><strong>📊</strong><span>Seguimiento de macros</span></div>
-      <div class="nutri-item"><strong>⚡</strong><span>Suplementación</span></div>
-      <div class="nutri-item"><strong>🏆</strong><span>Resultados garantizados</span></div>
+  <!-- ===== TICKER ===== -->
+  <div class="ticker-wrap">
+    <div class="ticker-inner">
+      <span class="ticker-item"><span class="ticker-dot"></span>Rutinas personalizadas</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Planes de nutrición</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Chat en tiempo real</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Seguimiento de progreso</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Entrenadores certificados</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Pago seguro con PayPal</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Sin compromiso de permanencia</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Resultados medibles</span>
+      <!-- Duplicate for seamless loop -->
+      <span class="ticker-item"><span class="ticker-dot"></span>Rutinas personalizadas</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Planes de nutrición</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Chat en tiempo real</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Seguimiento de progreso</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Entrenadores certificados</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Pago seguro con PayPal</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Sin compromiso de permanencia</span>
+      <span class="ticker-item"><span class="ticker-dot"></span>Resultados medibles</span>
     </div>
   </div>
+
+  <!-- ===== PROOF STRIP ===== -->
+  <div class="proof-strip">
+    <div class="container">
+      <div class="proof-inner">
+        <div class="proof-item"><strong id="ps1">…</strong><span>Entrenadores activos</span></div>
+        <div class="proof-item"><strong id="ps2">…</strong><span>Clientes satisfechos</span></div>
+        <div class="proof-item"><strong>4.9★</strong><span>Valoración media</span></div>
+        <div class="proof-item"><strong>100%</strong><span>Pago seguro</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="how-section">
+    <div class="container">
+      <span class="section-label" style="color:var(--green-l);">Así funciona</span>
+      <h2 class="section-title" style="color:var(--text-light);">De cero a resultados<br><span class="highlight">en 3 pasos</span></h2>
+
+      <div class="steps-grid">
+        <div class="step">
+          <span class="step-num">01</span>
+          <h3>Crea tu cuenta gratis</h3>
+          <p>Regístrate en menos de 2 minutos. Sin tarjeta de crédito. Elige si eres cliente buscando entrenador o entrenador que quiere hacer crecer su negocio.</p>
+          <div class="step-connector"></div>
+        </div>
+        <div class="step">
+          <span class="step-num">02</span>
+          <h3>Encuentra tu entrenador</h3>
+          <p>Filtra por especialidad, precio y valoraciones. Lee perfiles detallados y contrata directamente con un solo clic a través de PayPal seguro.</p>
+          <div class="step-connector"></div>
+        </div>
+        <div class="step">
+          <span class="step-num">03</span>
+          <h3>Empieza a transformarte</h3>
+          <p>Recibe tu rutina y plan nutricional personalizado. Registra tu progreso cada semana y chatea con tu entrenador cuando lo necesites.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ===== FEATURES ===== -->
   <section class="features-section">
     <div class="container">
-      <span class="section-label">¿Qué ofrecemos?</span>
-      <h2 class="section-title">Todo lo que<br>necesitas</h2>
-      <p class="section-sub">GymConnect une entrenamiento y nutrición en una sola plataforma. Menos fricción, más resultados reales.</p>
+      <span class="section-label">Plataforma completa</span>
+      <h2 class="section-title">Todo lo que necesitas<br>en un solo lugar</h2>
+      <p class="section-sub">GymConnect une entrenamiento y nutrición en una sola plataforma. Sin apps extra, sin WhatsApp, sin papel.</p>
 
       <div class="features-grid">
         <div class="feature-card">
-          <span class="feature-icon">💬</span>
-          <h3>Chat en tiempo real</h3>
-          <p>Comunicación directa con tu entrenador sin intermediarios. Resuelve dudas sobre tu rutina o dieta al instante.</p>
+          <span class="feature-icon">📋</span>
+          <h3>Rutinas personalizadas</h3>
+          <p>Tu entrenador diseña un plan semanal adaptado exactamente a tus objetivos, nivel y equipamiento disponible.</p>
           <span class="feature-num">01</span>
         </div>
         <div class="feature-card">
-          <span class="feature-icon">📋</span>
-          <h3>Rutinas personalizadas</h3>
-          <p>Tu entrenador diseña y publica cada semana un plan adaptado a tus objetivos y nivel.</p>
+          <span class="feature-icon">🥗</span>
+          <h3>Plan nutricional</h3>
+          <p>Dietas personalizadas con calorías, macros y recomendaciones semanales. Nutrición real, no dietas genéricas.</p>
           <span class="feature-num">02</span>
         </div>
         <div class="feature-card">
-          <span class="feature-icon">🥗</span>
-          <h3>Plan de nutrición</h3>
-          <p>Dietas personalizadas con seguimiento de macros, calorías y recomendaciones semanales.</p>
+          <span class="feature-icon">💬</span>
+          <h3>Chat en tiempo real</h3>
+          <p>Comunicación directa con tu entrenador sin intermediarios. Resuelve dudas al instante con mensajería WebSocket.</p>
           <span class="feature-num">03</span>
         </div>
         <div class="feature-card">
           <span class="feature-icon">📊</span>
           <h3>Seguimiento de progreso</h3>
-          <p>Registra tus métricas semana a semana. El entrenador ajusta tu plan basándose en tus avances.</p>
+          <p>Registra peso, medidas y check-ins semanales. Tu entrenador ajusta el plan en tiempo real según tus avances.</p>
           <span class="feature-num">04</span>
         </div>
         <div class="feature-card">
-          <span class="feature-icon">💳</span>
-          <h3>Pago seguro con PayPal</h3>
-          <p>Contratación sencilla y segura. Pago mensual automatizado, cancela cuando quieras.</p>
+          <span class="feature-icon">📅</span>
+          <h3>Agenda de sesiones</h3>
+          <p>Calendario semanal para organizar y confirmar sesiones. Notificaciones automáticas para que nunca faltes.</p>
           <span class="feature-num">05</span>
         </div>
         <div class="feature-card">
-          <span class="feature-icon">📱</span>
-          <h3>Multidispositivo</h3>
-          <p>Accede desde móvil, tablet o PC sin instalar nada. Todo sincronizado en tiempo real.</p>
+          <span class="feature-icon">🏋️</span>
+          <h3>Biblioteca de ejercicios</h3>
+          <p>Catálogo completo de ejercicios con instrucciones, grupos musculares y nivel. Tu entrenador puede añadir los suyos.</p>
           <span class="feature-num">06</span>
         </div>
       </div>
@@ -142,76 +350,204 @@
     <div class="container">
       <span class="section-label">Entrenadores destacados</span>
       <h2 class="section-title">Profesionales<br>verificados</h2>
-      <p class="section-sub">Cada entrenador está certificado en entrenamiento y nutrición. Solo los mejores están en GymConnect.</p>
+      <p class="section-sub">Cada entrenador está certificado y verificado. Filtra por especialidad, precio y ubicación para encontrar el tuyo.</p>
 
       <div class="trainers-grid" id="trainersGrid">
-        <div style="color:var(--muted);font-size:0.9rem;padding:2rem;">Cargando entrenadores…</div>
+        <div class="skeleton" style="height:180px;border-radius:14px;"></div>
+        <div class="skeleton" style="height:180px;border-radius:14px;"></div>
+        <div class="skeleton" style="height:180px;border-radius:14px;"></div>
+      </div>
+
+      <div style="text-align:center;margin-top:2.5rem;">
+        <a href="cliente/buscar.html" class="btn btn-outline" style="font-size:0.87rem;">Ver todos los entrenadores →</a>
       </div>
     </div>
   </section>
 
-  <!-- ===== CTA ===== -->
+  <!-- ===== TESTIMONIALS ===== -->
+  <section class="testimonials-section">
+    <div class="container">
+      <span class="section-label">Lo que dicen</span>
+      <h2 class="section-title">Resultados reales,<br>personas reales</h2>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"En 3 meses perdí 12 kg siguiendo el plan de nutrición y las rutinas de mi entrenador. Nunca pensé que sería tan fácil tener todo en una app."</p>
+          <div class="t-author">
+            <div class="avatar" style="width:36px;height:36px;font-size:0.72rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);">ML</div>
+            <div>
+              <div class="t-author-name">María L.</div>
+              <div class="t-author-role">Cliente · Pérdida de peso</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"Como entrenador, GymConnect me ha permitido gestionar 15 clientes de forma profesional. Las estadísticas ELITE son un antes y un después."</p>
+          <div class="t-author">
+            <div class="avatar" style="width:36px;height:36px;font-size:0.72rem;">AR</div>
+            <div>
+              <div class="t-author-name">Alejandro R.</div>
+              <div class="t-author-role">Entrenador · Plan ELITE</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"El chat en tiempo real con mi entrenador marca la diferencia. Le mando fotos de mis comidas y me corrige al momento. Es como tenerlo al lado."</p>
+          <div class="t-author">
+            <div class="avatar" style="width:36px;height:36px;font-size:0.72rem;background:linear-gradient(135deg,#d97706,#f59e0b);">JG</div>
+            <div>
+              <div class="t-author-name">Javier G.</div>
+              <div class="t-author-role">Cliente · Ganancia muscular</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRICING ===== -->
+  <section class="pricing-section">
+    <div class="container">
+      <div style="position:relative;z-index:1;">
+        <span class="section-label" style="color:var(--green-l);">Planes de entrenador</span>
+        <h2 class="section-title" style="color:var(--text-light);">Precios claros,<br><span class="highlight">sin sorpresas</span></h2>
+        <p class="section-sub" style="color:var(--muted-light);">Empieza gratis como cliente. Si eres entrenador, elige el plan que mejor se adapta a tu negocio.</p>
+
+        <div class="pricing-cards">
+          <div class="pricing-card">
+            <div class="pricing-plan">Free</div>
+            <div class="pricing-price">0€<span>/mes</span></div>
+            <div class="pricing-sub">Para empezar</div>
+            <ul class="pricing-features">
+              <li>Hasta 3 clientes</li>
+              <li>Rutinas ilimitadas</li>
+              <li>Chat en tiempo real</li>
+              <li>Seguimiento de progreso</li>
+            </ul>
+            <a href="registro.html" class="btn btn-outline" style="width:100%;justify-content:center;color:#eef7f1;border-color:rgba(255,255,255,0.15);">Empezar gratis</a>
+          </div>
+          <div class="pricing-card featured">
+            <div class="featured-badge">Más popular</div>
+            <div class="pricing-plan" style="color:#fbbf24;">Pro</div>
+            <div class="pricing-price">9€<span>/mes</span></div>
+            <div class="pricing-sub">Para entrenadores en crecimiento</div>
+            <ul class="pricing-features">
+              <li>Clientes ilimitados</li>
+              <li>Planes de nutrición</li>
+              <li>Posición destacada en búsqueda</li>
+              <li>Todo lo del plan Free</li>
+            </ul>
+            <a href="registro.html" class="btn btn-primary" style="width:100%;justify-content:center;">Empezar con Pro</a>
+          </div>
+          <div class="pricing-card">
+            <div class="pricing-plan" style="color:#a78bfa;">Elite</div>
+            <div class="pricing-price">25€<span>/mes</span></div>
+            <div class="pricing-sub">Para profesionales top</div>
+            <ul class="pricing-features">
+              <li>Posición #1 en búsquedas</li>
+              <li>Estadísticas avanzadas</li>
+              <li>Fichas completas de clientes</li>
+              <li>Notas privadas por cliente</li>
+              <li>Exportar PDF de progreso</li>
+              <li>Todo lo del plan Pro</li>
+            </ul>
+            <a href="registro.html" class="btn" style="width:100%;justify-content:center;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;box-shadow:0 4px 20px rgba(124,58,237,0.35);">Empezar con Elite</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA FINAL ===== -->
   <section class="cta-section">
     <div class="container">
       <div class="cta-inner">
-        <span class="badge badge-gold">🚀 Únete hoy</span>
-        <h2 class="section-title highlight">¿Listo para<br>transformarte?</h2>
-        <p>Más de 3.200 personas ya entrenan y cuidan su nutrición con GymConnect. Empieza gratis hoy.</p>
-        <a href="registro.html" class="btn btn-primary" style="font-size:1rem;padding:1.1rem 2.8rem;">
-          Crear cuenta gratis →
-        </a>
+        <span class="badge badge-gold">🚀 Empieza hoy</span>
+        <h2 class="section-title" style="color:var(--text-light);">¿Listo para<br><span class="highlight">transformarte?</span></h2>
+        <p>Únete a los entrenadores y clientes que ya usan GymConnect para conseguir resultados reales.</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <a href="registro.html" class="btn btn-primary" style="font-size:0.95rem;padding:0.85rem 2.2rem;">Crear cuenta gratis →</a>
+          <a href="cliente/buscar.html" class="btn btn-light" style="font-size:0.95rem;padding:0.85rem 2.2rem;">Ver entrenadores</a>
+        </div>
       </div>
     </div>
   </section>
 
   <footer>
-    <p>&copy; 2026 <strong>GymConnect</strong> · Todos los derechos reservados</p>
+    <p>&copy; 2026 <strong>GymConnect</strong> · Conectando entrenadores y clientes · Todos los derechos reservados</p>
   </footer>
 
 <script src="js/config.js"></script>
 <script>
-  // Entrenadores destacados
+  // Stats
+  fetch(`${API}/api/entrenadores/stats`)
+    .then(r => r.json())
+    .then(d => {
+      ['statEntrenadores','ps1'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = d.entrenadores || '—';
+      });
+      ['statClientes','ps2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = d.clientesActivos || '—';
+      });
+      const sv = document.getElementById('statValoracion');
+      if (sv) sv.textContent = (d.valoracionMedia || '—') + '★';
+    })
+    .catch(() => {
+      ['statEntrenadores','statClientes','statValoracion','ps1','ps2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '—';
+      });
+    });
+
+  // Trainers
   fetch(`${API}/api/entrenadores`)
     .then(r => r.json())
     .then(lista => {
       const grid = document.getElementById('trainersGrid');
       const top = lista.slice(0, 3);
-      if (!top.length) { grid.innerHTML = '<p style="color:var(--muted);padding:2rem;">No hay entrenadores aún.</p>'; return; }
+      if (!top.length) {
+        grid.innerHTML = '<p style="color:var(--muted);padding:2rem;grid-column:1/-1;">No hay entrenadores aún.</p>';
+        return;
+      }
       grid.innerHTML = top.map(e => {
-        const iniciales = (e.nombre.charAt(0) + e.apellido.charAt(0)).toUpperCase();
-        const estrellas = '★'.repeat(Math.floor(e.rating || 5)) + '☆'.repeat(5 - Math.floor(e.rating || 5));
+        const iniciales = (e.nombre.charAt(0) + (e.apellido||' ').charAt(0)).toUpperCase();
+        const stars = '★'.repeat(Math.round(e.rating || 5)) + '☆'.repeat(5 - Math.round(e.rating || 5));
         const tags = (e.especialidades || []).slice(0, 2).map(t => `<span class="tag">${t}</span>`).join('');
+        const planBadge = e.planTier === 'ELITE'
+          ? '<span style="font-size:0.62rem;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.25);color:#a78bfa;border-radius:99px;padding:0.1rem 0.5rem;font-weight:700;">👑 Elite</span>'
+          : e.planTier === 'PRO'
+          ? '<span style="font-size:0.62rem;background:rgba(202,138,4,0.1);border:1px solid rgba(202,138,4,0.2);color:#ca8a04;border-radius:99px;padding:0.1rem 0.5rem;font-weight:700;">⭐ Pro</span>'
+          : '';
         return `
           <div class="trainer-card">
             <div class="trainer-head">
               ${e.fotoUrl
-                ? `<div class="avatar" style="width:48px;height:48px;overflow:hidden;"><img src="${e.fotoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>`
-                : `<div class="avatar" style="width:48px;height:48px;font-size:0.9rem;background:${e.avatarColor||'linear-gradient(135deg,#16a34a,#84cc16)'};">${iniciales}</div>`
-              }
-              <div><h3>${e.nombre} ${e.apellido}</h3><p>${e.ciudad || 'España'}</p></div>
+                ? `<div class="avatar" style="width:44px;height:44px;overflow:hidden;"><img src="${e.fotoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`
+                : `<div class="avatar" style="width:44px;height:44px;font-size:0.85rem;">${iniciales}</div>`}
+              <div>
+                <div style="display:flex;align-items:center;gap:0.4rem;">
+                  <h3>${e.nombre} ${e.apellido||''}</h3>
+                  ${planBadge}
+                </div>
+                <p>${e.ciudad || 'España'}</p>
+              </div>
             </div>
-            <div class="stars" style="padding-left:0.75rem;">${estrellas} <span>(${e.totalResenas || 0})</span></div>
+            <div style="padding-left:0.75rem;font-size:0.8rem;color:var(--gold-l);margin-bottom:0.65rem;">${stars} <span style="color:var(--muted);font-size:0.72rem;">(${e.totalResenas||0})</span></div>
             <div class="trainer-tags">${tags || '<span class="tag">Entrenamiento</span>'}</div>
             <div class="trainer-bottom">
-              <div class="trainer-price">${e.precioMensual || '—'}€ <small>/mes</small></div>
-              <a href="cliente/perfil.html?id=${e.id}" class="btn btn-primary" style="padding:0.5rem 1.1rem;font-size:0.78rem;">Ver perfil</a>
+              <div class="trainer-price">${e.precioMensual||'—'}€ <small>/mes</small></div>
+              <a href="cliente/perfil.html?id=${e.id}" class="btn btn-primary" style="padding:0.45rem 1rem;font-size:0.76rem;">Ver perfil</a>
             </div>
           </div>`;
       }).join('');
     })
-    .catch(() => {});
-
-  fetch(`${API}/api/entrenadores/stats`)
-    .then(r => r.json())
-    .then(d => {
-      document.getElementById('statEntrenadores').textContent = d.entrenadores;
-      document.getElementById('statClientes').textContent = d.clientesActivos;
-      document.getElementById('statValoracion').textContent = d.valoracionMedia + '★';
-    })
     .catch(() => {
-      document.getElementById('statEntrenadores').textContent = '—';
-      document.getElementById('statClientes').textContent = '—';
-      document.getElementById('statValoracion').textContent = '—';
+      document.getElementById('trainersGrid').innerHTML = '<p style="color:var(--muted);padding:2rem;grid-column:1/-1;">No se pudo cargar la lista.</p>';
     });
 </script>
 </body>
