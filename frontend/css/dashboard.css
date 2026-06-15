@@ -84,7 +84,7 @@
 .sidebar-user-name { font-size: 0.78rem; font-weight: 700; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sidebar-user-role { font-size: 0.62rem; color: var(--muted-light); }
 
-.main-content, .main { padding: 2rem 2.5rem; background: var(--bg); overflow-y: auto; }
+.main-content, .main { padding: 2rem 2.5rem; background: var(--bg); overflow-y: auto; min-height: calc(100vh - 64px); }
 
 .page-header {
   display: flex;
