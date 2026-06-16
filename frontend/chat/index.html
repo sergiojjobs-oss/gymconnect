@@ -654,11 +654,20 @@ function copiarMsg(texto) {
 
 async function eliminarMensaje(btn, id) {
   const msgEl = btn.closest('.msg');
-  if (id.startsWith('tmp-')) { msgEl.remove(); return; }
-  const r = await fetch(`${API}/api/chat/mensaje/${id}`, {
-    method: 'DELETE', headers: { Authorization: 'Bearer ' + token }
-  });
-  if (r.ok || r.status === 404) msgEl.remove();
+  if (!id.startsWith('tmp-')) {
+    const r = await fetch(`${API}/api/chat/mensaje/${id}`, {
+      method: 'DELETE', headers: { Authorization: 'Bearer ' + token }
+    });
+    if (!r.ok && r.status !== 404) return;
+  }
+  const bubble = msgEl.querySelector('.msg-bubble');
+  if (bubble) {
+    bubble.innerHTML = '<em style="opacity:0.45;font-size:0.82rem;">🚫 Mensaje eliminado</em>';
+    bubble.style.background = 'transparent';
+    bubble.style.border = '1px solid rgba(160,210,175,0.15)';
+    bubble.style.boxShadow = 'none';
+  }
+  msgEl.querySelector('.msg-actions')?.remove();
 }
 
 function cancelarRespuesta() {
