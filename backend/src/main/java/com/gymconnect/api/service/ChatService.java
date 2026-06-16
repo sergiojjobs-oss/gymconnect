@@ -50,6 +50,7 @@ public class ChatService {
         dto.setContenido(m.getContenido());
         dto.setFechaEnvio(m.getFechaEnvio());
         dto.setLeido(m.isLeido());
+        dto.setEliminado(m.isEliminado());
 
         usuarioRepo.findById(m.getRemitenteId())
                 .ifPresent(u -> dto.setRemitenteNombre(u.getNombre() + " " + u.getApellido()));

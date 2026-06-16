@@ -620,18 +620,27 @@ function mostrarMensaje(msg, esMio) {
   div.dataset.id = id;
   div.dataset.texto = msg.contenido;
   div.dataset.esMio = esMio ? '1' : '0';
-  const textoEscapado = escapeHtml(msg.contenido).replace(/"/g,'&quot;');
-  div.innerHTML = `
-    <div class="msg-row">
-      <div class="msg-bubble">${quoteHtml}${escapeHtml(msg.contenido)}</div>
-      <div class="msg-actions">
-        <button class="msg-action-btn" onclick="responderMsg('${id}','${textoEscapado}')" title="Responder">↩</button>
-        <button class="msg-action-btn" onclick="copiarMsg('${textoEscapado}')" title="Copiar">📋</button>
-        ${esMio ? `<button class="msg-action-btn del" onclick="eliminarMensaje(this,'${id}')" title="Eliminar">🗑</button>` : ''}
+  if (msg.eliminado) {
+    div.innerHTML = `
+      <div class="msg-bubble" style="background:transparent;border:1px solid rgba(160,210,175,0.15);box-shadow:none;">
+        <em style="opacity:0.45;font-size:0.82rem;">🚫 Mensaje eliminado</em>
       </div>
-    </div>
-    <span class="msg-time">${hora} ${tick}</span>
-  `;
+      <span class="msg-time">${hora}</span>
+    `;
+  } else {
+    const textoEscapado = escapeHtml(msg.contenido).replace(/"/g,'&quot;');
+    div.innerHTML = `
+      <div class="msg-row">
+        <div class="msg-bubble">${quoteHtml}${escapeHtml(msg.contenido)}</div>
+        <div class="msg-actions">
+          <button class="msg-action-btn" onclick="responderMsg('${id}','${textoEscapado}')" title="Responder">↩</button>
+          <button class="msg-action-btn" onclick="copiarMsg('${textoEscapado}')" title="Copiar">📋</button>
+          ${esMio ? `<button class="msg-action-btn del" onclick="eliminarMensaje(this,'${id}')" title="Eliminar">🗑</button>` : ''}
+        </div>
+      </div>
+      <span class="msg-time">${hora} ${tick}</span>
+    `;
+  }
 
   const ti = document.getElementById('typingIndicator');
   if (ti) msgs.insertBefore(div, ti); else msgs.appendChild(div);

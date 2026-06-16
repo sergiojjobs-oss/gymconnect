@@ -166,7 +166,10 @@ public class ChatController {
         var opt = mensajeRepo.findById(mensajeId);
         if (opt.isEmpty() || !opt.get().getRemitenteId().equals(yo.getId()))
             return ResponseEntity.notFound().build();
-        mensajeRepo.delete(opt.get());
+        Mensaje m = opt.get();
+        m.setEliminado(true);
+        m.setContenido("");
+        mensajeRepo.save(m);
         return ResponseEntity.ok().build();
     }
 

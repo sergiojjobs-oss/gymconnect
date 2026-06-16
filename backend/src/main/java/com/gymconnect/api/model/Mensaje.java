@@ -29,4 +29,5 @@ public class Mensaje {
     private LocalDateTime fechaEnvio = LocalDateTime.now();
 
     private boolean leido = false;
+    private boolean eliminado = false;
 }

@@ -13,4 +13,5 @@ public class MensajeDto {
     private String contenido;
     private LocalDateTime fechaEnvio;
     private boolean leido;
+    private boolean eliminado;
 }
