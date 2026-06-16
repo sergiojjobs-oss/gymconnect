@@ -140,35 +140,20 @@
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
           <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Certificaciones</h3>
-          <div class="form-group">
-            <label>Títulos y certificados</label>
-            <div class="tag-input-wrap" id="certWrap" onclick="document.getElementById('certInput').focus()">
-              <input type="text" id="certInput" placeholder="ej. NSCA-CPT, Máster Nutrición…" onkeydown="addTag(event,'cert')" />
-            </div>
-            <p class="hint">Pulsa Enter o coma para añadir.</p>
-          </div>
+          <p class="hint" style="margin-bottom:1rem;">Selecciona tus títulos y certificados</p>
+          <div id="certChecks" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.5rem;"></div>
         </div>
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
           <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Idiomas</h3>
-          <div class="form-group">
-            <label>Idiomas en los que puedes entrenar</label>
-            <div class="tag-input-wrap" id="idiomasWrap" onclick="document.getElementById('idiomasInput').focus()">
-              <input type="text" id="idiomasInput" placeholder="ej. Español, Inglés…" onkeydown="addTag(event,'idiomas')" />
-            </div>
-            <p class="hint">Pulsa Enter o coma para añadir.</p>
-          </div>
+          <p class="hint" style="margin-bottom:1rem;">Idiomas en los que puedes entrenar</p>
+          <div id="idiomasChecks" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.5rem;"></div>
         </div>
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
           <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Servicios incluidos</h3>
-          <div class="form-group">
-            <label>¿Qué incluye tu plan mensual?</label>
-            <div class="tag-input-wrap" id="servWrap" onclick="document.getElementById('servInput').focus()">
-              <input type="text" id="servInput" placeholder="ej. Rutina personalizada, Dieta…" onkeydown="addTag(event,'serv')" />
-            </div>
-            <p class="hint">Pulsa Enter o coma para añadir.</p>
-          </div>
+          <p class="hint" style="margin-bottom:1rem;">¿Qué incluye tu plan mensual?</p>
+          <div id="servChecks" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.5rem;"></div>
         </div>
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
@@ -220,6 +205,24 @@
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 3500);
     }
+
+    const CERTIFICACIONES = [
+      'NSCA-CPT','NASM-CPT','ACE','ACSM','CrossFit Level 1','CrossFit Level 2',
+      'Técnico Superior AFAD','Técnico Deportivo','Grado en CCAFD',
+      'Máster Nutrición Deportiva','Pilates Certificado','TRX Certified',
+      'Kettlebell Certified','Entrenador Personal FEG',
+    ];
+
+    const IDIOMAS_LISTA = [
+      'Español','Inglés','Francés','Alemán','Italiano','Portugués','Árabe','Chino',
+    ];
+
+    const SERVICIOS_LISTA = [
+      'Rutina personalizada semanal','Seguimiento diario por chat','Ajuste de dieta mensual',
+      'Análisis de composición corporal','Videollamadas semanales','Plan nutricional',
+      'Ejercicios en vídeo','Revisión de técnica','Programa de 12 semanas',
+      'Menú semanal','Planificación de competición','Acceso a app de seguimiento',
+    ];
 
     const ESPECIALIDADES = [
       'Musculación / Hipertrofia',
@@ -279,11 +282,42 @@
       });
     }
 
-    const tagMap = {
-      serv:    { arr: () => servTags,    setArr: v => servTags = v,    wrapId: 'servWrap',    inpId: 'servInput' },
-      cert:    { arr: () => certTags,    setArr: v => certTags = v,    wrapId: 'certWrap',    inpId: 'certInput' },
-      idiomas: { arr: () => idiomasTags, setArr: v => idiomasTags = v, wrapId: 'idiomasWrap', inpId: 'idiomasInput' }
-    };
+    function makeCheckGrid(containerId, lista, getTags, setTags, max) {
+      const wrap = document.getElementById(containerId);
+      wrap.innerHTML = lista.map(e => `
+        <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.82rem;font-weight:500;transition:border-color 0.15s,background 0.15s;" class="espec-check-label">
+          <input type="checkbox" value="${e}" style="accent-color:var(--green);width:15px;height:15px;cursor:pointer;" />
+          ${e}
+        </label>`).join('');
+      wrap.querySelectorAll('input[type=checkbox]').forEach(cb => {
+        syncCheck(cb, getTags);
+        cb.addEventListener('change', () => {
+          if (cb.checked) {
+            if (max && getTags().length >= max) { cb.checked = false; showToast(`Máximo ${max}`, true); return; }
+            if (!getTags().includes(cb.value)) setTags([...getTags(), cb.value]);
+          } else {
+            setTags(getTags().filter(t => t !== cb.value));
+          }
+          wrap.querySelectorAll('input[type=checkbox]').forEach(c => syncCheck(c, getTags));
+        });
+      });
+    }
+
+    function syncCheck(cb, getTags) {
+      cb.checked = getTags().includes(cb.value);
+      const label = cb.closest('label');
+      if (cb.checked) {
+        label.style.borderColor = 'var(--green)';
+        label.style.background = 'rgba(22,163,74,0.07)';
+        label.style.color = 'var(--green-l)';
+      } else {
+        label.style.borderColor = '';
+        label.style.background = '';
+        label.style.color = '';
+      }
+    }
+
+    const tagMap = {};
 
     function renderTags(type) {
       const m = tagMap[type];
@@ -385,9 +419,9 @@
         idiomasTags = ent.idiomas          || [];
         renderEspecChecks();
         syncEspecChecks();
-        renderTags('serv');
-        renderTags('cert');
-        renderTags('idiomas');
+        makeCheckGrid('certChecks',   CERTIFICACIONES, () => certTags,    v => certTags = v);
+        makeCheckGrid('idiomasChecks',IDIOMAS_LISTA,   () => idiomasTags, v => idiomasTags = v);
+        makeCheckGrid('servChecks',   SERVICIOS_LISTA, () => servTags,    v => servTags = v);
 
         document.getElementById('cargando').style.display = 'none';
         document.getElementById('form').style.display = 'block';
@@ -444,6 +478,9 @@
     }
 
     renderEspecChecks();
+    makeCheckGrid('certChecks',   CERTIFICACIONES, () => certTags,    v => certTags = v);
+    makeCheckGrid('idiomasChecks',IDIOMAS_LISTA,   () => idiomasTags, v => idiomasTags = v);
+    makeCheckGrid('servChecks',   SERVICIOS_LISTA, () => servTags,    v => servTags = v);
     cargarDatos();
   </script>
 <script src="../js/sidebar-user.js"></script>
