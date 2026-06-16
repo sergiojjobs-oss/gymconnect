@@ -29,7 +29,9 @@
     .filtros select option { background:#ffffff; color:#111827; }
 
     .ejercicios-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; }
-    .ej-card { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:border-color 0.15s; }
+
+    /* ── Card ── */
+    .ej-card { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:border-color 0.15s; position:relative; }
     .ej-card:hover { border-color:rgba(22,163,74,0.3); }
     .ej-img { width:100%; height:130px; object-fit:cover; background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:2.5rem; }
     .ej-body { padding:1rem; }
@@ -45,6 +47,31 @@
     .nivel-intermedio { color:#fbbf24; }
     .nivel-avanzado { color:#f87171; }
     .sin-resultados { grid-column:1/-1; text-align:center; padding:3rem; color:var(--muted); }
+
+    /* Botón eliminar en tarjeta */
+    .ej-del-btn {
+      position:absolute; top:0.5rem; right:0.5rem;
+      background:rgba(220,38,38,0.15); border:1px solid rgba(220,38,38,0.3);
+      color:#f87171; border-radius:7px; padding:0.28rem 0.5rem;
+      font-size:0.78rem; cursor:pointer; line-height:1;
+      transition:background 0.15s;
+    }
+    .ej-del-btn:hover { background:rgba(220,38,38,0.3); }
+
+    /* ── Móvil: card horizontal ── */
+    @media(max-width:768px){
+      .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1rem 0.85rem 2rem}
+      .filtros { flex-direction:column; gap:0.5rem; }
+      .filtros input { width:100%; }
+      .filtros select { width:100%; }
+      .ejercicios-grid { grid-template-columns:1fr; gap:0.6rem; }
+      .ej-card { display:flex; flex-direction:row; border-radius:10px; }
+      .ej-img { width:72px; height:72px; min-width:72px; font-size:1.6rem; border-radius:0; flex-shrink:0; }
+      .ej-body { padding:0.75rem; flex:1; min-width:0; }
+      .ej-nombre { font-size:0.85rem; }
+      .ej-desc { display:none; }
+      .ej-del-btn { top:0.4rem; right:0.4rem; }
+    }
 
     /* Modal */
     .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:1000; padding:1rem; }
@@ -212,10 +239,11 @@ function render(lista) {
       ? `<img src="${e.imagenUrl}" alt="${e.nombre}" style="width:100%;height:130px;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="ej-img" style="display:none;">${EMOJIS[e.grupoMuscular]||'🏋️'}</div>`
       : `<div class="ej-img">${EMOJIS[e.grupoMuscular]||'🏋️'}</div>`;
 
+    const eJson = JSON.stringify(e).replace(/'/g,"\\'");
     return `<div class="ej-card">
       ${imgHtml}
       <div class="ej-body">
-        <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.3rem;">
+        <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.3rem;flex-wrap:wrap;">
           <div class="ej-nombre">${e.nombre}</div>
           ${esPropio ? '<span class="ej-badge-propio">Mío</span>' : '<span class="ej-badge-sistema">Sistema</span>'}
         </div>
@@ -225,8 +253,11 @@ function render(lista) {
           ${e.equipamiento ? `<span class="ej-tag">${e.equipamiento}</span>` : ''}
         </div>
         ${e.descripcion ? `<div class="ej-desc">${e.descripcion}</div>` : ''}
-        ${esPropio ? `<div class="ej-actions"><button class="btn btn-outline" style="font-size:0.78rem;padding:0.3rem 0.75rem;" onclick='editarEj(${JSON.stringify(e).replace(/'/g,"\\'")})'> ✏️ Editar</button></div>` : ''}
+        ${esPropio ? `<div class="ej-actions">
+          <button class="btn btn-outline" style="font-size:0.78rem;padding:0.3rem 0.75rem;" onclick='editarEj(${eJson})'>✏️ Editar</button>
+        </div>` : ''}
       </div>
+      ${esPropio ? `<button class="ej-del-btn" onclick='eliminarDirecto(${e.id})' title="Eliminar">🗑</button>` : ''}
     </div>`;
   }).join('');
 }
@@ -281,6 +312,12 @@ async function eliminar() {
   if (!confirm('¿Eliminar este ejercicio?')) return;
   const r = await fetch(`${API}/api/ejercicios/${editId}`, { method: 'DELETE', headers: hdr() });
   if (r.ok) { cerrar(); cargar(); }
+}
+
+async function eliminarDirecto(id) {
+  if (!confirm('¿Eliminar este ejercicio?')) return;
+  const r = await fetch(`${API}/api/ejercicios/${id}`, { method: 'DELETE', headers: hdr() });
+  if (r.ok) cargar();
 }
 
 cargar();
