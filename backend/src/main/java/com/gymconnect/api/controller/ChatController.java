@@ -190,9 +190,9 @@ public class ChatController {
 
     // REST: consultar si un usuario está online
     @GetMapping("/api/chat/presencia/{userId}")
-    public ResponseEntity<Map<String, Object>> presencia(@PathVariable Long userId) {
+    public ResponseEntity<?> presencia(@PathVariable Long userId) {
         return usuarioRepo.findById(userId)
-            .map(u -> ResponseEntity.ok(Map.of("online", presenciaService.estaConectado(u.getEmail()))))
+            .map(u -> (ResponseEntity<?>) ResponseEntity.ok(Map.of("online", presenciaService.estaConectado(u.getEmail()))))
             .orElse(ResponseEntity.notFound().build());
     }
 
