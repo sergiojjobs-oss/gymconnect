@@ -1,43 +1,9 @@
-// Mobile bottom navigation — injected on dashboard pages
+// Mobile navigation — hamburger button in header that opens the sidebar overlay
 (function () {
   const path = window.location.pathname;
   const isEntrenador = path.includes('/entrenador/');
   const isCliente    = path.includes('/cliente/') || path.endsWith('/buscar.html');
   if (!isEntrenador && !isCliente) return;
-
-  const page = path.split('/').pop();
-
-  const entrenadorItems = [
-    { icon: '👤', label: 'Perfil',   href: 'perfil.html',       match: 'perfil.html' },
-    { icon: '📋', label: 'Rutinas',  href: 'rutinas.html',      match: 'rutinas.html' },
-    { icon: '👥', label: 'Clientes', href: 'clientes.html',     match: 'clientes.html' },
-    { icon: '💬', label: 'Chat',     href: '../chat/index.html',match: 'index.html' },
-    { icon: '☰',  label: 'Más',     href: '#',                 isMenu: true },
-  ];
-
-  const clienteItems = [
-    { icon: '🏠', label: 'Inicio',    href: 'dashboard.html',    match: 'dashboard.html' },
-    { icon: '📋', label: 'Rutina',    href: 'mi-rutina.html',    match: 'mi-rutina.html' },
-    { icon: '🥗', label: 'Nutrición', href: 'mi-nutricion.html', match: 'mi-nutricion.html' },
-    { icon: '📈', label: 'Progreso',  href: 'mi-progreso.html',  match: 'mi-progreso.html' },
-    { icon: '🔍', label: 'Buscar',    href: 'buscar.html',       match: 'buscar.html' },
-  ];
-
-  const items = isEntrenador ? entrenadorItems : clienteItems;
-
-  // Build nav HTML
-  const nav = document.createElement('nav');
-  nav.className = 'mobile-nav';
-  nav.innerHTML = '<div class="mobile-nav-inner">' +
-    items.map(item => {
-      const active = item.match && page === item.match;
-      if (item.isMenu) {
-        return `<button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
-          <span class="nav-icon">${item.icon}</span><span>${item.label}</span></button>`;
-      }
-      return `<a href="${item.href}"${active ? ' class="active"' : ''}>
-        <span class="nav-icon">${item.icon}</span><span>${item.label}</span></a>`;
-    }).join('') + '</div>';
 
   // Backdrop for sidebar overlay
   const backdrop = document.createElement('div');
@@ -45,57 +11,84 @@
   backdrop.addEventListener('click', closeMobileSidebar);
 
   function applyMobileLayout() {
-    if (window.innerWidth > 900) return;
+    if (window.innerWidth > 900) {
+      // Desktop: restore sidebar, remove backdrop
+      const sidebar = document.querySelector('aside.sidebar');
+      if (sidebar) { sidebar.style.cssText = ''; }
+      backdrop.classList.remove('open');
+      return;
+    }
 
-    const header  = document.querySelector('header');
     const layout  = document.querySelector('.dashboard-layout');
-    const main    = document.querySelector('.main-content, .main');
-
     if (!layout) return;
-
-    const NAV_H = 58; // px
 
     // Body: flex column filling viewport
     document.body.style.cssText =
       'display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;margin:0;';
 
-    // Header: fixed height, no sticky needed
-    if (header) {
-      header.style.cssText = 'flex-shrink:0;position:relative;height:64px;';
-    }
+    const header = document.querySelector('header');
+    if (header) header.style.cssText = 'flex-shrink:0;position:relative;height:64px;';
 
     // Dashboard layout: fills remaining space, scrolls internally
     layout.style.cssText =
       'display:grid;grid-template-columns:1fr;flex:1;overflow-y:auto;' +
       'overflow-x:hidden;-webkit-overflow-scrolling:touch;min-height:0;';
 
-    // Hide sidebar
+    // Hide sidebar by default
     const sidebar = document.querySelector('aside.sidebar');
     if (sidebar && !sidebar.classList.contains('open')) {
       sidebar.style.display = 'none';
     }
+  }
 
-    // Main content: padding bottom so last content isn't hidden behind nav
-    if (main) {
-      main.style.paddingBottom = (NAV_H + 16) + 'px';
-    }
+  function injectHamburger() {
+    const header = document.querySelector('header .container, header');
+    if (!header || header.querySelector('.mobile-hamburger')) return;
 
-    // Nav: flex item at the bottom, NO position:fixed
-    nav.style.cssText =
-      'display:flex;flex-direction:column;flex-shrink:0;' +
-      'background:#0f2318;border-top:1px solid rgba(255,255,255,0.08);' +
-      'height:' + NAV_H + 'px;z-index:200;';
+    const btn = document.createElement('button');
+    btn.className = 'mobile-hamburger';
+    btn.setAttribute('aria-label', 'Menú');
+    btn.innerHTML = '<span></span><span></span><span></span>';
+    btn.addEventListener('click', toggleMobileSidebar);
+
+    // Style injected button
+    const style = document.createElement('style');
+    style.textContent = `
+      .mobile-hamburger {
+        display: none;
+        flex-direction: column; gap: 5px;
+        background: none; border: none; cursor: pointer;
+        padding: 0.4rem; border-radius: 6px;
+        margin-left: auto;
+      }
+      .mobile-hamburger span {
+        display: block; width: 24px; height: 2.5px;
+        background: #ffffff; border-radius: 3px;
+        transition: all 0.18s ease;
+      }
+      .mobile-hamburger:hover { background: rgba(74,222,128,0.12); }
+      @media (max-width: 900px) {
+        .mobile-hamburger { display: flex; }
+        /* hide desktop nav links inside dashboard header if any */
+        header nav { display: none !important; }
+      }
+      @keyframes sidebarIn {
+        from { transform: translateX(-100%); opacity: 0; }
+        to   { transform: translateX(0);     opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+    header.appendChild(btn);
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    document.body.appendChild(nav);
     document.body.appendChild(backdrop);
+    injectHamburger();
     applyMobileLayout();
   });
 
   window.addEventListener('resize', applyMobileLayout);
 
-  // Sidebar toggle
   window.toggleMobileSidebar = function () {
     const sidebar = document.querySelector('aside.sidebar');
     if (!sidebar) return;
@@ -111,6 +104,7 @@
       'background:#0f2318;border-right:1px solid rgba(255,255,255,0.07);' +
       'overflow-y:auto;box-shadow:6px 0 40px rgba(0,0,0,0.6);' +
       'animation:sidebarIn 0.22s ease;';
+    sidebar.classList.add('open');
     backdrop.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -122,7 +116,6 @@
       sidebar.classList.remove('open');
     }
     backdrop.classList.remove('open');
-    // Restore body overflow for the flex layout
     document.body.style.overflow = 'hidden';
   }
 })();

@@ -326,32 +326,8 @@
 @keyframes skel-anim { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
 /* =============================================
-   MOBILE BOTTOM NAV
+   MOBILE NAV (hamburger only — bottom bar removed)
    ============================================= */
-.mobile-nav { display: none; }
-.mobile-nav-inner {
-  display: flex;
-  justify-content: space-around;
-  align-items: stretch;
-}
-.mobile-nav a,
-.mobile-nav .mobile-menu-btn {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 0.2rem; padding: 0.55rem 0.5rem; flex: 1;
-  color: rgba(160,210,175,0.4);
-  text-decoration: none; font-size: 0.6rem; font-weight: 600;
-  letter-spacing: 0.2px; border: none; background: none;
-  cursor: pointer; font-family: var(--font);
-  transition: color 0.15s, background 0.15s;
-}
-.mobile-nav .nav-icon { font-size: 1.25rem; line-height: 1; }
-.mobile-nav a.active    { color: #4ade80; }
-.mobile-nav a:hover,
-.mobile-nav .mobile-menu-btn:hover {
-  color: #c8f0d4;
-  background: rgba(74,222,128,0.06);
-}
 
 /* Backdrop */
 .sidebar-backdrop {
@@ -362,26 +338,10 @@
 .sidebar-backdrop.open { display: block; }
 
 /* ── Mobile ── */
-@media (max-width: 768px) {
-  body.has-mobile-nav {
-    display: flex; flex-direction: column;
-    height: 100vh; height: 100dvh; overflow: hidden;
-  }
-  body.has-mobile-nav header { flex-shrink: 0; position: relative; }
-  body.has-mobile-nav .dashboard-layout {
-    flex: 1; overflow-y: auto; overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-  }
-  body.has-mobile-nav .mobile-nav {
-    display: flex; flex-direction: column; flex-shrink: 0;
-    background: #0a1a10;
-    border-top: 1px solid rgba(74,222,128,0.15);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-    z-index: 200;
-  }
+@media (max-width: 900px) {
   .dashboard-layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
-  .main-content, .main { padding: 1.25rem 1rem 1.5rem !important; min-height: unset; }
+  .main-content, .main { padding: 1.25rem 1rem 2rem !important; min-height: unset; }
   .page-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
   .page-header-actions { width: 100%; }
   .page-header-actions .btn { flex: 1; justify-content: center; }
@@ -391,16 +351,11 @@
   .modal-footer { flex-direction: column-reverse; }
   .modal-footer .btn { width: 100%; justify-content: center; }
 
-  /* Tables: horizontal scroll instead of overflow */
+  /* Tables: horizontal scroll */
   .table-wrap, table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { min-width: 480px; }
 
-  /* Cards grid: single column on mobile */
-  .cards-grid,
-  [style*="grid-template-columns: 1fr 1fr"],
-  [style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
-
-  /* Stat cards: always 2 columns */
+  /* Stat cards */
   .stat-card .stat-val { font-size: 1.4rem; }
 
   /* Tab strip: scrollable */
@@ -413,9 +368,9 @@
   aside.sidebar.open {
     display: flex !important;
     position: fixed; top: 0; left: 0;
-    width: 260px; height: 100vh; z-index: 300;
+    width: 270px; height: 100vh; z-index: 300;
     padding-top: 1.5rem;
-    box-shadow: 4px 0 48px rgba(0,0,0,0.7);
+    box-shadow: 6px 0 48px rgba(0,0,0,0.7);
     animation: sidebarSlideIn 0.22s ease;
     overflow-y: auto;
   }
