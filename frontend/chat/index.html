@@ -278,11 +278,47 @@
     .no-chat small { font-size: 0.76rem; color: rgba(160,210,175,0.3); }
 
     @media (max-width: 700px) {
-      .chat-wrap { flex-direction: column; padding: 0; gap: 0; height: auto; min-height: calc(100vh - 64px); }
-      .chat-sidebar { width: 100%; border-radius: 0; border: none; border-bottom: 1px solid rgba(74,222,128,0.12); max-height: 240px; }
-      .chat-main { flex: 1; border-radius: 0; border: none; }
+      /* Full-screen flip: show ONE panel at a time */
+      body { display:flex; flex-direction:column; height:100vh; height:100dvh; overflow:hidden; margin:0; }
+      header { flex-shrink:0; position:relative; }
+      .chat-wrap {
+        flex: 1; flex-direction: column; padding: 0; gap: 0;
+        overflow: hidden; height: 0; /* grows via flex */
+      }
+      /* List panel: full screen by default */
+      .chat-sidebar {
+        width: 100%; border-radius: 0; border: none;
+        border-bottom: 1px solid rgba(74,222,128,0.12);
+        max-height: unset; flex: 1; overflow-y: auto;
+        transition: transform 0.25s ease, opacity 0.25s ease;
+      }
+      /* Chat panel: hidden by default, slides in when active */
+      .chat-main {
+        position: absolute; inset: 0;
+        border-radius: 0; border: none;
+        transform: translateX(100%); opacity: 0;
+        transition: transform 0.25s ease, opacity 0.25s ease;
+        z-index: 10;
+        pointer-events: none;
+      }
+      /* When a conversation is open */
+      body.chat-open .chat-sidebar { transform: translateX(-100%); opacity: 0; pointer-events: none; }
+      body.chat-open .chat-main { transform: translateX(0); opacity: 1; pointer-events: all; }
+      /* Back button visible on mobile */
+      .mobile-back-btn {
+        display: flex; align-items: center; gap: 0.5rem;
+        background: none; border: none; color: #4ade80;
+        font-size: 1.2rem; padding: 0.4rem 0.6rem; cursor: pointer;
+        border-radius: 8px; flex-shrink: 0;
+      }
+      .mobile-back-btn:hover { background: rgba(74,222,128,0.1); }
       .back-btn span { display: none; }
       .emoji-picker { left: 0.5rem; }
+      /* Message actions visible on tap (not just hover) */
+      .msg:active .msg-actions, .msg.tapped .msg-actions { display: flex; }
+    }
+    @media (min-width: 701px) {
+      .mobile-back-btn { display: none; }
     }
   </style>
 </head>
@@ -451,6 +487,8 @@ async function abrirChat(contacto) {
   contactoActivo = contacto;
   lastMsgDate = null;
   replyingTo = null;
+  // Mobile: show chat panel, hide contact list
+  if (window.innerWidth <= 700) document.body.classList.add('chat-open');
   document.querySelectorAll('.chat-item').forEach(el => {
     el.classList.toggle('active', el.dataset.id == contacto.id);
     const dot = el.querySelector('.unread-dot');
@@ -462,6 +500,7 @@ async function abrirChat(contacto) {
   const nombreContactoSafe = escapeHtml(contacto.nombre);
   main.innerHTML = `
     <div class="chat-header">
+      <button class="mobile-back-btn" onclick="volverListaChat()" title="Volver">←</button>
       <div class="chat-header-avatar">${nombreContactoSafe.charAt(0)}</div>
       <div style="flex:1;min-width:0;">
         <div class="chat-header-name">${nombreContactoSafe}</div>
@@ -808,6 +847,11 @@ function filtrarContactos(q) {
     const nombre = el.querySelector('.chat-item-name')?.textContent?.toLowerCase() || '';
     el.style.display = nombre.includes(q.toLowerCase()) ? '' : 'none';
   });
+}
+
+function volverListaChat() {
+  document.body.classList.remove('chat-open');
+  contactoActivo = null;
 }
 
 function logout() {
