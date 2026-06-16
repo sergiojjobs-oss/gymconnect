@@ -262,6 +262,30 @@
   box-shadow: 0 32px 100px rgba(0,0,0,0.6);
   animation: modalIn 0.2s ease;
   color: #eef7f1;
+  /* Redefinir variables para contexto oscuro */
+  --text:      #eef7f1;
+  --text-2:    rgba(220,245,230,0.85);
+  --muted:     rgba(160,210,175,0.6);
+  --border:    rgba(74,222,128,0.12);
+  --border-md: rgba(74,222,128,0.25);
+  --bg:        rgba(255,255,255,0.04);
+  --card:      #1a3424;
+}
+
+/* Btn-outline visible en contexto oscuro (modales y main) */
+.modal-box .btn-outline,
+.main .btn-outline,
+.main-content .btn-outline {
+  color: rgba(200,235,210,0.8);
+  border-color: rgba(74,222,128,0.25);
+  background: transparent;
+}
+.modal-box .btn-outline:hover,
+.main .btn-outline:hover,
+.main-content .btn-outline:hover {
+  color: #4ade80;
+  border-color: #4ade80;
+  background: rgba(74,222,128,0.06);
 }
 @keyframes modalIn { from { opacity: 0; transform: translateY(14px) scale(0.97); } }
 .modal-title { font-size: 1.05rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 1.5rem; color: #fff !important; }
