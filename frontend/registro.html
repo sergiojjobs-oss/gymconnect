@@ -204,9 +204,9 @@
           <label>
             <input type="radio" name="rol" value="cliente" checked hidden />
             <div class="role-card active" id="card-cliente">
-              <span>🏃</span>
+              <span>💪</span>
               <strong>Soy cliente</strong>
-              <small>Busco un entrenador personal</small>
+              <small>Busco un entrenador de gimnasio</small>
             </div>
           </label>
           <label>
@@ -333,7 +333,7 @@
       [1,2].forEach(i => { const l=document.getElementById('line-'+i); if(l) l.classList.toggle('done', i<n); });
       if (n===3) {
         const rol = document.querySelector('input[name="rol"]:checked').value;
-        document.getElementById('res-rol').textContent    = rol==='cliente' ? '🏃 Cliente' : '💪 Entrenador';
+        document.getElementById('res-rol').textContent    = rol==='cliente' ? '💪 Cliente' : '💪 Entrenador';
         document.getElementById('res-nombre').textContent = document.getElementById('nombre').value + ' ' + document.getElementById('apellido').value;
         document.getElementById('res-email').textContent  = document.getElementById('email').value;
       }
