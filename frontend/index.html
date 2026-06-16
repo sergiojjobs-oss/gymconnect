@@ -295,9 +295,21 @@
         (function() {
           const u = JSON.parse(localStorage.getItem('gc_user') || 'null');
           if (u && u.rol === 'CLIENTE') {
-            document.getElementById('mainNav').innerHTML = '<a href="cliente/buscar.html">Buscar entrenadores</a><a href="cliente/dashboard.html" class="nav-cta">← Mi dashboard</a>';
+            document.getElementById('mainNav').innerHTML = '<a href="cliente/buscar.html">Buscar entrenadores</a><a href="cliente/dashboard.html" class="nav-cta" id="navPanelBtn">← Mi dashboard</a>';
           } else if (u && u.rol === 'ENTRENADOR') {
-            document.getElementById('mainNav').innerHTML = '<a href="cliente/buscar.html">Buscar entrenadores</a><a href="entrenador/perfil.html" class="nav-cta">← Mi panel</a>';
+            document.getElementById('mainNav').innerHTML = '<a href="cliente/buscar.html">Buscar entrenadores</a><a href="entrenador/perfil.html" class="nav-cta" id="navPanelBtn">← Mi panel</a>';
+            // Colorear según plan
+            const planColors = { FREE:'#16a34a', PRO:'#2563eb', ELITE:'#7c3aed' };
+            const token = localStorage.getItem('gc_token');
+            if (token) {
+              fetch((typeof API !== 'undefined' ? API : '') + '/api/suscripcion/estado', { headers:{ Authorization:'Bearer '+token } })
+                .then(r => r.ok ? r.json() : null).then(d => {
+                  if (!d) return;
+                  const c = planColors[d.plan] || planColors.FREE;
+                  const btn = document.getElementById('navPanelBtn');
+                  if (btn) btn.style.background = c;
+                }).catch(()=>{});
+            }
           }
         })();
       </script>
