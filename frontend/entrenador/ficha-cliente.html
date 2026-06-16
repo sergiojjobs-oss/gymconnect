@@ -103,6 +103,12 @@
       <p>Selecciona un cliente para ver o editar su ficha</p>
     </div>
 
+    <!-- Modo vista -->
+    <div id="fichaVista" style="display:none;margin-bottom:1.5rem;">
+      <div id="vistaCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1rem;"></div>
+      <button class="btn btn-primary" onclick="activarEdicion()" style="font-size:0.85rem;">✏️ Editar ficha</button>
+    </div>
+
     <div id="fichaContent" style="display:none;">
       <div class="ficha-grid">
 
@@ -277,10 +283,60 @@ async function cargarFicha() {
   const r = await fetch(`${API}/api/ficha-cliente/${id}`, { headers: hdr() });
   if (r.status === 204 || !r.ok) {
     limpiarFormulario();
+    activarEdicion();
     return;
   }
   const f = await r.json();
   llenarFormulario(f);
+  mostrarVista(f);
+}
+
+function mostrarVista(f) {
+  const val = (v, suf='') => v ? `<strong>${v}</strong>${suf}` : '<span style="color:var(--muted)">—</span>';
+  const secciones = [
+    { titulo: '👤 Datos personales', filas: [
+      ['Edad', val(f.edad, ' años')],
+      ['Sexo', val(f.sexo)],
+      ['Altura', val(f.alturacm, ' cm')],
+      ['Peso objetivo', val(f.pesoObjetivo, ' kg')],
+    ]},
+    { titulo: '🎯 Objetivo y nivel', filas: [
+      ['Objetivo', val(f.objetivo)],
+      ['Nivel', val(f.nivelFitness)],
+      ['Días/semana', val(f.diasDisponibles)],
+      ['Horas de sueño', val(f.horasSuenio, ' h')],
+      ['Equipamiento', val(f.equipamientoDisponible)],
+    ]},
+    { titulo: '📐 Medidas iniciales', filas: [
+      ['Cintura', val(f.cinturaInicial, ' cm')],
+      ['Cadera', val(f.caderaInicial, ' cm')],
+      ['Pecho', val(f.pechoInicial, ' cm')],
+    ]},
+    { titulo: '🏥 Salud e historial', filas: [
+      ['Lesiones', val(f.lesiones)],
+      ['Condiciones médicas', val(f.condicionesMedicas)],
+    ]},
+    { titulo: '💬 Motivación y notas', filas: [
+      ['Motivación', val(f.motivacion)],
+      ['Notas del entrenador', val(f.otrasNotas)],
+    ]},
+  ];
+  document.getElementById('vistaCards').innerHTML = secciones.map(s => `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;">
+      <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--green);margin-bottom:0.85rem;">${s.titulo}</div>
+      ${s.filas.map(([k,v]) => `
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:0.35rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.83rem;gap:0.5rem;">
+          <span style="color:var(--muted);flex-shrink:0;">${k}</span>
+          <span style="text-align:right;">${v}</span>
+        </div>`).join('')}
+    </div>`).join('');
+  document.getElementById('fichaVista').style.display = 'block';
+  document.getElementById('fichaContent').style.display = 'none';
+}
+
+function activarEdicion() {
+  document.getElementById('fichaVista').style.display = 'none';
+  document.getElementById('fichaContent').style.display = 'block';
 }
 
 function llenarFormulario(f) {
@@ -337,11 +393,9 @@ async function guardar() {
 
   const status = document.getElementById('saveStatus');
   if (r.ok) {
-    status.textContent = '✓ Guardado correctamente';
-    status.style.display = 'block';
-    status.style.color = 'var(--green)';
-    setTimeout(() => { status.style.display = 'none'; }, 3000);
+    mostrarVista(body);
   } else {
+    const status = document.getElementById('saveStatus');
     status.textContent = '✗ Error al guardar';
     status.style.display = 'block';
     status.style.color = '#f87171';
