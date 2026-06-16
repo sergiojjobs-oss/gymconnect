@@ -33,6 +33,7 @@ public class ChatController {
     private final RelacionRepository relacionRepo;
     private final MensajeRepository mensajeRepo;
     private final SimpMessagingTemplate broker;
+    private final com.gymconnect.api.config.PresenciaService presenciaService;
 
     // WebSocket: indicador de escritura
     @MessageMapping("/chat.typing")
@@ -185,6 +186,14 @@ public class ChatController {
         mensajeRepo.deleteByRemitenteIdAndDestinatarioId(yo.getId(), otroId);
         mensajeRepo.deleteByRemitenteIdAndDestinatarioId(otroId, yo.getId());
         return ResponseEntity.ok().build();
+    }
+
+    // REST: consultar si un usuario está online
+    @GetMapping("/api/chat/presencia/{userId}")
+    public ResponseEntity<Map<String, Object>> presencia(@PathVariable Long userId) {
+        return usuarioRepo.findById(userId)
+            .map(u -> ResponseEntity.ok(Map.of("online", presenciaService.estaConectado(u.getEmail()))))
+            .orElse(ResponseEntity.notFound().build());
     }
 
     // REST: mensajes no leídos

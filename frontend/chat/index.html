@@ -368,6 +368,7 @@ function conectarWS() {
       setStatus('● Conectado', 'connected');
       stompClient.subscribe(`/user/${user.email}/queue/mensajes`, f => recibirMensaje(JSON.parse(f.body)));
       stompClient.subscribe(`/user/${user.email}/queue/typing`,   f => recibirTyping(JSON.parse(f.body)));
+      stompClient.subscribe(`/user/${user.email}/queue/presencia`, f => recibirPresencia(JSON.parse(f.body)));
     },
     onDisconnect:     () => { setStatus('● Reconectando…', 'disconnected'); wakeBackend(); },
     onStompError:     () => { setStatus('● Reconectando…', 'disconnected'); wakeBackend(); },
@@ -467,6 +468,12 @@ async function abrirChat(contacto) {
   construirEmojiPicker();
   fetch(`${API}/api/chat/${contacto.id}/leer`, { method:'POST', headers: { Authorization:'Bearer '+token } }).catch(()=>{});
 
+  // Consultar presencia inicial
+  fetch(`${API}/api/chat/presencia/${contacto.id}`, { headers: { Authorization:'Bearer '+token } })
+    .then(r => r.ok ? r.json() : null)
+    .then(d => { if (d) actualizarEstadoPresencia(d.online); })
+    .catch(()=>{});
+
   try {
     const res = await fetch(`${API}/api/chat/${contacto.id}`, { headers: { Authorization:'Bearer '+token } });
     if (res.ok) {
@@ -522,6 +529,18 @@ function enviarTyping() {
       body: JSON.stringify({ destinatarioId: contactoActivo.id, escribiendo: false })
     });
   }, 2000);
+}
+
+function recibirPresencia(data) {
+  if (!contactoActivo || data.usuarioId != contactoActivo.id) return;
+  actualizarEstadoPresencia(data.online);
+}
+
+function actualizarEstadoPresencia(online) {
+  const el = document.getElementById('chatStatus');
+  if (!el) return;
+  el.className = 'chat-status' + (online ? '' : ' offline');
+  el.textContent = online ? 'En línea' : 'Desconectado';
 }
 
 function recibirTyping(data) {
