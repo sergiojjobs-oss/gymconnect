@@ -301,7 +301,7 @@ function renderCalendario() {
     sesiones.forEach(s => {
       const tipo = (s.tipo || 'otro').toLowerCase().replace(/ó/g,'o').replace(/é/g,'e');
       const estadoClass = s.estado === 'COMPLETADA' ? 'sp-estado-completada' : s.estado === 'CANCELADA' ? 'sp-estado-cancelada' : '';
-      const nombreCliente = s.cliente?.nombre || clientes.find(c => c.id == s.cliente?.id)?.nombre || '—';
+      const nombreCliente = s.cliente ? `${s.cliente.nombre || ''} ${s.cliente.apellido || ''}`.trim() : clientes.find(c => c.id == s.cliente?.id)?.nombre || '—';
       html += `<div class="sesion-pill sp-tipo-${tipo} ${estadoClass}" onclick="editarSesion(${JSON.stringify(s).replace(/"/g,'&quot;')})">
         <div class="sp-hora">${s.hora ? s.hora.substring(0,5) : ''}</div>
         <div class="sp-cliente">${nombreCliente}</div>
@@ -357,7 +357,7 @@ function renderListaDia() {
     html += `<div class="sin-sesiones-dia">Sin sesiones este día</div>`;
   } else {
     sesiones.forEach(s => {
-      const nombreCliente = s.cliente?.nombre || clientes.find(c => c.id == s.cliente?.id)?.nombre || '—';
+      const nombreCliente = s.cliente ? `${s.cliente.nombre || ''} ${s.cliente.apellido || ''}`.trim() : clientes.find(c => c.id == s.cliente?.id)?.nombre || '—';
       const badgeStyle = tipoBadgeClass(s.tipo);
       const opacidad = s.estado === 'COMPLETADA' ? 'opacity:0.55;' : s.estado === 'CANCELADA' ? 'opacity:0.35;text-decoration:line-through;' : '';
       html += `<div class="sesion-card" style="${opacidad}" onclick="editarSesion(${JSON.stringify(s).replace(/"/g,'&quot;')})">
