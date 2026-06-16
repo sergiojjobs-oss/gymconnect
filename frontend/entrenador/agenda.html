@@ -63,14 +63,58 @@
     .btn-danger { background:rgba(220,38,38,0.1); border:1px solid rgba(220,38,38,0.3); color:#f87171; border-radius:8px; padding:0.6rem 1.25rem; font-weight:700; cursor:pointer; font-size:0.85rem; }
     .btn-danger:hover { background:rgba(220,38,38,0.2); }
 
+    /* ── Selector de día (móvil) ── */
+    .dias-strip {
+      display: none;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; gap: 0.4rem;
+      padding-bottom: 0.25rem; margin-bottom: 1rem;
+    }
+    .dias-strip::-webkit-scrollbar { display: none; }
+    .dia-btn {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0.1rem; min-width: 44px; padding: 0.45rem 0.6rem;
+      border-radius: 10px; border: 1.5px solid var(--border);
+      background: var(--card); cursor: pointer; flex-shrink: 0;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .dia-btn .db-nombre { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+    .dia-btn .db-num   { font-size: 1rem; font-weight: 900; color: var(--text); line-height: 1; }
+    .dia-btn .db-dot   { width: 5px; height: 5px; border-radius: 50%; background: var(--green); margin-top: 2px; opacity: 0; }
+    .dia-btn.tiene-sesiones .db-dot { opacity: 1; }
+    .dia-btn.hoy { border-color: rgba(22,163,74,0.4); }
+    .dia-btn.hoy .db-num { color: var(--green); }
+    .dia-btn.activo { background: rgba(22,163,74,0.12); border-color: var(--green); }
+    .dia-btn.activo .db-num { color: var(--green); }
+
+    /* ── Vista lista (móvil) ── */
+    .lista-dia { display: none; flex-direction: column; gap: 0.6rem; }
+    .lista-dia-titulo { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 0.25rem; }
+    .sesion-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 0.9rem 1rem; display: flex; align-items: center; gap: 0.85rem;
+      cursor: pointer; transition: border-color 0.15s;
+    }
+    .sesion-card:hover { border-color: var(--green); }
+    .sesion-card-hora { font-size: 0.8rem; font-weight: 900; color: var(--text); min-width: 36px; }
+    .sesion-card-info { flex: 1; min-width: 0; }
+    .sesion-card-cliente { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .sesion-card-tipo { font-size: 0.73rem; color: var(--muted); margin-top: 0.1rem; }
+    .sesion-card-badge { font-size: 0.65rem; font-weight: 700; padding: 0.18rem 0.55rem; border-radius: 99px; flex-shrink: 0; }
+    .sin-sesiones-dia { text-align: center; padding: 2.5rem 1rem; color: var(--muted); font-size: 0.85rem; }
+
     @media(max-width:900px){ .calendario{grid-template-columns:repeat(7,minmax(100px,1fr)); overflow-x:auto;} }
     @media(max-width:768px){
       .dashboard-layout{grid-template-columns:1fr}
       .sidebar{display:none}
-      .main{padding:1rem 0.85rem 5.5rem}
-      .calendario{grid-template-columns:repeat(7,minmax(40px,1fr)); font-size:0.68rem; overflow-x:auto;}
-      .cal-day{padding:0.25rem 0.15rem; min-height:44px;}
-      .sesion-chip{font-size:0.58rem; padding:0.1rem 0.25rem;}
+      .main{padding:1rem 0.85rem 2rem}
+      /* Ocultar vista semanal, mostrar lista */
+      .semana-nav { gap: 0.5rem; }
+      .semana-nav button { padding: 0.35rem 0.6rem; font-size: 0.78rem; }
+      .semana-titulo { font-size: 0.82rem; text-align: center; flex: 1; }
+      .calendario { display: none !important; }
+      .dias-strip  { display: flex; }
+      .lista-dia   { display: flex; }
     }
   </style>
 </head>
@@ -118,6 +162,13 @@
       <button onclick="irHoy()" style="margin-left:auto;">Hoy</button>
     </div>
 
+    <!-- Selector de días (solo móvil) -->
+    <div class="dias-strip" id="diasStrip"></div>
+
+    <!-- Lista del día seleccionado (solo móvil) -->
+    <div class="lista-dia" id="listaDia"></div>
+
+    <!-- Grid semanal (desktop) -->
     <div class="calendario" id="calendario"></div>
   </main>
 </div>
@@ -214,12 +265,25 @@ async function cargarClientes() {
   }
 }
 
+let diaSeleccionado = fmt(new Date());
+
+function tipoBadgeClass(tipo) {
+  const t = (tipo || 'otro').toLowerCase().replace(/ó/g,'o').replace(/é/g,'e').replace(/á/g,'a');
+  const map = { fuerza:'#818cf8;background:rgba(99,102,241,0.18);border:1px solid rgba(99,102,241,0.3)',
+    cardio:'#f87171;background:rgba(239,68,68,0.14);border:1px solid rgba(239,68,68,0.25)',
+    flexibilidad:'#34d399;background:rgba(16,185,129,0.14);border:1px solid rgba(16,185,129,0.25)',
+    evaluacion:'#fbbf24;background:rgba(245,158,11,0.14);border:1px solid rgba(245,158,11,0.25)',
+    otro:'#9ca3af;background:rgba(107,114,128,0.14);border:1px solid rgba(107,114,128,0.25)' };
+  return map[t] || map.otro;
+}
+
 function renderCalendario() {
   const hoy = fmt(new Date());
   const fin = new Date(fechaBase); fin.setDate(fin.getDate() + 6);
   document.getElementById('tituloSemana').textContent =
     `${fechaBase.getDate()} ${MESES[fechaBase.getMonth()]} — ${fin.getDate()} ${MESES[fin.getMonth()]} ${fin.getFullYear()}`;
 
+  // ── Desktop: grid semanal ──
   let html = '';
   for (let i = 0; i < 7; i++) {
     const d = new Date(fechaBase); d.setDate(d.getDate() + i);
@@ -250,6 +314,63 @@ function renderCalendario() {
     </div>`;
   }
   document.getElementById('calendario').innerHTML = html;
+
+  // ── Móvil: strip de días ──
+  let stripHtml = '';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(fechaBase); d.setDate(d.getDate() + i);
+    const ds = fmt(d);
+    const esHoy = ds === hoy;
+    const tieneSesiones = sesionesActuales.some(s => s.fecha === ds);
+    const activo = ds === diaSeleccionado;
+    stripHtml += `<button class="dia-btn${esHoy ? ' hoy' : ''}${activo ? ' activo' : ''}${tieneSesiones ? ' tiene-sesiones' : ''}"
+      onclick="seleccionarDia('${ds}')">
+      <span class="db-nombre">${DIAS[i]}</span>
+      <span class="db-num">${d.getDate()}</span>
+      <span class="db-dot"></span>
+    </button>`;
+  }
+  document.getElementById('diasStrip').innerHTML = stripHtml;
+
+  renderListaDia();
+}
+
+function seleccionarDia(ds) {
+  diaSeleccionado = ds;
+  document.querySelectorAll('.dia-btn').forEach(btn => {
+    btn.classList.toggle('activo', btn.getAttribute('onclick').includes(`'${ds}'`));
+  });
+  renderListaDia();
+}
+
+function renderListaDia() {
+  const sesiones = sesionesActuales.filter(s => s.fecha === diaSeleccionado).sort((a,b) => (a.hora||'').localeCompare(b.hora||''));
+  const d = new Date(diaSeleccionado + 'T12:00:00');
+  const titulo = `${DIAS[(d.getDay()+6)%7]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+
+  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
+    <span class="lista-dia-titulo">${titulo}</span>
+    <button class="btn btn-primary" style="font-size:0.78rem;padding:0.4rem 0.85rem;" onclick="abrirModalNueva('${diaSeleccionado}')">+ Añadir</button>
+  </div>`;
+
+  if (!sesiones.length) {
+    html += `<div class="sin-sesiones-dia">Sin sesiones este día</div>`;
+  } else {
+    sesiones.forEach(s => {
+      const nombreCliente = clientes.find(c => c.id == s.clienteId)?.nombre || s.clienteNombre || '—';
+      const badgeStyle = tipoBadgeClass(s.tipo);
+      const opacidad = s.estado === 'COMPLETADA' ? 'opacity:0.55;' : s.estado === 'CANCELADA' ? 'opacity:0.35;text-decoration:line-through;' : '';
+      html += `<div class="sesion-card" style="${opacidad}" onclick="editarSesion(${JSON.stringify(s).replace(/"/g,'&quot;')})">
+        <div class="sesion-card-hora">${s.hora ? s.hora.substring(0,5) : '—'}</div>
+        <div class="sesion-card-info">
+          <div class="sesion-card-cliente">${nombreCliente}</div>
+          <div class="sesion-card-tipo">${s.tipo || ''} · ${s.duracionMinutos || 60} min</div>
+        </div>
+        <span class="sesion-card-badge" style="color:${badgeStyle}">${s.tipo || 'Otro'}</span>
+      </div>`;
+    });
+  }
+  document.getElementById('listaDia').innerHTML = html;
 }
 
 function abrirModalNueva(fecha) {
