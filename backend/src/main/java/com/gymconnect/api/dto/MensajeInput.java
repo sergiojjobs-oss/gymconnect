@@ -6,4 +6,5 @@ import lombok.Data;
 public class MensajeInput {
     private Long destinatarioId;
     private String contenido;
+    private Long replyToId;
 }

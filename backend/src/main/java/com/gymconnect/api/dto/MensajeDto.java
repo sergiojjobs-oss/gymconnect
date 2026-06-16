@@ -14,4 +14,11 @@ public class MensajeDto {
     private LocalDateTime fechaEnvio;
     private boolean leido;
     private boolean eliminado;
+    private ReplyDto replyTo;
+
+    @lombok.Data
+    public static class ReplyDto {
+        private String autor;
+        private String texto;
+    }
 }

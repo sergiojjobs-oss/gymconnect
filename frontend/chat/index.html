@@ -573,7 +573,7 @@ function enviar() {
     return;
   }
   const payload = { destinatarioId: contactoActivo.id, contenido: texto };
-  if (replyingTo) payload.replyToId = replyingTo.id;
+  if (replyingTo && !String(replyingTo.id).startsWith('tmp-')) payload.replyToId = replyingTo.id;
 
   stompClient.publish({ destination: '/app/chat.enviar', body: JSON.stringify(payload) });
   mostrarMensaje({

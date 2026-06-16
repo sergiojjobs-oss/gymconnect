@@ -30,4 +30,5 @@ public class Mensaje {
 
     private boolean leido = false;
     private boolean eliminado = false;
+    private Long replyToId;
 }

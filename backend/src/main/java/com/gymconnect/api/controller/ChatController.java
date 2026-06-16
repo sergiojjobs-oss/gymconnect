@@ -54,7 +54,7 @@ public class ChatController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Mensaje guardado = chatService.guardar(
-                remitente.getId(), input.getDestinatarioId(), input.getContenido());
+                remitente.getId(), input.getDestinatarioId(), input.getContenido(), input.getReplyToId());
 
         MensajeDto dto = chatService.toDto(guardado);
 

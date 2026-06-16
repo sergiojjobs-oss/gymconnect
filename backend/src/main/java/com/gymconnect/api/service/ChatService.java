@@ -17,11 +17,12 @@ public class ChatService {
     private final MensajeRepository mensajeRepo;
     private final UsuarioRepository usuarioRepo;
 
-    public Mensaje guardar(Long remitenteId, Long destinatarioId, String contenido) {
+    public Mensaje guardar(Long remitenteId, Long destinatarioId, String contenido, Long replyToId) {
         Mensaje m = new Mensaje();
         m.setRemitenteId(remitenteId);
         m.setDestinatarioId(destinatarioId);
         m.setContenido(contenido);
+        m.setReplyToId(replyToId);
         return mensajeRepo.save(m);
     }
 
@@ -54,6 +55,16 @@ public class ChatService {
 
         usuarioRepo.findById(m.getRemitenteId())
                 .ifPresent(u -> dto.setRemitenteNombre(u.getNombre() + " " + u.getApellido()));
+
+        if (m.getReplyToId() != null) {
+            mensajeRepo.findById(m.getReplyToId()).ifPresent(orig -> {
+                MensajeDto.ReplyDto r = new MensajeDto.ReplyDto();
+                r.setTexto(orig.isEliminado() ? "Mensaje eliminado" : orig.getContenido());
+                usuarioRepo.findById(orig.getRemitenteId())
+                    .ifPresent(u -> r.setAutor(u.getNombre()));
+                dto.setReplyTo(r);
+            });
+        }
 
         return dto;
     }
