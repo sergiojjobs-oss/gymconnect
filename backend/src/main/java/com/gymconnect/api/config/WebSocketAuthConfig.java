@@ -37,16 +37,18 @@ public class WebSocketAuthConfig implements WebSocketMessageBrokerConfigurer {
 
                 if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
                     String auth = accessor.getFirstNativeHeader("Authorization");
-                    if (auth != null && auth.startsWith("Bearer ")) {
-                        String token = auth.substring(7);
-                        if (jwtUtil.esValido(token)) {
-                            String email = jwtUtil.getEmail(token);
-                            var ud = userDetailsService.loadUserByUsername(email);
-                            var authToken = new UsernamePasswordAuthenticationToken(
-                                    ud, null, ud.getAuthorities());
-                            accessor.setUser(authToken);
-                        }
+                    if (auth == null || !auth.startsWith("Bearer ")) {
+                        throw new org.springframework.messaging.MessageDeliveryException("Token requerido");
                     }
+                    String token = auth.substring(7);
+                    if (!jwtUtil.esValido(token)) {
+                        throw new org.springframework.messaging.MessageDeliveryException("Token inválido");
+                    }
+                    String email = jwtUtil.getEmail(token);
+                    var ud = userDetailsService.loadUserByUsername(email);
+                    var authToken = new UsernamePasswordAuthenticationToken(
+                            ud, null, ud.getAuthorities());
+                    accessor.setUser(authToken);
                 }
                 return message;
             }

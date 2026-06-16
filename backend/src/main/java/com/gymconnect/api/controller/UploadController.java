@@ -30,6 +30,9 @@ public class UploadController {
         if (file.isEmpty()) return ResponseEntity.badRequest().body(Map.of("error", "Archivo vacío"));
         if (file.getSize() > 5 * 1024 * 1024)
             return ResponseEntity.badRequest().body(Map.of("error", "Máximo 5 MB"));
+        String contentType = file.getContentType();
+        if (contentType == null || !java.util.List.of("image/jpeg","image/png","image/webp","image/gif").contains(contentType))
+            return ResponseEntity.badRequest().body(Map.of("error", "Solo imágenes JPEG, PNG, WEBP o GIF"));
 
         try {
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();

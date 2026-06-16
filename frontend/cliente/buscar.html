@@ -575,6 +575,10 @@
       return ((nombre||'?').charAt(0) + (apellido||'?').charAt(0)).toUpperCase();
     }
 
+    function escapeHtml(s) {
+      return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
     function renderCard(e) {
       const tier = (e.planTier || 'FREE').toUpperCase();
       const tierClass = tier === 'ELITE' ? 'tier-elite' : tier === 'PRO' ? 'tier-pro' : 'tier-free';
@@ -584,10 +588,10 @@
           ? '<span class="card-badge badge-pro">⭐ Pro</span>'
           : '<span class="card-badge badge-free">✓ Free</span>';
       const avatarHtml = e.fotoUrl
-        ? `<div class="card-avatar"><img src="${e.fotoUrl}" alt="${e.nombre}" /></div>`
+        ? `<div class="card-avatar"><img src="${escapeHtml(e.fotoUrl)}" alt="${escapeHtml(e.nombre)}" /></div>`
         : `<div class="card-avatar" style="background:${e.avatarColor||'linear-gradient(135deg,#16a34a,#84cc16)'}">${iniciales(e.nombre,e.apellido)}</div>`;
       const starsHtml = '★'.repeat(Math.floor(e.rating||0)) + (((e.rating||0) % 1) >= 0.5 ? '½' : '☆'.repeat(5-Math.ceil(e.rating||0)));
-      const tagsHtml = (e.especialidades||[]).slice(0,3).map(t => `<span class="card-tag">${t}</span>`).join('');
+      const tagsHtml = (e.especialidades||[]).slice(0,3).map(t => `<span class="card-tag">${escapeHtml(t)}</span>`).join('');
 
       return `
         <div class="trainer-card ${tierClass}" onclick="location.href='perfil.html?id=${e.id}'">
@@ -596,8 +600,8 @@
             <div class="card-top">
               ${avatarHtml}
               <div class="card-meta">
-                <div class="card-name">${e.nombre} ${e.apellido||''}</div>
-                <div class="card-location">📍 ${e.ciudad||'España'}</div>
+                <div class="card-name">${escapeHtml(e.nombre)} ${escapeHtml(e.apellido||'')}</div>
+                <div class="card-location">📍 ${escapeHtml(e.ciudad||'España')}</div>
                 ${badgeHtml}
               </div>
             </div>
@@ -606,7 +610,7 @@
               <span class="stars-count">${(e.rating||0).toFixed(1)} · ${e.totalResenas||0} reseñas</span>
             </div>
             <div class="card-tags">${tagsHtml || '<span class="card-tag">Entrenamiento</span>'}</div>
-            ${e.bio ? `<p class="card-bio">${e.bio}</p>` : ''}
+            ${e.bio ? `<p class="card-bio">${escapeHtml(e.bio)}</p>` : ''}
           </div>
           <div class="card-footer">
             <div class="card-price">${e.precioMensual||'—'}€ <small>/mes</small></div>

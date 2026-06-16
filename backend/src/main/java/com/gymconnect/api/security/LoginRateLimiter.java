@@ -22,7 +22,10 @@ public class LoginRateLimiter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest http = (HttpServletRequest) req;
-        if ("POST".equals(http.getMethod()) && http.getRequestURI().contains("/api/auth/login")) {
+        String uri = http.getRequestURI();
+        boolean isRateLimited = "POST".equals(http.getMethod()) &&
+            (uri.contains("/api/auth/login") || uri.contains("/api/auth/registro"));
+        if (isRateLimited) {
             String ip = getClientIp(http);
             long now = System.currentTimeMillis();
             Bucket b = buckets.compute(ip, (k, existing) -> {
@@ -44,7 +47,11 @@ public class LoginRateLimiter implements Filter {
 
     private String getClientIp(HttpServletRequest req) {
         String forwarded = req.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) return forwarded.split(",")[0].trim();
+        if (forwarded != null && !forwarded.isBlank()) {
+            // Usar la última IP (la del proxy de Render/CDN), no la primera (manipulable por el cliente)
+            String[] parts = forwarded.split(",");
+            return parts[parts.length - 1].trim();
+        }
         return req.getRemoteAddr();
     }
 }

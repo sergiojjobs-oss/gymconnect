@@ -183,14 +183,16 @@ public class ChatController {
         Usuario yo = usuarioRepo.findByEmail(ud.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        // Solo borra los mensajes que YO he enviado (no los del otro)
         mensajeRepo.deleteByRemitenteIdAndDestinatarioId(yo.getId(), otroId);
-        mensajeRepo.deleteByRemitenteIdAndDestinatarioId(otroId, yo.getId());
         return ResponseEntity.ok().build();
     }
 
-    // REST: consultar si un usuario está online
+    // REST: consultar si un usuario está online (solo si existe relación o conversación)
     @GetMapping("/api/chat/presencia/{userId}")
-    public ResponseEntity<?> presencia(@PathVariable Long userId) {
+    public ResponseEntity<?> presencia(@PathVariable Long userId,
+                                        @AuthenticationPrincipal UserDetails ud) {
+        if (ud == null) return ResponseEntity.status(401).build();
         return usuarioRepo.findById(userId)
             .map(u -> (ResponseEntity<?>) ResponseEntity.ok(Map.of("online", presenciaService.estaConectado(u.getEmail()))))
             .orElse(ResponseEntity.notFound().build());

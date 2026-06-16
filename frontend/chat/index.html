@@ -399,12 +399,13 @@ async function cargarContactos() {
       ? '<span style="font-size:0.65rem;font-weight:800;background:rgba(22,163,74,0.15);color:var(--green);padding:0.1rem 0.45rem;border-radius:99px;flex-shrink:0;">✓ Cliente</span>'
       : '<span style="font-size:0.65rem;font-weight:800;background:rgba(100,116,139,0.1);color:var(--muted);padding:0.1rem 0.45rem;border-radius:99px;flex-shrink:0;">Solo mensajes</span>';
     div.style.borderLeft = c.esPagador ? '3px solid var(--green)' : '3px solid transparent';
+    const nombreSafe = escapeHtml(c.nombre);
     div.innerHTML = `
-      <div class="chat-avatar${c.esPagador ? '' : ' grey'}">${c.nombre.charAt(0)}</div>
+      <div class="chat-avatar${c.esPagador ? '' : ' grey'}">${nombreSafe.charAt(0)}</div>
       <div class="chat-item-info">
-        <div class="chat-item-name">${c.nombre}${badge}</div>
+        <div class="chat-item-name">${nombreSafe}${badge}</div>
         <div class="chat-item-meta">
-          <div class="chat-item-preview">${c.ultimoMensaje || 'Sin mensajes'}</div>
+          <div class="chat-item-preview">${escapeHtml(c.ultimoMensaje || 'Sin mensajes')}</div>
           ${c.ultimoMensajeFecha ? `<span class="chat-item-time">${formatHora(c.ultimoMensajeFecha)}</span>` : ''}
         </div>
       </div>
@@ -428,11 +429,12 @@ async function abrirChat(contacto) {
 
   const wsOk = stompClient && stompClient.connected;
   const main = document.getElementById('chatMain');
+  const nombreContactoSafe = escapeHtml(contacto.nombre);
   main.innerHTML = `
     <div class="chat-header">
-      <div class="chat-header-avatar">${contacto.nombre.charAt(0)}</div>
+      <div class="chat-header-avatar">${nombreContactoSafe.charAt(0)}</div>
       <div style="flex:1;min-width:0;">
-        <div class="chat-header-name">${contacto.nombre}</div>
+        <div class="chat-header-name">${nombreContactoSafe}</div>
         <div class="chat-status${wsOk ? '' : ' offline'}" id="chatStatus" id="typingStatus">
           ${wsOk ? 'En línea' : 'Conectando…'}
         </div>

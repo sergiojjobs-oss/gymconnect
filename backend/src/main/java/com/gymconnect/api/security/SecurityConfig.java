@@ -1,6 +1,7 @@
 package com.gymconnect.api.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -28,6 +30,9 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final UserDetailsService userDetailsService;
+
+    @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:5500,http://127.0.0.1:5500}")
+    private String allowedOriginsRaw;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -54,11 +59,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // allowedOriginPatterns con wildcard funciona junto a allowCredentials(true)
-        config.setAllowedOriginPatterns(List.of("*"));
+        List<String> origins = Arrays.asList(allowedOriginsRaw.split(","));
+        config.setAllowedOrigins(origins);
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS","PATCH"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowedHeaders(List.of("Authorization","Content-Type","Accept"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

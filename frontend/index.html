@@ -705,10 +705,11 @@
         grid.innerHTML = '<p style="color:var(--muted);padding:2rem;grid-column:1/-1;">No hay entrenadores aún.</p>';
         return;
       }
+      const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
       grid.innerHTML = top.map(e => {
         const iniciales = (e.nombre.charAt(0) + (e.apellido||' ').charAt(0)).toUpperCase();
         const stars = '★'.repeat(Math.round(e.rating || 5)) + '☆'.repeat(5 - Math.round(e.rating || 5));
-        const tags = (e.especialidades || []).slice(0, 2).map(t => `<span class="tag">${t}</span>`).join('');
+        const tags = (e.especialidades || []).slice(0, 2).map(t => `<span class="tag">${esc(t)}</span>`).join('');
         const planBadge = e.planTier === 'ELITE'
           ? '<span style="font-size:0.62rem;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.25);color:#a78bfa;border-radius:99px;padding:0.1rem 0.5rem;font-weight:700;">👑 Elite</span>'
           : e.planTier === 'PRO'
@@ -718,14 +719,14 @@
           <div class="trainer-card reveal">
             <div class="trainer-head">
               ${e.fotoUrl
-                ? `<div class="avatar" style="width:46px;height:46px;overflow:hidden;"><img src="${e.fotoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`
+                ? `<div class="avatar" style="width:46px;height:46px;overflow:hidden;"><img src="${esc(e.fotoUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`
                 : `<div class="avatar" style="width:46px;height:46px;font-size:0.88rem;">${iniciales}</div>`}
               <div>
                 <div style="display:flex;align-items:center;gap:0.4rem;">
-                  <h3>${e.nombre} ${e.apellido||''}</h3>
+                  <h3>${esc(e.nombre)} ${esc(e.apellido||'')}</h3>
                   ${planBadge}
                 </div>
-                <p>${e.ciudad || 'España'}</p>
+                <p>${esc(e.ciudad || 'España')}</p>
               </div>
             </div>
             <div style="padding-left:0.75rem;font-size:0.8rem;color:#f59e0b;margin-bottom:0.65rem;">${stars} <span style="color:var(--muted);font-size:0.72rem;">(${e.totalResenas||0})</span></div>
