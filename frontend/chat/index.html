@@ -169,6 +169,7 @@
     .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
     .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+    @keyframes slideInToast { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
 
     /* ── Separador fecha ── */
     .date-sep {
@@ -339,6 +340,35 @@ function playBeep() {
     g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
     o.start(); o.stop(ctx.currentTime + 0.35);
   } catch {}
+}
+
+// ── Toast de mensaje entrante ────────────────────────────────────
+let toastTimer = null;
+function mostrarToastMensaje(nombre, texto) {
+  let toast = document.getElementById('msgToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'msgToast';
+    toast.style.cssText = `
+      position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;
+      background:#1a2e1f;border:1px solid rgba(34,197,94,0.3);border-radius:14px;
+      padding:0.85rem 1.1rem;min-width:220px;max-width:300px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.4);display:flex;gap:0.75rem;align-items:flex-start;
+      animation:slideInToast 0.25s ease;cursor:pointer;
+    `;
+    toast.onclick = () => toast.remove();
+    document.body.appendChild(toast);
+  }
+  const textoSafe = texto.length > 50 ? texto.slice(0,50)+'…' : texto;
+  toast.innerHTML = `
+    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#16a34a,#84cc16);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;flex-shrink:0;">${escapeHtml(nombre.charAt(0))}</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-weight:700;font-size:0.82rem;color:#4ade80;margin-bottom:0.2rem;">${escapeHtml(nombre)}</div>
+      <div style="font-size:0.78rem;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(textoSafe)}</div>
+    </div>
+  `;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.remove(), 4000);
 }
 
 // ── WebSocket ───────────────────────────────────────────────────
@@ -607,6 +637,10 @@ function recibirMensaje(msg) {
       dot.className = 'unread-dot';
       item.appendChild(dot);
     }
+    // toast con nombre y preview del mensaje
+    const nombreRemitente = msg.remitenteNombre || 'Nuevo mensaje';
+    const textoPreview = msg.eliminado ? '🚫 Mensaje eliminado' : (msg.contenido || '');
+    mostrarToastMensaje(nombreRemitente, textoPreview);
   }
   actualizarPreview(msg);
 }
