@@ -28,26 +28,25 @@ import java.util.stream.Collectors;
 public class EntrenadorController {
 
     public static final Set<String> ESPECIALIDADES_VALIDAS = Set.of(
-        "Musculación / Hipertrofia",
+        "Musculación/Hipertrofia",
         "Pérdida de grasa",
-        "Nutrición deportiva",
+        "Definición y tonificación",
         "Fuerza y potencia",
-        "Entrenamiento funcional",
-        "HIIT / Cardio intenso",
-        "Crossfit",
-        "Calistenia",
-        "Yoga",
-        "Pilates",
+        "Powerlifting",
+        "Entrenamiento en máquinas",
+        "Peso libre y barras",
+        "HIIT en sala",
+        "Cardio de gimnasio",
+        "Core y abdomen",
+        "Calistenia en sala",
         "Flexibilidad y movilidad",
-        "Running / Atletismo",
-        "Ciclismo",
-        "Natación",
-        "Deportes de combate",
+        "Nutrición deportiva",
         "Rehabilitación física",
         "Entrenamiento para mayores",
-        "Preparación física deportiva",
+        "Entrenamiento femenino",
+        "Pérdida de peso post-parto",
         "Entrenamiento online",
-        "Pérdida de peso post-parto"
+        "Ganancia de masa muscular"
     );
 
     private final EntrenadorService service;

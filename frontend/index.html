@@ -286,11 +286,21 @@
       <button class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('open')" aria-label="Menú">
         <span></span><span></span><span></span>
       </button>
-      <nav>
+      <nav id="mainNav">
         <a href="cliente/buscar.html">Buscar entrenadores</a>
         <a href="login.html">Acceder</a>
         <a href="registro.html" class="nav-cta">Empezar gratis</a>
       </nav>
+      <script>
+        (function() {
+          const u = JSON.parse(localStorage.getItem('gc_user') || 'null');
+          if (u && u.rol === 'CLIENTE') {
+            document.getElementById('mainNav').innerHTML = '<a href="cliente/buscar.html">Buscar entrenadores</a><a href="cliente/dashboard.html" class="nav-cta">← Mi dashboard</a>';
+          } else if (u && u.rol === 'ENTRENADOR') {
+            document.getElementById('mainNav').innerHTML = '<a href="cliente/buscar.html">Buscar entrenadores</a><a href="entrenador/perfil.html" class="nav-cta">← Mi panel</a>';
+          }
+        })();
+      </script>
     </div>
   </header>
 
@@ -699,52 +709,67 @@
     });
 
   // ── Trainers ──
-  fetch(`${API}/api/entrenadores`)
-    .then(r => r.json())
-    .then(lista => {
-      const grid = document.getElementById('trainersGrid');
-      const top = lista.slice(0, 3);
-      if (!top.length) {
-        grid.innerHTML = '<p style="color:var(--muted);padding:2rem;grid-column:1/-1;">No hay entrenadores aún.</p>';
-        return;
-      }
-      const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-      grid.innerHTML = top.map(e => {
-        const iniciales = (e.nombre.charAt(0) + (e.apellido||' ').charAt(0)).toUpperCase();
-        const stars = '★'.repeat(Math.round(e.rating || 5)) + '☆'.repeat(5 - Math.round(e.rating || 5));
-        const tags = (e.especialidades || []).slice(0, 2).map(t => `<span class="tag">${esc(t)}</span>`).join('');
-        const planBadge = e.planTier === 'ELITE'
-          ? '<span style="font-size:0.62rem;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.25);color:#a78bfa;border-radius:99px;padding:0.1rem 0.5rem;font-weight:700;">👑 Elite</span>'
-          : e.planTier === 'PRO'
-          ? '<span style="font-size:0.62rem;background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.2);color:#60a5fa;border-radius:99px;padding:0.1rem 0.5rem;font-weight:700;">⭐ Pro</span>'
-          : '';
-        return `
-          <div class="trainer-card reveal">
-            <div class="trainer-head">
-              ${e.fotoUrl
-                ? `<div class="avatar" style="width:46px;height:46px;overflow:hidden;"><img src="${esc(e.fotoUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`
-                : `<div class="avatar" style="width:46px;height:46px;font-size:0.88rem;">${iniciales}</div>`}
-              <div>
-                <div style="display:flex;align-items:center;gap:0.4rem;">
-                  <h3>${esc(e.nombre)} ${esc(e.apellido||'')}</h3>
-                  ${planBadge}
-                </div>
-                <p>${esc(e.ciudad || 'España')}</p>
+  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+  function renderTrainers(lista) {
+    const grid = document.getElementById('trainersGrid');
+    const top = lista.slice(0, 3);
+    if (!top.length) { grid.innerHTML = '<p style="color:var(--muted);padding:2rem;grid-column:1/-1;">No hay entrenadores aún.</p>'; return; }
+    grid.innerHTML = top.map(e => {
+      const iniciales = (e.nombre.charAt(0) + (e.apellido||' ').charAt(0)).toUpperCase();
+      const stars = '★'.repeat(Math.round(e.rating || 5)) + '☆'.repeat(5 - Math.round(e.rating || 5));
+      const tags = (e.especialidades || []).slice(0, 2).map(t => `<span class="tag">${esc(t)}</span>`).join('');
+      const planBadge = e.planTier === 'ELITE'
+        ? '<span style="font-size:0.62rem;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.25);color:#a78bfa;border-radius:99px;padding:0.1rem 0.5rem;font-weight:700;">👑 Elite</span>'
+        : e.planTier === 'PRO'
+        ? '<span style="font-size:0.62rem;background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.2);color:#60a5fa;border-radius:99px;padding:0.1rem 0.5rem;font-weight:700;">⭐ Pro</span>'
+        : '';
+      return `
+        <div class="trainer-card reveal">
+          <div class="trainer-head">
+            ${e.fotoUrl
+              ? `<div class="avatar" style="width:46px;height:46px;overflow:hidden;"><img src="${esc(e.fotoUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>`
+              : `<div class="avatar" style="width:46px;height:46px;font-size:0.88rem;">${iniciales}</div>`}
+            <div>
+              <div style="display:flex;align-items:center;gap:0.4rem;">
+                <h3>${esc(e.nombre)} ${esc(e.apellido||'')}</h3>
+                ${planBadge}
               </div>
+              <p>${esc(e.ciudad || 'España')}</p>
             </div>
-            <div style="padding-left:0.75rem;font-size:0.8rem;color:#f59e0b;margin-bottom:0.65rem;">${stars} <span style="color:var(--muted);font-size:0.72rem;">(${e.totalResenas||0})</span></div>
-            <div class="trainer-tags">${tags || '<span class="tag">Entrenamiento</span>'}</div>
-            <div class="trainer-bottom">
-              <div class="trainer-price">${e.precioMensual||'—'}€ <small>/mes</small></div>
-              <a href="cliente/perfil.html?id=${e.id}" class="btn btn-primary" style="padding:0.5rem 1.1rem;font-size:0.78rem;">Ver perfil</a>
-            </div>
-          </div>`;
-      }).join('');
-      document.querySelectorAll('.trainer-card.reveal').forEach(el => observer.observe(el));
-    })
-    .catch(() => {
-      document.getElementById('trainersGrid').innerHTML = '<p style="color:var(--muted);padding:2rem;grid-column:1/-1;">No se pudo cargar la lista.</p>';
-    });
+          </div>
+          <div style="padding-left:0.75rem;font-size:0.8rem;color:#f59e0b;margin-bottom:0.65rem;">${stars} <span style="color:var(--muted);font-size:0.72rem;">(${e.totalResenas||0})</span></div>
+          <div class="trainer-tags">${tags || '<span class="tag">Gimnasio</span>'}</div>
+          <div class="trainer-bottom">
+            <div class="trainer-price">${e.precioMensual||'—'}€ <small>/mes</small></div>
+            <a href="cliente/perfil.html?id=${e.id}" class="btn btn-primary" style="padding:0.5rem 1.1rem;font-size:0.78rem;">Ver perfil</a>
+          </div>
+        </div>`;
+    }).join('');
+    document.querySelectorAll('.trainer-card.reveal').forEach(el => observer.observe(el));
+  }
+
+  function cargarTrainers(intento) {
+    const grid = document.getElementById('trainersGrid');
+    if (intento > 1) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted-light);">
+        <div style="font-size:1.5rem;margin-bottom:0.5rem;">⏳</div>
+        <p style="font-size:0.88rem;">El servidor está iniciando, espera un momento…</p>
+        <p style="font-size:0.75rem;opacity:0.6;margin-top:0.25rem;">Intento ${intento} de 4</p>
+      </div>`;
+    }
+    fetch(`${API}/api/entrenadores`, { signal: AbortSignal.timeout(15000) })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(renderTrainers)
+      .catch(() => {
+        if (intento < 4) {
+          setTimeout(() => cargarTrainers(intento + 1), 8000);
+        } else {
+          grid.innerHTML = '<p style="color:var(--muted);padding:2rem;grid-column:1/-1;text-align:center;">No se pudo conectar con el servidor. Recarga la página.</p>';
+        }
+      });
+  }
+  cargarTrainers(1);
 </script>
 </body>
 </html>
