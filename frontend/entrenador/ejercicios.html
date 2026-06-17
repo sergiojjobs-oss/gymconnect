@@ -15,23 +15,23 @@
   <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
   <style>
     .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
-    .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
-    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--muted-light); padding:0 0.75rem; margin:1rem 0 0.4rem; }
-    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--muted-light); transition:background var(--t),color var(--t); text-decoration:none; }
-    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text-light); }
-    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--green-l); font-weight:700; }
+    .sidebar { background:var(--surface); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
+    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--text-2); padding:0 0.75rem; margin:1rem 0 0.4rem; }
+    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--text-2); transition:background 0.12s,color 0.12s; text-decoration:none; }
+    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text); }
+    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--brand-light); font-weight:700; }
     .main { padding:2rem 2.5rem; overflow-y:auto; }
 
     .filtros { display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.5rem; align-items:center; }
-    .filtros input { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.85rem; color:var(--text); font-size:0.85rem; width:220px; }
+    .filtros input { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.85rem; color:var(--text); font-size:0.85rem; width:220px; }
     .filtros input:focus { outline:none; border-color:var(--green); }
-    .filtros select { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; color:var(--text); font-size:0.85rem; }
+    .filtros select { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; color:var(--text); font-size:0.85rem; }
     .filtros select option { background:#ffffff; color:#111827; }
 
     .ejercicios-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; }
 
     /* ── Card ── */
-    .ej-card { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:border-color 0.15s; position:relative; }
+    .ej-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:border-color 0.15s; position:relative; }
     .ej-card:hover { border-color:rgba(22,163,74,0.3); }
     .ej-img { width:100%; height:130px; object-fit:cover; background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:2.5rem; }
     .ej-body { padding:1rem; }
@@ -75,7 +75,7 @@
 
     /* Modal */
     .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:1000; padding:1rem; }
-    .modal-box { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:2rem; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; }
+    .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:2rem; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; }
     .modal-box h3 { font-size:1.1rem; font-weight:800; margin-bottom:1.25rem; }
     .form-row { margin-bottom:1rem; }
     .form-row label { display:block; font-size:0.78rem; font-weight:700; color:var(--muted); margin-bottom:0.3rem; }

@@ -15,17 +15,17 @@
   <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
   <style>
     .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
-    .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
-    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--muted-light); padding:0 0.75rem; margin:1rem 0 0.4rem; }
-    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--muted-light); transition:background var(--t),color var(--t); text-decoration:none; }
-    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text-light); }
-    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--green-l); font-weight:700; }
+    .sidebar { background:var(--surface); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
+    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--text-2); padding:0 0.75rem; margin:1rem 0 0.4rem; }
+    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--text-2); transition:background 0.12s,color 0.12s; text-decoration:none; }
+    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text); }
+    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--brand-light); font-weight:700; }
     .main { padding:2rem 2.5rem; overflow-y:auto; }
     .clientes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.25rem; }
-    .cliente-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; transition:border-color 0.15s; }
+    .cliente-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.5rem; transition:border-color 0.15s; }
     .cliente-card:hover { border-color:rgba(22,163,74,0.3); }
     .cliente-head { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
-    .cli-avatar { width:48px; height:48px; border-radius:50%; background:var(--grad-main); display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:900; color:#fff; flex-shrink:0; }
+    .cli-avatar { width:48px; height:48px; border-radius:50%; background:#16a34a; display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:900; color:#fff; flex-shrink:0; }
     .cli-nombre { font-size:0.95rem; font-weight:800; }
     .cli-estado { font-size:0.72rem; font-weight:700; padding:0.15rem 0.5rem; border-radius:6px; display:inline-flex; align-items:center; gap:0.3rem; margin-top:0.2rem; }
     .estado-activo { background:rgba(22,163,74,0.1); color:var(--green); border:1px solid rgba(22,163,74,0.2); }

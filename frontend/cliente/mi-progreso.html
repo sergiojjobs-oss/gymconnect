@@ -14,13 +14,13 @@
   <script src="../js/auth-guard.js" data-rol="CLIENTE"></script>
   <style>
     .dashboard-layout { display:grid; grid-template-columns:220px 1fr; min-height:calc(100vh - 70px); }
-    .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
-    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--muted-light); padding:0 0.75rem; margin:1rem 0 0.4rem; }
-    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--muted-light); transition:background var(--t),color var(--t); text-decoration:none; }
-    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text-light); }
-    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--green-l); font-weight:700; }
+    .sidebar { background:var(--surface); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
+    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--text-2); padding:0 0.75rem; margin:1rem 0 0.4rem; }
+    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--text-2); transition:background 0.12s,color 0.12s; text-decoration:none; }
+    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text); }
+    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--brand-light); font-weight:700; }
     .main { padding:2rem 2.5rem; }
-    .checkin-form { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.75rem; margin-bottom:2rem; }
+    .checkin-form { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.75rem; margin-bottom:2rem; }
     .checkin-form h2 { font-size:1rem; font-weight:800; margin-bottom:1.25rem; }
     .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
     .form-group label { display:block; font-size:0.78rem; font-weight:700; color:var(--muted); margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.5px; }
@@ -30,7 +30,7 @@
     .energia-btn { flex:1; padding:0.6rem; background:var(--bg); border:2px solid var(--border); border-radius:8px; color:var(--muted); font-size:1rem; cursor:pointer; transition:all 0.15s; text-align:center; }
     .energia-btn.sel { border-color:var(--green); background:rgba(22,163,74,0.1); color:var(--green); }
     .historial-lista { display:flex; flex-direction:column; gap:1rem; }
-    .checkin-item { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; }
+    .checkin-item { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.25rem; }
     .checkin-top { display:flex; align-items:center; gap:1.5rem; margin-bottom:0.75rem; flex-wrap:wrap; }
     .checkin-fecha { font-size:0.8rem; color:var(--muted); font-weight:700; }
     .checkin-peso { font-size:1.4rem; font-weight:900; color:var(--text); }
@@ -43,7 +43,7 @@
     .feedback-box strong { display:block; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--green); margin-bottom:0.3rem; }
     .foto-preview { width:80px; height:80px; border-radius:8px; object-fit:cover; margin-left:auto; }
     .cumpl-bar { height:6px; background:var(--border); border-radius:99px; margin-top:0.5rem; overflow:hidden; }
-    .cumpl-fill { height:100%; background:var(--grad-main); border-radius:99px; }
+    .cumpl-fill { height:100%; background:#16a34a; border-radius:99px; }
     @media(max-width:768px){ .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1rem 0.85rem 5.5rem} .form-row{grid-template-columns:1fr} }
   </style>
 </head>

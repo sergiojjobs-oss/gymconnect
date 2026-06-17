@@ -54,7 +54,7 @@
 
     /* ── Hero ──────────────────────────────────────────────────── */
     .profile-hero {
-      background: var(--dark-hero);
+      background: var(--surface);
       padding: 3rem 0 4rem;
       position: relative;
       overflow: hidden;
@@ -86,18 +86,18 @@
       overflow: hidden;
       transition: border-color 0.4s, box-shadow 0.4s;
     }
-    .profile-hero-info h1 { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; color: var(--text-light); margin-bottom: 0.25rem; }
-    .profile-hero-info p  { color: var(--muted-light); font-size: 0.9rem; }
+    .profile-hero-info h1 { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; color: var(--text); margin-bottom: 0.25rem; }
+    .profile-hero-info p  { color: var(--text-2); font-size: 0.9rem; }
     .profile-hero-info .stars { color: var(--gold-l); margin-top: 0.5rem; font-size: 0.9rem; }
-    .profile-hero-info .stars span { color: var(--muted-light); }
+    .profile-hero-info .stars span { color: var(--text-2); }
     .profile-hero-cta { margin-left: auto; display: flex; flex-direction: column; gap: 0.75rem; align-items: flex-end; }
     .profile-price-big { font-size: 2.4rem; font-weight: 900; color: var(--plan-color); line-height: 1; text-shadow: 0 0 30px var(--plan-glow); }
-    .profile-price-big small { font-size: 0.8rem; color: var(--muted-light); font-weight: 400; }
+    .profile-price-big small { font-size: 0.8rem; color: var(--text-2); font-weight: 400; }
 
     /* Plan badge */
     .plan-badge {
       display: inline-flex; align-items: center; gap: 0.35rem;
-      padding: 0.3rem 0.85rem; border-radius: 20px;
+      padding: 0.3rem 0.85rem; border-radius:8px;
       font-size: 0.72rem; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;
       background: var(--plan-bg);
       border: 1px solid var(--plan-border);
@@ -118,7 +118,7 @@
     .profile-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start; }
 
     .info-card {
-      background: var(--card);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 1.75rem;
@@ -137,7 +137,7 @@
 
     /* Sidebar CTA card */
     .sidebar-cta-card {
-      background: var(--card);
+      background: var(--surface);
       border: 1px solid var(--plan-border);
       border-top: 3px solid var(--plan-color);
       border-radius: 12px;
@@ -150,7 +150,7 @@
     .review-item { padding: 1rem 0; border-bottom: 1px solid var(--border); }
     .review-item:last-child { border-bottom: none; }
     .review-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem; }
-    .review-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--grad-main); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; color: #fff; }
+    .review-avatar { width: 32px; height: 32px; border-radius: 50%; background: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; color: #fff; }
     .review-name { font-size: 0.85rem; font-weight: 700; }
     .review-stars { color: var(--gold-l); font-size: 0.78rem; margin-left: auto; }
     .review-text { font-size: 0.83rem; color: var(--text-2); line-height: 1.65; }
@@ -296,7 +296,7 @@
 
   <div id="toast" class="toast" style="
     position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
-    background:var(--text);color:var(--text-light);padding:.85rem 1.5rem;border-radius:8px;
+    background:var(--text);color:var(--text);padding:.85rem 1.5rem;border-radius:8px;
     font-size:.88rem;font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.2);opacity:0;
     transition:opacity .3s,transform .3s;z-index:999;border-left:4px solid var(--green);
     white-space:nowrap;pointer-events:none;"></div>
@@ -403,7 +403,7 @@
       const hasRating = e.totalResenas > 0;
       document.getElementById('heroStars').innerHTML = hasRating
         ? '★'.repeat(Math.floor(e.rating)) + ` <span>${e.rating} · ${e.totalResenas} reseñas</span>`
-        : '<span style="color:var(--muted-light);font-size:0.83rem;">Sin valoraciones aún</span>';
+        : '<span style="color:var(--text-2);font-size:0.83rem;">Sin valoraciones aún</span>';
       document.getElementById('heroPrecio').innerHTML = e.precioMensual + '€ <small>/mes</small>';
       document.getElementById('sidebarPrecio').innerHTML = e.precioMensual + '€ <small style="font-size:.75rem;color:var(--muted);font-weight:400">/mes</small>';
       document.title = e.nombre + ' ' + e.apellido + ' — MomentFit';
@@ -416,9 +416,9 @@
 
       // Idiomas e Instagram/YouTube en hero
       const extras = [];
-      if ((e.idiomas||[]).length) extras.push((e.idiomas).map(i=>`<span style="background:rgba(255,255,255,0.1);color:#fff;border-radius:20px;padding:.15rem .6rem;font-size:.75rem;font-weight:700;">🌐 ${i}</span>`).join(''));
-      if (e.instagram) extras.push(`<a href="https://instagram.com/${e.instagram}" target="_blank" style="color:var(--muted-light);font-size:.82rem;">📸 @${e.instagram}</a>`);
-      if (e.youtube)   extras.push(`<a href="${e.youtube}" target="_blank" style="color:var(--muted-light);font-size:.82rem;">▶ YouTube</a>`);
+      if ((e.idiomas||[]).length) extras.push((e.idiomas).map(i=>`<span style="background:rgba(255,255,255,0.1);color:#fff;border-radius:8px;padding:.15rem .6rem;font-size:.75rem;font-weight:700;">🌐 ${i}</span>`).join(''));
+      if (e.instagram) extras.push(`<a href="https://instagram.com/${e.instagram}" target="_blank" style="color:var(--text-2);font-size:.82rem;">📸 @${e.instagram}</a>`);
+      if (e.youtube)   extras.push(`<a href="${e.youtube}" target="_blank" style="color:var(--text-2);font-size:.82rem;">▶ YouTube</a>`);
       const extrasEl = document.getElementById('heroExtras');
       if (extrasEl) extrasEl.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem;">${extras.join('')}</div>`;
 

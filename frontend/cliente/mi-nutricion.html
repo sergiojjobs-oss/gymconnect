@@ -14,21 +14,21 @@
   <script src="../js/auth-guard.js" data-rol="CLIENTE"></script>
   <style>
     .dashboard-layout { display:grid; grid-template-columns:220px 1fr; min-height:calc(100vh - 70px); }
-    .sidebar { background:var(--dark-hero); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
-    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--muted-light); padding:0 0.75rem; margin:1rem 0 0.4rem; }
-    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--muted-light); transition:background var(--t),color var(--t); text-decoration:none; }
-    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text-light); }
-    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--green-l); font-weight:700; }
+    .sidebar { background:var(--surface); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
+    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--text-2); padding:0 0.75rem; margin:1rem 0 0.4rem; }
+    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--text-2); transition:background 0.12s,color 0.12s; text-decoration:none; }
+    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text); }
+    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--brand-light); font-weight:700; }
     .main { padding:2rem 2.5rem; }
     .macros-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
-    .macro-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; text-align:center; }
+    .macro-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.25rem; text-align:center; }
     .macro-card .val { font-size:1.8rem; font-weight:900; color:var(--green); }
     .macro-card .lbl { font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:0.25rem; }
     .macro-card.kcal .val { color:#f59e0b; }
     .macro-card.prot .val { color:#3b82f6; }
     .macro-card.carb .val { color:#8b5cf6; }
     .macro-card.gras .val { color:#ec4899; }
-    .comida-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+    .comida-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
     .comida-header { display:flex; align-items:center; gap:1rem; margin-bottom:0.75rem; }
     .comida-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
     .comida-title { font-size:0.95rem; font-weight:800; }

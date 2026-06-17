@@ -17,11 +17,11 @@
   <script src="https://www.paypal.com/sdk/js?client-id=AdCjPbDMjomTwFZOBxgRsQAQsUQdHbzvmKTPOa_fDSAE7skBsdwMl2osJFISy_swAHmetn3Z6H2oCC_h&currency=EUR&intent=capture"></script>
   <style>
     .dashboard-layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 70px); }
-    .sidebar { background: var(--dark-hero); border-right: 1px solid rgba(255,255,255,0.06); padding: 2rem 1rem; display: flex; flex-direction: column; gap: 0.25rem; }
-    .sidebar-label { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: var(--muted-light); padding: 0 0.75rem; margin: 1rem 0 0.4rem; }
-    .sidebar a { display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.75rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: var(--muted-light); transition: background var(--t), color var(--t); }
-    .sidebar a:hover { background: rgba(255,255,255,0.06); color: var(--text-light); }
-    .sidebar a.active { background: rgba(22,163,74,0.15); color: var(--green-l); font-weight: 700; }
+    .sidebar { background: var(--surface); border-right: 1px solid rgba(255,255,255,0.06); padding: 2rem 1rem; display: flex; flex-direction: column; gap: 0.25rem; }
+    .sidebar-label { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: var(--text-2); padding: 0 0.75rem; margin: 1rem 0 0.4rem; }
+    .sidebar a { display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.75rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: var(--text-2); transition: background 0.12s, color 0.12s; }
+    .sidebar a:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+    .sidebar a.active { background: rgba(22,163,74,0.15); color: var(--brand-light); font-weight: 700; }
     .main-content { padding: 2.5rem; overflow-y: auto; }
 
     /* Banner estado actual */
@@ -54,7 +54,7 @@
     /* Barra de clientes usados */
     .client-bar-wrap { margin-top: 0.75rem; }
     .client-bar-label { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.4rem; }
-    .client-bar { height: 8px; background: var(--bg-2); border-radius: 99px; overflow: hidden; }
+    .client-bar { height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
     .client-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#2563eb,#60a5fa); transition: width 0.5s; }
     .client-bar-fill.full { background: linear-gradient(90deg, #dc2626, #ef4444); }
 
@@ -62,13 +62,13 @@
     .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
 
     .plan-card {
-      background: var(--card);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius:8px;
       padding: 2rem;
       position: relative;
       overflow: hidden;
-      transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+      transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
     }
     .plan-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.08); }
     .plan-card.highlighted {
@@ -78,7 +78,7 @@
 
     /* ELITE — el que más destaca */
     .plan-card.elite {
-      background: linear-gradient(160deg, rgba(139,92,246,0.08) 0%, var(--card) 50%);
+      background: linear-gradient(160deg, rgba(139,92,246,0.08) 0%, var(--surface) 50%);
       border: 2px solid #8b5cf6;
       box-shadow: 0 0 0 4px rgba(139,92,246,0.12), 0 24px 60px rgba(139,92,246,0.18);
       transform: translateY(-10px) scale(1.02);
@@ -151,10 +151,10 @@
     .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
     .modal-bg.open { display: flex; }
     .modal-box {
-      background: var(--card);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-top: 3px solid var(--green);
-      border-radius: 14px;
+      border-radius:8px;
       padding: 2.5rem;
       max-width: 440px;
       width: 90%;
@@ -184,7 +184,7 @@
     .modal-cancel:hover { color: var(--text); }
 
     /* Toast */
-    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--text-light); padding: .85rem 1.5rem; border-radius: 8px; font-size: .88rem; font-weight: 600; box-shadow: 0 8px 32px rgba(0,0,0,.2); opacity: 0; transition: opacity .3s, transform .3s; z-index: 1100; border-left: 4px solid var(--green); white-space: nowrap; pointer-events: none; }
+    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--text); padding: .85rem 1.5rem; border-radius: 8px; font-size: .88rem; font-weight: 600; box-shadow: 0 8px 32px rgba(0,0,0,.2); opacity: 0; transition: opacity .3s, transform .3s; z-index: 1100; border-left: 4px solid var(--green); white-space: nowrap; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     @media (max-width: 900px) { .plans-grid { grid-template-columns: 1fr; } }
