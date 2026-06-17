@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -14,48 +14,75 @@
   <script src="../js/plan-theme.js"></script>
   <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
   <style>
-    .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
-    .sidebar { background:var(--surface); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
-    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--text-2); padding:0 0.75rem; margin:1rem 0 0.4rem; }
-    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--text-2); transition:background 0.12s,color 0.12s; text-decoration:none; }
-    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text); }
-    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--brand-light); font-weight:700; }
-    .main { padding:2rem 2.5rem; overflow-y:auto; }
-    .clientes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.25rem; }
-    .cliente-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.5rem; transition:border-color 0.15s; }
-    .cliente-card:hover { border-color:rgba(22,163,74,0.3); }
-    .cliente-head { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
-    .cli-avatar { width:48px; height:48px; border-radius:50%; background:#16a34a; display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:900; color:#fff; flex-shrink:0; }
-    .cli-nombre { font-size:0.95rem; font-weight:800; }
-    .cli-estado { font-size:0.72rem; font-weight:700; padding:0.15rem 0.5rem; border-radius:6px; display:inline-flex; align-items:center; gap:0.3rem; margin-top:0.2rem; }
-    .estado-activo { background:rgba(22,163,74,0.1); color:var(--green); border:1px solid rgba(22,163,74,0.2); }
-    .estado-lead { background:rgba(245,158,11,0.1); color:#d97706; border:1px solid rgba(245,158,11,0.2); }
-    .cli-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.5rem; margin-bottom:1rem; }
-    .cli-stat { background:var(--bg); border-radius:8px; padding:0.5rem; text-align:center; }
-    .cli-stat .v { font-size:0.9rem; font-weight:900; color:var(--text); }
-    .cli-stat .l { font-size:0.62rem; color:var(--muted); margin-top:0.1rem; }
-    .cli-ultimo-peso { font-size:0.82rem; color:var(--muted); margin-bottom:1rem; }
-    .cli-actions { display:flex; gap:0.5rem; flex-wrap:wrap; }
-    .sin-clientes { grid-column:1/-1; text-align:center; padding:4rem 2rem; color:var(--muted); }
-    .sin-clientes span { font-size:3rem; display:block; margin-bottom:1rem; }
-    .alerta-inactivo { background:rgba(220,38,38,0.06); border:1px solid rgba(220,38,38,0.2); border-radius:8px; padding:0.4rem 0.7rem; font-size:0.72rem; font-weight:700; color:#dc2626; display:inline-flex; align-items:center; gap:0.3rem; margin-bottom:0.5rem; }
-    .notas-privadas-section { margin-top:0.75rem; border-top:1px solid var(--border); padding-top:0.75rem; }
-    .notas-privadas-section textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.75rem; color:var(--text); font-size:0.8rem; resize:none; margin-top:0.4rem; }
-    .notas-privadas-section textarea:focus { outline:none; border-color:#8b5cf6; }
-    .notas-label { font-size:0.68rem; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; color:#8b5cf6; display:flex; align-items:center; gap:0.3rem; }
-    .resumen-banner { background:linear-gradient(135deg,rgba(220,38,38,0.06),rgba(220,38,38,0.02)); border:1px solid rgba(220,38,38,0.2); border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem; display:none; }
-    .resumen-banner h3 { font-size:0.85rem; font-weight:800; color:#dc2626; margin-bottom:0.5rem; }
-    .resumen-banner ul { list-style:none; display:flex; flex-wrap:wrap; gap:0.5rem; }
-    .resumen-banner ul li { background:rgba(220,38,38,0.08); border:1px solid rgba(220,38,38,0.2); border-radius:99px; padding:0.2rem 0.75rem; font-size:0.78rem; font-weight:700; color:#dc2626; }
-    @media(max-width:768px){ .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1rem 0.85rem 5.5rem} }
+    /* ── Inline alert banner ── */
+    .inactivos-banner {
+      display: none;
+      background: rgba(220,38,38,0.05);
+      border: 1px solid rgba(220,38,38,0.15);
+      border-radius: var(--radius-lg);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.78rem;
+      color: #f87171;
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .inactivos-banner strong { font-weight: 600; white-space: nowrap; }
+    .inactivos-banner .pills { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+    .inactivos-banner .pill-name {
+      background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.18);
+      border-radius: 99px; padding: 0.1rem 0.55rem;
+      font-size: 0.72rem; font-weight: 500; color: #fca5a5;
+    }
+
+    /* ── Client table ── */
+    .cli-avatar-sm {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--brand); color: #fff;
+      font-size: 0.62rem; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0; overflow: hidden; vertical-align: middle; margin-right: 0.55rem;
+    }
+    .cli-avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+    .cli-name { font-weight: 600; font-size: 0.82rem; color: var(--text); }
+    .cli-inactivo-dot {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: #f87171; margin-right: 0.35rem; flex-shrink: 0;
+    }
+    .row-actions { display: flex; gap: 0.35rem; opacity: 0; transition: opacity 0.1s; }
+    tr:hover .row-actions { opacity: 1; }
+
+    /* ── ELITE notes panel (expandable per row) ── */
+    .notes-row td { padding: 0 1rem 0.875rem !important; }
+    .notes-panel {
+      background: var(--surface-2); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius); padding: 0.65rem 0.875rem;
+    }
+    .notes-label {
+      font-size: 0.6rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.8px; color: #a78bfa; margin-bottom: 0.4rem;
+    }
+    .notes-panel textarea {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 0.5rem 0.75rem;
+      color: var(--text); font-size: 0.78rem; resize: none;
+      font-family: var(--font);
+    }
+    .notes-panel textarea:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139,92,246,0.1); }
+
+    @media(max-width:768px){
+      .row-actions { opacity: 1; }
+    }
   </style>
 </head>
 <body>
 <header>
   <div class="container">
-    <a href="../index.html" class="logo">Moment<span>Fit</span></a>
+    <a href="../index.html" class="logo">Moment<em>Fit</em></a>
     <nav>
-      <button class="btn btn-primary" style="font-size:0.82rem;" onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
+      <button onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
     </nav>
   </div>
 </header>
@@ -63,32 +90,58 @@
 <div class="dashboard-layout">
   <aside class="sidebar">
     <span class="sidebar-label">Panel</span>
-    <a href="perfil.html">👤 Mi perfil</a>
-    <a href="rutinas.html">📋 Rutinas</a>
-    <a href="nutricion.html">🥗 Nutrición</a>
-    <a href="../chat/index.html">💬 Mensajes</a>
-    <a href="clientes.html" class="active">👥 Clientes</a>
-    <a href="ficha-cliente.html">📋 Fichas de clientes</a>
-    <a href="agenda.html">📅 Agenda</a>
-    <a href="ejercicios.html">🏋️ Ejercicios</a>
-    <a href="resultados.html">📈 Progreso clientes</a>
-    <a href="estadisticas.html">📊 Estadísticas</a>
+    <a href="perfil.html">Mi perfil</a>
+    <a href="rutinas.html">Rutinas</a>
+    <a href="nutricion.html">Nutrición</a>
+    <a href="../chat/index.html">Mensajes</a>
+    <a href="clientes.html" class="active">Clientes</a>
+    <a href="ficha-cliente.html">Fichas de clientes</a>
+    <a href="agenda.html">Agenda</a>
+    <a href="ejercicios.html">Ejercicios</a>
+    <a href="resultados.html">Progreso clientes</a>
+    <a href="estadisticas.html">Estadísticas</a>
     <span class="sidebar-label">Cuenta</span>
-    <a href="planes.html">💳 Mi suscripción</a>
-    <a href="ajustes.html">⚙️ Ajustes</a>
-    <a href="../login.html" onclick="localStorage.clear()">🚪 Salir</a>
+    <a href="planes.html">Mi suscripción</a>
+    <a href="ajustes.html">Ajustes</a>
+    <a href="../login.html" onclick="localStorage.clear()">Salir</a>
   </aside>
 
   <main class="main">
-    <div style="margin-bottom:2rem;">
-      <h1 style="font-size:1.5rem;font-weight:800;">👥 Mis clientes</h1>
-      <p style="color:var(--muted);font-size:0.88rem;margin-top:0.2rem;" id="subTitulo">Cargando…</p>
+    <div class="page-header">
+      <div>
+        <h1>Clientes</h1>
+        <p class="page-subtitle" id="subTitulo">Cargando…</p>
+      </div>
     </div>
-    <div class="resumen-banner" id="resumenBanner">
-      <h3>⚠️ Clientes sin actividad esta semana</h3>
-      <ul id="resumenLista"></ul>
+
+    <div class="inactivos-banner" id="inactivosBanner">
+      <strong>Sin actividad esta semana:</strong>
+      <div class="pills" id="inactivosPills"></div>
     </div>
-    <div class="clientes-grid" id="grid"><p style="color:var(--muted);">Cargando…</p></div>
+
+    <div class="table-wrap" id="tableWrap" style="display:none">
+      <table id="clientesTable">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Último peso</th>
+            <th>Último check-in</th>
+            <th>Energía</th>
+            <th>Última nota</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <div id="emptyState" style="display:none" class="empty-state">
+      <span class="empty-state-icon">—</span>
+      <h3>Sin clientes aún</h3>
+      <p>Cuando un cliente contrate tu servicio aparecerá aquí.</p>
+    </div>
+
+    <div id="loading" style="padding:3rem;text-align:center;color:var(--muted);font-size:0.8rem;">Cargando…</div>
   </main>
 </div>
 
@@ -97,24 +150,32 @@ const token = () => localStorage.getItem('gc_token');
 const hdr = (json) => ({ Authorization: 'Bearer ' + token(), ...(json ? {'Content-Type':'application/json'} : {}) });
 let esElite = false;
 
+function energiaLabel(n) {
+  const labels = {1:'Bajo',2:'Regular',3:'Bien',4:'Muy bien',5:'Excelente'};
+  return labels[n] || '—';
+}
+
 async function cargar() {
-  const grid = document.getElementById('grid');
+  const tbody = document.getElementById('tbody');
   try {
     const [todosRaw, planData] = await Promise.all([
       fetch(`${API}/api/chat/contactos`, { headers: hdr() }).then(r => r.json()),
       fetch(`${API}/api/suscripcion/estado`, { headers: hdr() }).then(r => r.json()).catch(() => ({}))
     ]);
     esElite = planData.plan === 'ELITE';
-
     const contactos = todosRaw.filter(c => c.esPagador);
 
+    document.getElementById('loading').style.display = 'none';
+
     if (!contactos.length) {
+      document.getElementById('emptyState').style.display = 'block';
       document.getElementById('subTitulo').textContent = '0 clientes';
-      grid.innerHTML = `<div class="sin-clientes"><span>👥</span><p>Aún no tienes clientes.</p></div>`;
       return;
     }
 
-    document.getElementById('subTitulo').textContent = `${contactos.length} cliente${contactos.length !== 1 ? 's' : ''} activo${contactos.length !== 1 ? 's' : ''}`;
+    document.getElementById('subTitulo').textContent =
+      `${contactos.length} cliente${contactos.length !== 1 ? 's' : ''}`;
+    document.getElementById('tableWrap').style.display = '';
 
     const progresos = await Promise.all(
       contactos.map(c =>
@@ -123,72 +184,77 @@ async function cargar() {
       )
     );
 
-    // Resumen semanal ELITE — clientes sin check-in en los últimos 7 días
+    // ELITE: banner de inactivos
     if (esElite) {
       const inactivos = contactos.filter((c, i) => {
         const prog = progresos[i];
         if (!prog) return true;
-        const dias = Math.floor((Date.now() - new Date(prog.fecha)) / 86400000);
-        return dias > 7;
+        return Math.floor((Date.now() - new Date(prog.fecha)) / 86400000) > 7;
       });
       if (inactivos.length) {
-        document.getElementById('resumenBanner').style.display = 'block';
-        document.getElementById('resumenLista').innerHTML = inactivos.map(c =>
-          `<li>⚠️ ${c.nombre}</li>`).join('');
+        const banner = document.getElementById('inactivosBanner');
+        banner.style.display = 'flex';
+        document.getElementById('inactivosPills').innerHTML =
+          inactivos.map(c => `<span class="pill-name">${c.nombre}</span>`).join('');
       }
     }
 
-    grid.innerHTML = contactos.map((c, i) => {
+    tbody.innerHTML = contactos.map((c, i) => {
       const prog = progresos[i];
       const iniciales = c.nombre.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
       const diasDesde = prog ? Math.floor((Date.now() - new Date(prog.fecha)) / 86400000) : null;
       const inactivo = esElite && (diasDesde === null || diasDesde > 7);
+      const rowId = `row-${c.id}`;
 
-      return `
-        <div class="cliente-card">
-          <div class="cliente-head">
-            <div class="cli-avatar">${iniciales}</div>
-            <div>
-              <div class="cli-nombre">${c.nombre}</div>
-              <div class="cli-estado ${c.esPagador ? 'estado-activo' : 'estado-lead'}">
-                ${c.esPagador ? '✓ Cliente activo' : '💬 Lead'}
-              </div>
+      let rows = `<tr id="${rowId}">
+        <td>
+          <div style="display:flex;align-items:center;">
+            <span class="cli-avatar-sm">${iniciales}</span>
+            <span class="cli-name">${inactivo ? '<span class="cli-inactivo-dot"></span>' : ''}${c.nombre}</span>
+          </div>
+        </td>
+        <td>${prog?.peso ? `<strong style="color:var(--text)">${prog.peso} kg</strong>` : '—'}</td>
+        <td>${diasDesde !== null ? `${diasDesde}d` : '—'}</td>
+        <td>${prog?.energia ? `<span class="chip chip-${prog.energia >= 4 ? 'green' : prog.energia >= 3 ? 'muted' : 'orange'}">${energiaLabel(prog.energia)}</span>` : '—'}</td>
+        <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)">
+          ${prog?.notas ? `"${prog.notas.slice(0,60)}${prog.notas.length>60?'…':''}"` : ''}
+        </td>
+        <td>
+          <div class="row-actions">
+            <a href="../chat/index.html?contacto=${c.id}" class="btn btn-outline" style="font-size:0.73rem;padding:0.3rem 0.6rem;">Mensaje</a>
+            <a href="resultados.html?cliente=${c.id}" class="btn btn-outline" style="font-size:0.73rem;padding:0.3rem 0.6rem;">Progreso</a>
+            ${esElite ? `<button onclick="toggleNotas(${c.id})" class="btn btn-ghost" style="font-size:0.73rem;padding:0.3rem 0.6rem;color:#a78bfa;">Notas</button>` : ''}
+            <button onclick="eliminarCliente(${c.id}, '${c.nombre}')" class="btn btn-ghost" style="font-size:0.73rem;padding:0.3rem 0.6rem;color:#f87171;">Eliminar</button>
+          </div>
+        </td>
+      </tr>`;
+
+      if (esElite) {
+        rows += `<tr id="notes-${c.id}" class="notes-row" style="display:none">
+          <td colspan="6">
+            <div class="notes-panel">
+              <div class="notes-label">Notas privadas — solo tú las ves</div>
+              <textarea id="np-${c.id}" rows="2" placeholder="Observaciones privadas sobre este cliente…" onblur="guardarNotas(${c.id})"></textarea>
             </div>
-          </div>
-
-          ${inactivo ? `<div class="alerta-inactivo">⚠️ Sin check-in esta semana</div>` : ''}
-
-          <div class="cli-stats">
-            <div class="cli-stat"><div class="v">${prog?.peso ? prog.peso+'kg' : '—'}</div><div class="l">Último peso</div></div>
-            <div class="cli-stat"><div class="v">${diasDesde !== null ? diasDesde+'d' : '—'}</div><div class="l">Últ. check-in</div></div>
-            <div class="cli-stat"><div class="v">${prog?.energia ? '⭐'.repeat(prog.energia) : '—'}</div><div class="l">Energía</div></div>
-          </div>
-
-          ${prog?.notas ? `<div class="cli-ultimo-peso">💬 "${prog.notas.slice(0,60)}${prog.notas.length>60?'…':''}"</div>` : ''}
-
-          <div class="cli-actions">
-            <a href="../chat/index.html?contacto=${c.id}" class="btn btn-primary" style="font-size:0.78rem;padding:0.45rem 0.9rem;">💬 Mensaje</a>
-            <a href="resultados.html?cliente=${c.id}" class="btn btn-outline" style="font-size:0.78rem;padding:0.45rem 0.9rem;">📈 Progreso</a>
-            <a href="rutinas.html" class="btn btn-outline" style="font-size:0.78rem;padding:0.45rem 0.9rem;">📋 Rutina</a>
-            <button onclick="eliminarCliente(${c.id}, '${c.nombre}')" class="btn" style="font-size:0.78rem;padding:0.45rem 0.9rem;background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.25);">🚫 Eliminar</button>
-          </div>
-
-          ${esElite ? `
-          <div class="notas-privadas-section">
-            <div class="notas-label">🔒 Notas privadas (solo tú las ves)</div>
-            <textarea id="np-${c.id}" rows="2" placeholder="Observaciones privadas sobre este cliente…" onblur="guardarNotas(${c.id})"></textarea>
-          </div>` : ''}
-        </div>`;
+          </td>
+        </tr>`;
+      }
+      return rows;
     }).join('');
 
-    // Cargar notas privadas si ELITE
-    if (esElite) {
-      contactos.forEach(c => cargarNotas(c.id));
-    }
+    if (esElite) contactos.forEach(c => cargarNotas(c.id));
 
   } catch (e) {
-    grid.innerHTML = '<p style="color:#dc2626;">Error al cargar clientes.</p>';
+    document.getElementById('loading').textContent = 'Error al cargar clientes.';
   }
+}
+
+function toggleNotas(id) {
+  const row = document.getElementById(`notes-${id}`);
+  if (!row) return;
+  const visible = row.style.display !== 'none';
+  row.style.display = visible ? 'none' : '';
+  if (!visible) document.getElementById(`np-${id}`)?.focus();
 }
 
 async function cargarNotas(clienteId) {
@@ -211,20 +277,14 @@ async function guardarNotas(clienteId) {
 }
 
 async function eliminarCliente(clienteId, nombre) {
-  if (!confirm(`¿Eliminar a ${nombre} de tu lista de clientes? Se cancelará la relación activa.`)) return;
+  if (!confirm(`¿Eliminar a ${nombre} de tu lista de clientes?`)) return;
   try {
     const res = await fetch(`${API}/api/entrenadores/clientes/${clienteId}/eliminar`, {
       method: 'DELETE', headers: hdr()
     });
-    if (res.ok) {
-      alert(`${nombre} ha sido eliminado de tu lista.`);
-      cargar();
-    } else {
-      alert('No se pudo eliminar. Inténtalo de nuevo.');
-    }
-  } catch {
-    alert('Error de conexión.');
-  }
+    if (res.ok) cargar();
+    else alert('No se pudo eliminar. Inténtalo de nuevo.');
+  } catch { alert('Error de conexión.'); }
 }
 
 cargar();

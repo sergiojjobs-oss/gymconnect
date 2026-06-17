@@ -15,99 +15,90 @@
   <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); }
-    .sidebar { background:var(--surface); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
-    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--text-2); padding:0 0.75rem; margin:1rem 0 0.4rem; }
-    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--text-2); transition:background 0.12s,color 0.12s; text-decoration:none; }
-    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text); }
-    .sidebar a.active { background:rgba(139,92,246,0.15); color:#a78bfa; font-weight:700; }
-    .main { padding:2.5rem; overflow-y:auto; }
+    
+    
+    
+    
+    
+    /* ELITE active state */
+    .sidebar a.active { border-left-color: #a78bfa; color: #a78bfa; }
 
-    /* Header ELITE */
-    .elite-header {
-      background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(109,40,217,0.06));
-      border: 1px solid rgba(139,92,246,0.3);
-      border-radius: 16px;
-      padding: 2rem 2.5rem;
-      margin-bottom: 2rem;
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
+    /* Page header */
+    .elite-badge {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2);
+      color: #a78bfa; padding: 0.15rem 0.55rem; border-radius: 99px;
+      font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
     }
-    .elite-header-icon { font-size: 3rem; }
-    .elite-header h1 { font-size: 1.6rem; font-weight: 900; margin-bottom: 0.25rem; }
-    .elite-header p { color: var(--muted); font-size: 0.88rem; }
-    .elite-badge { margin-left:auto; background:linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff; padding:0.4rem 1rem; border-radius:99px; font-size:0.72rem; font-weight:900; letter-spacing:1px; text-transform:uppercase; }
 
-    /* KPI cards */
-    .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem; margin-bottom:2rem; }
+    /* KPI grid — unified stat-grid style */
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 1px; background: var(--border-subtle);
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+      overflow: hidden; margin-bottom: 1.5rem;
+    }
     .kpi-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius:8px;
-      padding: 1.5rem;
-      position: relative;
-      overflow: hidden;
+      background: var(--surface); padding: 1.1rem 1rem;
+      position: relative; transition: background 0.1s;
     }
-    .kpi-card::before {
-      content:'';
-      position:absolute;
-      top:0;left:0;right:0;height:3px;
-      background: linear-gradient(90deg,#8b5cf6,#7c3aed);
-    }
-    .kpi-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin-bottom:0.6rem; }
-    .kpi-value { font-size:2.4rem; font-weight:900; color:#8b5cf6; line-height:1; margin-bottom:0.25rem; }
-    .kpi-sub { font-size:0.78rem; color:var(--muted); }
+    .kpi-card:hover { background: var(--surface-2); }
+    .kpi-label { font-size: 0.65rem; font-weight: 500; color: var(--muted); margin-bottom: 0.4rem; letter-spacing: 0.1px; }
+    .kpi-value { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.8px; color: #a78bfa; line-height: 1; margin-bottom: 0.2rem; }
+    .kpi-sub { font-size: 0.67rem; color: var(--muted); }
 
-    /* Charts grid */
-    .charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem; }
+    /* Charts */
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
     .chart-card {
-      background:var(--surface);
-      border:1px solid var(--border);
-      border-radius:8px;
-      padding:1.5rem;
+      background: var(--surface); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg); padding: 1.1rem;
     }
     .chart-card.full { grid-column: 1 / -1; }
-    .chart-title { font-size:0.9rem; font-weight:800; margin-bottom:1.25rem; display:flex; align-items:center; gap:0.5rem; }
-    .chart-title span { background:rgba(139,92,246,0.1); color:#8b5cf6; border:1px solid rgba(139,92,246,0.2); border-radius:6px; padding:0.2rem 0.5rem; font-size:0.7rem; font-weight:900; text-transform:uppercase; }
-    .chart-wrap { position:relative; height:220px; }
+    .chart-title {
+      font-size: 0.78rem; font-weight: 600; color: var(--text);
+      margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .chart-title .chip-purple { font-size: 0.6rem; }
+    .chart-wrap { position: relative; height: 200px; }
 
-    /* Top clientes tabla */
-    .top-table { width:100%; border-collapse:collapse; }
-    .top-table th { font-size:0.7rem; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); padding:0.6rem 1rem; text-align:left; border-bottom:1px solid var(--border); }
-    .top-table td { padding:0.85rem 1rem; font-size:0.85rem; border-bottom:1px solid rgba(255,255,255,0.04); }
-    .top-table tr:last-child td { border-bottom:none; }
-    .top-table tr:hover td { background:rgba(139,92,246,0.04); }
-    .rank { width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:900; font-size:0.8rem; }
-    .rank-1 { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; }
-    .rank-2 { background:linear-gradient(135deg,#94a3b8,#64748b); color:#fff; }
-    .rank-3 { background:linear-gradient(135deg,#b45309,#92400e); color:#fff; }
-    .rank-n { background:var(--bg); color:var(--muted); border:1px solid var(--border); }
-    .delta-pos { color:#16a34a; font-weight:700; }
-    .delta-neg { color:#dc2626; font-weight:700; }
-    .bar-mini { height:6px; border-radius:99px; background:rgba(139,92,246,0.15); overflow:hidden; margin-top:4px; }
-    .bar-mini-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#8b5cf6,#7c3aed); }
+    /* Ranking table uses dashboard.css table styles */
+    .top-table { width: 100%; border-collapse: collapse; }
+    .top-table th { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid var(--border-subtle); }
+    .top-table td { padding: 0.7rem 1rem; font-size: 0.8rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-2); }
+    .top-table tr:last-child td { border-bottom: none; }
+    .top-table tr:hover td { background: var(--surface-2); }
+    .rank {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.7rem;
+    }
+    .rank-1 { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+    .rank-2 { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
+    .rank-3 { background: rgba(180,83,9,0.1);  color: #b45309; border: 1px solid rgba(180,83,9,0.2); }
+    .rank-n { background: var(--surface-3); color: var(--muted); border: 1px solid var(--border); }
+    .delta-pos { color: var(--brand-light); font-weight: 600; }
+    .delta-neg { color: #f87171; font-weight: 600; }
+    .bar-mini { height: 3px; border-radius: 99px; background: rgba(139,92,246,0.1); overflow: hidden; margin-top: 5px; }
+    .bar-mini-fill { height: 100%; border-radius: 99px; background: #8b5cf6; }
 
-    /* Energía emojis */
-    .energia-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:0.75rem; }
-    .energia-item { text-align:center; padding:1rem 0.5rem; background:var(--bg); border-radius:10px; border:1px solid var(--border); }
-    .energia-emoji { font-size:1.6rem; display:block; margin-bottom:0.4rem; }
-    .energia-count { font-size:1.3rem; font-weight:900; color:#8b5cf6; }
-    .energia-label { font-size:0.7rem; color:var(--muted); margin-top:0.2rem; }
+    /* Energía */
+    .energia-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 1px; background: var(--border-subtle); border-radius: var(--radius); overflow: hidden; }
+    .energia-item { text-align: center; padding: 0.875rem 0.5rem; background: var(--surface); transition: background 0.1s; }
+    .energia-item:hover { background: var(--surface-2); }
+    .energia-emoji { font-size: 1.2rem; display: block; margin-bottom: 0.3rem; }
+    .energia-count { font-size: 1.25rem; font-weight: 700; color: #a78bfa; letter-spacing: -0.5px; }
+    .energia-label { font-size: 0.62rem; color: var(--muted); margin-top: 0.15rem; }
 
-    /* Bloqueado */
-    .locked-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; align-items:center; justify-content:center; flex-direction:column; text-align:center; gap:1rem; }
-    .locked-overlay.show { display:flex; }
-    .locked-box { background:var(--surface); border:1px solid rgba(139,92,246,0.3); border-radius:8px; padding:3rem; max-width:420px; }
-    .locked-box h2 { font-size:1.4rem; font-weight:900; margin-bottom:0.5rem; }
-    .locked-box p { color:var(--muted); font-size:0.9rem; margin-bottom:1.5rem; }
+    /* Locked overlay */
+    .locked-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; }
+    .locked-overlay.show { display: flex; }
+    .locked-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; max-width: 380px; width: 100%; text-align: center; }
+    .locked-box h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .locked-box p { color: var(--muted); font-size: 0.8rem; margin-bottom: 1.25rem; line-height: 1.6; }
 
     @media(max-width:900px) {
-      .dashboard-layout { grid-template-columns:1fr; }
-      .sidebar { display:none; }
-      .main { padding:1.5rem; }
-      .kpi-grid { grid-template-columns:repeat(2,1fr); }
-      .charts-grid { grid-template-columns:1fr; }
+      .kpi-grid { grid-template-columns: repeat(2,1fr); }
+      .charts-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -115,18 +106,17 @@
 
 <div class="locked-overlay" id="lockedOverlay">
   <div class="locked-box">
-    <div style="font-size:3rem;margin-bottom:1rem;">👑</div>
     <h2>Estadísticas avanzadas</h2>
     <p>Esta funcionalidad es exclusiva del plan <strong>ELITE</strong>. Actualiza tu plan para desbloquear análisis completos de tus clientes.</p>
-    <a href="planes.html" class="btn btn-elite" style="display:inline-block;padding:0.75rem 2rem;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;border-radius:8px;font-weight:700;text-decoration:none;">Ver planes →</a>
+    <a href="planes.html" class="btn btn-primary" style="display:inline-flex;">Ver planes</a>
   </div>
 </div>
 
 <header>
   <div class="container">
-    <a href="../index.html" class="logo">Moment<span>Fit</span></a>
+    <a href="../index.html" class="logo">Moment<em>Fit</em></a>
     <nav>
-      <button class="btn btn-primary" style="font-size:0.82rem;" onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
+      <button onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
     </nav>
   </div>
 </header>
@@ -134,30 +124,28 @@
 <div class="dashboard-layout">
   <aside class="sidebar">
     <span class="sidebar-label">Panel</span>
-    <a href="perfil.html">👤 Mi perfil</a>
-    <a href="clientes.html">👥 Clientes</a>
-          <a href="ficha-cliente.html">📋 Fichas de clientes</a>
-      <a href="agenda.html">📅 Agenda</a>
-      <a href="ejercicios.html">🏋️ Ejercicios</a>
-    <a href="rutinas.html">💪 Rutinas</a>
-    <a href="nutricion.html">🥗 Nutrición</a>
-    <a href="resultados.html">📈 Progreso clientes</a>
-    <a href="estadisticas.html" class="active">📊 Estadísticas</a>
+    <a href="perfil.html">Mi perfil</a>
+    <a href="clientes.html">Clientes</a>
+    <a href="ficha-cliente.html">Fichas de clientes</a>
+    <a href="agenda.html">Agenda</a>
+    <a href="ejercicios.html">Ejercicios</a>
+    <a href="rutinas.html">Rutinas</a>
+    <a href="nutricion.html">Nutrición</a>
+    <a href="resultados.html">Progreso clientes</a>
+    <a href="estadisticas.html" class="active">Estadísticas</a>
     <span class="sidebar-label">Cuenta</span>
-    <a href="planes.html">💳 Mi suscripción</a>
-    <a href="ajustes.html">⚙️ Ajustes</a>
-    <a href="../login.html" onclick="localStorage.clear()">🚪 Salir</a>
+    <a href="planes.html">Mi suscripción</a>
+    <a href="ajustes.html">Ajustes</a>
+    <a href="../login.html" onclick="localStorage.clear()">Salir</a>
   </aside>
 
   <main class="main">
 
-    <div class="elite-header">
-      <div class="elite-header-icon">📊</div>
+    <div class="page-header">
       <div>
-        <h1>Estadísticas avanzadas</h1>
-        <p>Análisis completo del rendimiento y progreso de todos tus clientes</p>
+        <h1>Estadísticas <span class="elite-badge">Elite</span></h1>
+        <p class="page-subtitle">Rendimiento y progreso de todos tus clientes</p>
       </div>
-      <div class="elite-badge">👑 Elite</div>
     </div>
 
     <!-- KPIs -->
@@ -188,17 +176,17 @@
     <div class="charts-grid">
 
       <div class="chart-card full">
-        <div class="chart-title">📅 Check-ins por semana <span>Últimas 8 semanas</span></div>
+        <div class="chart-title">Check-ins por semana <span class="chip chip-muted">Últimas 8 sem.</span></div>
         <div class="chart-wrap"><canvas id="chartCheckins"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <div class="chart-title">⚖️ Evolución de peso promedio <span>kg</span></div>
+        <div class="chart-title">Evolución de peso <span class="chip chip-muted">kg</span></div>
         <div class="chart-wrap"><canvas id="chartPeso"></canvas></div>
       </div>
 
       <div class="chart-card">
-        <div class="chart-title">⚡ Distribución de energía</div>
+        <div class="chart-title">Distribución de energía</div>
         <div class="energia-grid" id="energiaGrid"></div>
       </div>
 
@@ -206,7 +194,7 @@
 
     <!-- Top clientes -->
     <div class="chart-card">
-      <div class="chart-title">🏆 Ranking de clientes <span>Por actividad</span></div>
+      <div class="chart-title">Ranking de clientes <span class="chip chip-muted">Por actividad</span></div>
       <table class="top-table" id="topTabla">
         <thead>
           <tr>

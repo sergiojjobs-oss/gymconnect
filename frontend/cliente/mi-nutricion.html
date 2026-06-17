@@ -14,11 +14,11 @@
   <script src="../js/auth-guard.js" data-rol="CLIENTE"></script>
   <style>
     .dashboard-layout { display:grid; grid-template-columns:220px 1fr; min-height:calc(100vh - 70px); }
-    .sidebar { background:var(--surface); border-right:1px solid rgba(255,255,255,0.06); padding:2rem 1rem; display:flex; flex-direction:column; gap:0.25rem; }
-    .sidebar-label { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; color:var(--text-2); padding:0 0.75rem; margin:1rem 0 0.4rem; }
-    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--text-2); transition:background 0.12s,color 0.12s; text-decoration:none; }
-    .sidebar a:hover { background:rgba(255,255,255,0.06); color:var(--text); }
-    .sidebar a.active { background:rgba(22,163,74,0.15); color:var(--brand-light); font-weight:700; }
+    
+    
+    
+    
+    
     .main { padding:2rem 2.5rem; }
     .macros-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
     .macro-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.25rem; text-align:center; }
@@ -44,9 +44,9 @@
 <body>
 <header>
   <div class="container">
-    <a href="../index.html" class="logo">Moment<span>Fit</span></a>
+    <a href="../index.html" class="logo">Moment<em>Fit</em></a>
     <nav>
-      <button class="btn btn-primary" style="font-size:0.82rem;" onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
+      <button onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
     </nav>
   </div>
 </header>
@@ -54,19 +54,19 @@
 <div class="dashboard-layout">
   <aside class="sidebar">
     <span class="sidebar-label">Mi espacio</span>
-    <a href="dashboard.html">🏠 Inicio</a>
-    <a href="mi-rutina.html">💪 Mi rutina</a>
+    <a href="dashboard.html">Inicio</a>
+    <a href="mi-rutina.html">Mi rutina</a>
     <a href="mi-nutricion.html" class="active">🥗 Mi nutrición</a>
-    <a href="mi-progreso.html">📈 Mi progreso</a>
-    <a href="../chat/index.html">💬 Mensajes</a>
+    <a href="mi-progreso.html">Mi progreso</a>
+    <a href="../chat/index.html">Mensajes</a>
     <span class="sidebar-label">Buscar</span>
-    <a href="buscar.html">🔍 Buscar entrenador</a>
-    <a href="../login.html" onclick="localStorage.clear()">🚪 Salir</a>
+    <a href="buscar.html">Buscar entrenador</a>
+    <a href="../login.html" onclick="localStorage.clear()">Salir</a>
   </aside>
 
   <main class="main">
     <div style="margin-bottom:2rem;">
-      <h1 style="font-size:1.5rem;font-weight:800;">🥗 Mi plan nutricional</h1>
+      <h1 style="">🥗 Mi plan nutricional</h1>
       <p style="color:var(--muted);margin-top:0.3rem;font-size:0.9rem;">El plan de alimentación que ha preparado tu entrenador</p>
     </div>
     <div id="contenido"><p style="color:var(--muted);">Cargando…</p></div>
