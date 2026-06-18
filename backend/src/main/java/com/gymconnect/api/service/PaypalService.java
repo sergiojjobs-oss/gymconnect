@@ -26,6 +26,9 @@ public class PaypalService {
     @Value("${paypal.base-url}")
     private String baseUrl;
 
+    @Value("${app.frontend-url:https://momentfitapp.vercel.app}")
+    private String frontendUrl;
+
     private final ObjectMapper mapper = new ObjectMapper();
     private final RestTemplate rest;
 
@@ -65,8 +68,8 @@ public class PaypalService {
                 "intent", "CAPTURE",
                 "purchase_units", new Object[]{purchaseUnit},
                 "application_context", Map.of(
-                        "return_url", "http://localhost:3000/paypal-ok.html",
-                        "cancel_url", "http://localhost:3000/paypal-cancel.html",
+                        "return_url", frontendUrl + "/paypal-ok.html",
+                        "cancel_url", frontendUrl + "/paypal-cancel.html",
                         "brand_name", "MomentFit",
                         "user_action", "PAY_NOW"
                 )
@@ -87,8 +90,8 @@ public class PaypalService {
                         "amount", Map.of("currency_code", moneda, "value", importe)
                 )},
                 "application_context", Map.of(
-                        "return_url", "http://localhost:3000/paypal-ok.html",
-                        "cancel_url", "http://localhost:3000/paypal-cancel.html",
+                        "return_url", frontendUrl + "/paypal-ok.html",
+                        "cancel_url", frontendUrl + "/paypal-cancel.html",
                         "brand_name", "MomentFit",
                         "user_action", "PAY_NOW"
                 )
