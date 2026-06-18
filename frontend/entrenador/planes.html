@@ -283,8 +283,8 @@
         <h2 style="font-size:0.95rem;font-weight:600;margin-bottom:1.25rem;">Preguntas frecuentes</h2>
         <div class="faq">
           <div class="faq-item">
-            <button class="faq-q" onclick="toggleFaq(this)">¿Cómo funciona la prueba gratuita? <span class="faq-icon">+</span></button>
-            <div class="faq-a">Al registrarte como entrenador tienes acceso completo con hasta 3 clientes simultáneos. No necesitas tarjeta. Cuando quieras añadir un 4.º cliente, necesitarás activar el plan Pro o Elite.</div>
+            <button class="faq-q" onclick="toggleFaq(this)">¿Hay algún período de prueba? <span class="faq-icon">+</span></button>
+            <div class="faq-a">Sí. Al registrarte como entrenador tienes acceso completo con hasta 3 clientes simultáneos de forma gratuita, sin tarjeta. Cuando quieras gestionar más clientes, activa el plan Pro o Elite.</div>
           </div>
           <div class="faq-item">
             <button class="faq-q" onclick="toggleFaq(this)">¿Puedo cancelar cuando quiera? <span class="faq-icon">+</span></button>
@@ -292,7 +292,7 @@
           </div>
           <div class="faq-item">
             <button class="faq-q" onclick="toggleFaq(this)">¿Cómo se realiza el pago? <span class="faq-icon">+</span></button>
-            <div class="faq-a">El pago se realiza de forma segura a través de PayPal. Puedes pagar con tu cuenta PayPal o con tarjeta de crédito/débito. El cargo se realiza mensualmente de forma automática.</div>
+            <div class="faq-a">El pago se realiza de forma segura a través de PayPal. Puedes pagar con tu cuenta PayPal. El cargo mensual se realiza al activar el plan y deberás renovarlo manualmente cada mes.</div>
           </div>
           <div class="faq-item">
             <button class="faq-q" onclick="toggleFaq(this)">¿Qué pasa con mis clientes si cancelo? <span class="faq-icon">+</span></button>
@@ -317,9 +317,8 @@
       <div class="modal-summary" id="modalSummary">
         <div class="modal-summary-row"><span>Plan</span><span id="mPlan">Pro</span></div>
         <div class="modal-summary-row"><span>Facturación</span><span>Mensual</span></div>
-        <div class="modal-summary-row"><span>Período de prueba</span><span style="color:var(--green);">Primer mes gratis</span></div>
-        <div class="modal-summary-row"><span>Total hoy</span><span id="mTotal">0€</span></div>
-        <div class="modal-summary-row"><span>A partir del 2.º mes</span><span id="mRecurring">10€/mes</span></div>
+        <div class="modal-summary-row"><span>Facturación</span><span>Mensual · Cancela cuando quieras</span></div>
+        <div class="modal-summary-row"><span>Total hoy</span><span id="mTotal">10€</span></div>
       </div>
 
       <!-- Botón real de PayPal (inyectado por el SDK) -->
@@ -421,8 +420,7 @@
       document.getElementById('modalTitle').textContent  = isPro ? 'Activar Plan Pro' : 'Activar Plan Elite';
       document.getElementById('modalSub').textContent    = isPro ? 'Acceso ilimitado a todas las funciones profesionales.' : 'Máxima visibilidad y herramientas avanzadas.';
       document.getElementById('mPlan').textContent       = isPro ? 'Pro' : 'Elite';
-      document.getElementById('mTotal').textContent      = '0€ (primer mes gratis)';
-      document.getElementById('mRecurring').textContent  = isPro ? '10€/mes' : '25€/mes';
+      document.getElementById('mTotal').textContent      = isPro ? '10€' : '25€';
       document.getElementById('payModal').classList.add('open');
 
       // Renderizar botones PayPal la primera vez que se abre el modal
