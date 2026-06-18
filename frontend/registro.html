@@ -281,7 +281,7 @@
 
         <label class="check-label">
           <input type="checkbox" id="terminos" />
-          Acepto los <a href="terminos.html" target="_blank">términos de uso</a> y la <a href="privacidad.html" target="_blank">política de privacidad</a>
+          Acepto los <a href="#" onclick="abrirModalLegal('terminos');return false;">términos de uso</a> y la <a href="#" onclick="abrirModalLegal('privacidad');return false;">política de privacidad</a>
         </label>
 
         <div class="btn-row">
@@ -385,5 +385,76 @@
       finally { btn.disabled=false; btn.textContent='Crear cuenta ✓'; }
     }
   </script>
+
+<script>
+  const MODALES_LEGAL = {
+    terminos: {
+      titulo: 'Términos de Uso',
+      contenido: `
+        <h3>1. Uso de la plataforma</h3>
+        <p>MomentFit es una plataforma SaaS que conecta entrenadores personales con clientes. Al registrarte y utilizar el servicio, aceptas estos términos en su totalidad. El acceso está permitido únicamente a personas mayores de 18 años.</p>
+        <h3>2. Responsabilidades del usuario</h3>
+        <ul><li>Proporcionar información veraz y actualizada durante el registro.</li><li>Mantener la confidencialidad de tus credenciales de acceso.</li><li>No compartir tu cuenta con terceros.</li><li>Usar la plataforma de forma legal y respetando a otros usuarios.</li></ul>
+        <h3>3. Uso aceptable</h3>
+        <p>Queda expresamente prohibido usar la plataforma para actividades ilegales, publicar contenido ofensivo, intentar acceder a datos de otros usuarios sin autorización, o revender el acceso al servicio.</p>
+        <h3>4. Modificaciones del servicio</h3>
+        <p>MomentFit se reserva el derecho de modificar, suspender o interrumpir cualquier parte del servicio en cualquier momento. Notificaremos cambios relevantes por correo electrónico.</p>
+        <h3>5. Limitación de responsabilidad</h3>
+        <p>MomentFit no se hace responsable de los consejos de entrenamiento o nutrición proporcionados por los entrenadores. El servicio se proporciona "tal como está", sin garantías de disponibilidad continua.</p>
+        <h3>6. Contacto</h3>
+        <p>Para consultas: <a href="mailto:sergiojjobs@gmail.com">sergiojjobs@gmail.com</a></p>
+      `
+    },
+    privacidad: {
+      titulo: 'Política de Privacidad',
+      contenido: `
+        <h3>1. Qué datos recogemos</h3>
+        <ul><li>Nombre y correo electrónico (registro).</li><li>Foto de perfil (opcional).</li><li>Datos de progreso físico: peso, medidas y notas.</li><li>Contenido generado: rutinas, planes y mensajes.</li><li>Datos técnicos de acceso: IP, navegador y timestamps.</li></ul>
+        <h3>2. Cómo usamos los datos</h3>
+        <p>Los datos se usan exclusivamente para proporcionar el servicio, gestionar suscripciones y cumplir con obligaciones legales. No vendemos ni compartimos tus datos con terceros con fines comerciales.</p>
+        <h3>3. Almacenamiento y seguridad</h3>
+        <p>Los datos se almacenan en servidores seguros con conexiones cifradas HTTPS/TLS. Las contraseñas se almacenan cifradas. Las imágenes de perfil se alojan en ImgBB.</p>
+        <h3>4. Uso de cookies</h3>
+        <p>MomentFit no utiliza cookies de seguimiento ni publicidad. El acceso autenticado se gestiona mediante tokens JWT en localStorage.</p>
+        <h3>5. Tus derechos</h3>
+        <ul><li><strong>Acceso:</strong> solicitar copia de tus datos.</li><li><strong>Rectificación:</strong> corregir datos incorrectos.</li><li><strong>Supresión:</strong> eliminar tu cuenta y datos.</li><li><strong>Portabilidad:</strong> recibir tus datos en formato estándar.</li></ul>
+        <h3>6. Contacto</h3>
+        <p>Para ejercer tus derechos: <a href="mailto:sergiojjobs@gmail.com">sergiojjobs@gmail.com</a></p>
+      `
+    }
+  };
+
+  function abrirModalLegal(tipo) {
+    const m = MODALES_LEGAL[tipo];
+    document.getElementById('modalLegalTitulo').textContent = m.titulo;
+    document.getElementById('modalLegalCuerpo').innerHTML = m.contenido;
+    document.getElementById('modalLegal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  function cerrarModalLegal() {
+    document.getElementById('modalLegal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  document.getElementById('modalLegal').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModalLegal();
+  });
+</script>
+
+<div id="modalLegal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:#111;border:1px solid #262626;border-radius:8px;max-width:640px;width:100%;max-height:80vh;display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid #1a1a1a;flex-shrink:0;">
+      <span id="modalLegalTitulo" style="font-size:0.95rem;font-weight:600;color:#ededed;"></span>
+      <button onclick="cerrarModalLegal()" style="background:none;border:none;color:#525252;font-size:1.2rem;cursor:pointer;line-height:1;padding:0.25rem;">✕</button>
+    </div>
+    <div id="modalLegalCuerpo" style="padding:1.5rem;overflow-y:auto;font-size:0.83rem;color:#a3a3a3;line-height:1.75;display:flex;flex-direction:column;gap:1rem;"></div>
+  </div>
+</div>
+<style>
+  #modalLegalCuerpo h3 { font-size:0.82rem;font-weight:600;color:#ededed;margin-top:0.25rem; }
+  #modalLegalCuerpo ul { padding-left:1rem;list-style:none; }
+  #modalLegalCuerpo ul li { position:relative;padding-left:1rem; }
+  #modalLegalCuerpo ul li::before { content:'–';position:absolute;left:0;color:#525252; }
+  #modalLegalCuerpo a { color:#22c55e; }
+</style>
 </body>
 </html>
