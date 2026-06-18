@@ -31,6 +31,8 @@ public class EntrenadorDto {
     private List<String> idiomas;
     private Boolean esEjemplo;
     private String planTier;
+    private Boolean disponible;
+    private String tiempoRespuesta;
 
     public static EntrenadorDto from(Entrenador e) {
         EntrenadorDto dto = new EntrenadorDto();
@@ -58,6 +60,8 @@ public class EntrenadorDto {
         dto.setCertificaciones(e.getCertificaciones());
         dto.setIdiomas(e.getIdiomas());
         dto.setEsEjemplo(e.getUsuario().getEmail().endsWith("@gymconnect.es"));
+        dto.setDisponible(e.getDisponible() != null ? e.getDisponible() : true);
+        dto.setTiempoRespuesta(e.getTiempoRespuesta() != null ? e.getTiempoRespuesta() : "menos de 24h");
         return dto;
     }
 }

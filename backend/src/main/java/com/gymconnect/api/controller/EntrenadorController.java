@@ -140,6 +140,8 @@ public class EntrenadorController {
         if (body.containsKey("youtube"))           e.setYoutube((String) body.get("youtube"));
         if (body.containsKey("certificaciones"))   e.setCertificaciones(new ArrayList<>((List<String>) body.get("certificaciones")));
         if (body.containsKey("idiomas"))           e.setIdiomas(new ArrayList<>((List<String>) body.get("idiomas")));
+        if (body.containsKey("disponible"))        e.setDisponible((Boolean) body.get("disponible"));
+        if (body.containsKey("tiempoRespuesta"))   e.setTiempoRespuesta((String) body.get("tiempoRespuesta"));
 
         entrenadorRepo.save(e);
         return ResponseEntity.ok(EntrenadorDto.from(e));

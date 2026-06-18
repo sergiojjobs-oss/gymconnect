@@ -56,4 +56,9 @@ public class Entrenador {
     @CollectionTable(name = "entrenador_idiomas", joinColumns = @JoinColumn(name = "entrenador_id"))
     @Column(name = "idioma")
     private List<String> idiomas;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private Boolean disponible = true;
+
+    private String tiempoRespuesta = "menos de 24h";
 }

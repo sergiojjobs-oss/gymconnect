@@ -257,8 +257,8 @@
 
           <div class="info-card" style="margin-top:0;">
             <h2>Disponibilidad</h2>
-            <p style="font-size:0.83rem;color:var(--text-2);">🟢 Acepta nuevos clientes</p>
-            <p style="font-size:0.83rem;color:var(--muted);margin-top:0.4rem;">Responde en menos de 24h</p>
+            <p id="dispEstado" style="font-size:0.83rem;color:var(--text-2);">🟢 Acepta nuevos clientes</p>
+            <p id="dispTiempo" style="font-size:0.83rem;color:var(--muted);margin-top:0.4rem;">Responde en menos de 24h</p>
           </div>
         </div>
 
@@ -408,6 +408,12 @@
       document.getElementById('heroPrecio').innerHTML = e.precioMensual + '€ <small>/mes</small>';
       document.getElementById('sidebarPrecio').innerHTML = e.precioMensual + '€ <small style="font-size:.75rem;color:var(--muted);font-weight:400">/mes</small>';
       document.title = e.nombre + ' ' + e.apellido + ' — MomentFit';
+
+      // Disponibilidad
+      const disp = e.disponible !== false;
+      document.getElementById('dispEstado').textContent = disp ? '🟢 Acepta nuevos clientes' : '🔴 No acepta nuevos clientes';
+      document.getElementById('dispEstado').style.color = disp ? 'var(--text-2)' : 'var(--muted)';
+      document.getElementById('dispTiempo').textContent = 'Responde en ' + (e.tiempoRespuesta || 'menos de 24h');
 
       // Stats
       document.getElementById('statRow').innerHTML = `
