@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidad — MomentFit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a0a; --surface: #111111; --border: #262626; --border-subtle: #1a1a1a;
+      --text: #ededed; --text-2: #a3a3a3; --muted: #525252;
+      --brand: #16a34a; --brand-light: #22c55e;
+      --radius: 6px;
+    }
+    html { -webkit-font-smoothing: antialiased; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    header {
+      height: 54px; padding: 0 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(10,10,10,0.9); backdrop-filter: blur(16px);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .logo { font-size: 0.88rem; font-weight: 800; letter-spacing: -0.4px; color: var(--text); text-decoration: none; }
+    .logo em { color: var(--brand-light); font-style: normal; }
+    .header-link { font-size: 0.78rem; color: var(--text-2); text-decoration: none; transition: color 0.12s; }
+    .header-link:hover { color: var(--text); }
+
+    main { flex: 1; max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem 5rem; width: 100%; }
+
+    .legal-header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    .legal-header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 0.5rem; }
+    .legal-header p { font-size: 0.82rem; color: var(--muted); }
+
+    section { margin-bottom: 2rem; }
+    h2 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border-subtle); }
+    p { font-size: 0.84rem; color: var(--text-2); line-height: 1.75; margin-bottom: 0.6rem; }
+    ul { list-style: none; padding: 0; }
+    ul li { font-size: 0.84rem; color: var(--text-2); line-height: 1.75; padding-left: 1rem; position: relative; margin-bottom: 0.25rem; }
+    ul li::before { content: '–'; position: absolute; left: 0; color: var(--muted); }
+    a { color: var(--brand-light); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    footer { border-top: 1px solid var(--border-subtle); padding: 1.25rem 1.5rem; }
+    .footer-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .footer-copy { font-size: 0.75rem; color: var(--muted); }
+    .footer-links { display: flex; gap: 1.25rem; }
+    .footer-links a { font-size: 0.75rem; color: var(--muted); text-decoration: none; transition: color 0.12s; }
+    .footer-links a:hover { color: var(--text-2); }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">Moment<em>Fit</em></a>
+  <a href="index.html" class="header-link">← Volver al inicio</a>
+</header>
+
+<main>
+  <div class="legal-header">
+    <h1>Política de Privacidad</h1>
+    <p>Última actualización: junio de 2026</p>
+  </div>
+
+  <section>
+    <h2>1. Qué datos recogemos</h2>
+    <p>Al usar MomentFit, podemos recoger los siguientes datos personales:</p>
+    <ul>
+      <li>Nombre completo y dirección de correo electrónico (registro).</li>
+      <li>Foto de perfil (opcional, proporcionada voluntariamente).</li>
+      <li>Datos de progreso físico: peso, medidas y notas de check-in.</li>
+      <li>Contenido generado: rutinas, planes nutricionales y mensajes de chat.</li>
+      <li>Datos de pago procesados por PayPal (MomentFit no almacena datos de tarjeta).</li>
+      <li>Datos técnicos de acceso: dirección IP, tipo de navegador y timestamps de sesión.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>2. Cómo usamos los datos</h2>
+    <p>Los datos recogidos se usan exclusivamente para:</p>
+    <ul>
+      <li>Proporcionar y mejorar el servicio de la plataforma.</li>
+      <li>Permitir la comunicación entre entrenadores y clientes.</li>
+      <li>Gestionar suscripciones y pagos.</li>
+      <li>Enviar notificaciones relacionadas con el servicio (no publicidad).</li>
+      <li>Cumplir con obligaciones legales aplicables.</li>
+    </ul>
+    <p>No vendemos, alquilamos ni compartimos tus datos personales con terceros con fines comerciales.</p>
+  </section>
+
+  <section>
+    <h2>3. Almacenamiento y seguridad</h2>
+    <p>Los datos se almacenan en servidores seguros gestionados por proveedores de confianza (Neon para base de datos, Render para el backend). Las conexiones están cifradas mediante HTTPS/TLS.</p>
+    <p>Las contraseñas se almacenan cifradas y nunca en texto plano. Los tokens de sesión (JWT) se gestionan en el navegador del usuario.</p>
+    <p>Las imágenes de perfil se alojan en ImgBB, un servicio externo de almacenamiento de imágenes.</p>
+  </section>
+
+  <section>
+    <h2>4. Uso de cookies</h2>
+    <p>MomentFit no utiliza cookies de seguimiento ni publicidad. El acceso autenticado se gestiona mediante tokens JWT almacenados en el almacenamiento local del navegador (<code>localStorage</code>), que no son cookies y no se envían automáticamente en cada petición.</p>
+    <p>Pueden existir cookies técnicas estrictamente necesarias para el funcionamiento del servicio de terceros (PayPal, Google Fonts).</p>
+  </section>
+
+  <section>
+    <h2>5. Derechos del usuario</h2>
+    <p>De acuerdo con la normativa aplicable, tienes derecho a:</p>
+    <ul>
+      <li><strong>Acceso:</strong> solicitar una copia de los datos que tenemos sobre ti.</li>
+      <li><strong>Rectificación:</strong> corregir datos incorrectos o incompletos.</li>
+      <li><strong>Supresión:</strong> solicitar la eliminación de tu cuenta y datos asociados.</li>
+      <li><strong>Portabilidad:</strong> recibir tus datos en un formato estructurado.</li>
+      <li><strong>Oposición:</strong> oponerte al tratamiento de tus datos en determinadas circunstancias.</li>
+    </ul>
+    <p>Para ejercer cualquiera de estos derechos, contáctanos en <a href="mailto:privacidad@momentfit.app">privacidad@momentfit.app</a>.</p>
+  </section>
+
+  <section>
+    <h2>6. Retención de datos</h2>
+    <p>Conservamos tus datos mientras tu cuenta esté activa. Si eliminas tu cuenta, procederemos a eliminar tus datos personales en un plazo máximo de 30 días, salvo que la ley exija conservarlos durante un período mayor.</p>
+  </section>
+
+  <section>
+    <h2>7. Contacto</h2>
+    <p>Para cualquier consulta relacionada con esta política de privacidad, puedes contactarnos en <a href="mailto:privacidad@momentfit.app">privacidad@momentfit.app</a>.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-copy">© 2026 MomentFit. Todos los derechos reservados.</span>
+    <div class="footer-links">
+      <a href="terminos.html">Términos</a>
+      <a href="privacidad.html">Privacidad</a>
+      <a href="index.html">Inicio</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
