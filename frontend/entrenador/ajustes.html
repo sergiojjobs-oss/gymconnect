@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -17,18 +17,15 @@
     .dashboard-layout { display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 70px); background:var(--bg); }
     
     
-    .sidebar a { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; border-radius:8px; font-size:0.85rem; font-weight:600; color:var(--text-2); transition:background 0.12s,color 0.12s; }
-    
-    
     .main-content { padding:2.5rem; overflow-y:auto; background:var(--bg); }
     .form-group { margin-bottom:1.5rem; }
-    .form-group label { display:block; font-size:0.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin-bottom:0.5rem; }
+    .form-group label { display:block; font-size:0.82rem; font-weight:500; color:var(--text-2); margin-bottom:0.5rem; }
     .form-group input, .form-group textarea, .form-group select {
-      width:100%; padding:0.75rem 1rem; background:var(--surface); border:1px solid var(--border);
-      border-radius:8px; color:var(--text); font-size:0.92rem; font-family:inherit;
+      width:100%; padding:0.7rem 0.9rem; background:var(--bg); border:1px solid var(--border);
+      border-radius:var(--radius); color:var(--text); font-size:0.88rem; font-family:inherit;
       transition:border-color 0.12s;
     }
-    .form-group input:focus, .form-group textarea:focus { outline:none; border-color:var(--green); }
+    .form-group input:focus, .form-group textarea:focus { outline:none; border-color:var(--brand); }
     .form-group textarea { resize:vertical; min-height:120px; }
     .tag-input-wrap { display:flex; flex-wrap:wrap; gap:0.5rem; padding:0.6rem; background:var(--surface); border:1px solid var(--border); border-radius:8px; min-height:48px; cursor:text; }
     .tag-input-wrap:focus-within { border-color:var(--green); }
@@ -37,7 +34,7 @@
     .tag-input-wrap input { border:none; background:none; color:var(--text); font-size:0.88rem; min-width:120px; flex:1; padding:0.1rem 0.2rem; }
     .tag-input-wrap input:focus { outline:none; }
     .hint { font-size:0.75rem; color:var(--muted); margin-top:0.35rem; }
-    .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(20px); background:var(--text); color:var(--text); padding:.85rem 1.5rem; border-radius:8px; font-size:.88rem; font-weight:600; box-shadow:0 8px 32px rgba(0,0,0,.2); opacity:0; transition:opacity .3s,transform .3s; z-index:1100; border-left:4px solid var(--green); white-space:nowrap; pointer-events:none; }
+    .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(20px); background:var(--surface-3); color:var(--text); padding:.85rem 1.5rem; border-radius:8px; font-size:.88rem; font-weight:600; opacity:0; transition:opacity .3s,transform .3s; z-index:1100; border-left:4px solid var(--brand); white-space:nowrap; pointer-events:none; }
     .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
     @media (max-width:768px) { .dashboard-layout { grid-template-columns:1fr; } .sidebar { display:none; } .main-content { padding:1rem 0.85rem 5.5rem !important; } }
   </style>
@@ -48,7 +45,7 @@
       <a href="../index.html" class="logo">Moment<em>Fit</em></a>
       <nav>
         <a href="perfil.html">Mi perfil</a>
-        <button class="btn btn-primary" style="font-size:0.82rem;" onclick="logout()">Cerrar sesión</button>
+        <a href="../login.html" onclick="localStorage.clear()" class="nav-cta">Cerrar sesión</a>
       </nav>
     </div>
   </header>
@@ -74,7 +71,7 @@
 
     <main class="main-content">
       <div style="margin-bottom:2rem;max-width:700px;">
-        <h1 style="font-size:1.4rem;font-weight:900;text-transform:uppercase;">Editar perfil</h1>
+        <h1 style="font-size:1.3rem;font-weight:700;">Editar perfil</h1>
         <p style="font-size:0.85rem;color:var(--muted);margin-top:0.25rem;">Actualiza tu información pública. Los cambios se reflejan de inmediato en tu perfil.</p>
       </div>
 
@@ -84,12 +81,12 @@
 
         <!-- Foto de perfil -->
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
-          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Foto de perfil</h3>
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:1.25rem;color:var(--text-2);">Foto de perfil</h3>
           <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
-            <div id="fotoPreview" style="width:80px;height:80px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:#fff;background:linear-gradient(135deg,#16a34a,#84cc16);"></div>
+            <div id="fotoPreview" style="width:72px;height:72px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:600;color:#fff;background:var(--brand);"></div>
             <div style="flex:1;">
               <label id="fotoLabel" class="btn btn-outline" style="cursor:pointer;font-size:0.85rem;display:inline-block;">
-                📷 Subir foto desde galería
+                Subir foto
                 <input type="file" id="fotoInput" accept="image/*" style="display:none;" onchange="procesarFoto(this)" />
               </label>
               <p class="hint" style="margin-top:0.5rem;">JPG o PNG · Se redimensiona automáticamente</p>
@@ -99,7 +96,7 @@
         </div>
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
-          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Información básica</h3>
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:1.25rem;color:var(--text-2);">Información básica</h3>
 
           <div class="form-group">
             <label>Ciudad / Ubicación</label>
@@ -124,7 +121,7 @@
         </div>
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
-          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Descripción</h3>
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:1.25rem;color:var(--text-2);">Descripción</h3>
 
           <div class="form-group">
             <label>Sobre mí / Bio</label>
@@ -133,31 +130,31 @@
         </div>
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
-          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Especialidades</h3>
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:1.25rem;color:var(--text-2);">Especialidades</h3>
           <p class="hint" style="margin-bottom:1rem;">Selecciona todas las que apliquen (máx. 6)</p>
           <div id="especChecks" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.5rem;"></div>
         </div>
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
-          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Certificaciones</h3>
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:1.25rem;color:var(--text-2);">Certificaciones</h3>
           <p class="hint" style="margin-bottom:1rem;">Selecciona tus títulos y certificados</p>
           <div id="certChecks" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.5rem;"></div>
         </div>
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
-          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Idiomas</h3>
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:1.25rem;color:var(--text-2);">Idiomas</h3>
           <p class="hint" style="margin-bottom:1rem;">Idiomas en los que puedes entrenar</p>
           <div id="idiomasChecks" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.5rem;"></div>
         </div>
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
-          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Servicios incluidos</h3>
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:1.25rem;color:var(--text-2);">Servicios incluidos</h3>
           <p class="hint" style="margin-bottom:1rem;">¿Qué incluye tu plan mensual?</p>
           <div id="servChecks" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.5rem;"></div>
         </div>
 
         <div class="card" style="margin-bottom:1.5rem;padding:1.5rem;">
-          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Metodología</h3>
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:1.25rem;color:var(--text-2);">Metodología</h3>
           <div class="form-group">
             <label>¿Cómo trabajas con tus clientes?</label>
             <textarea id="metodologia" placeholder="Describe tu metodología, cómo haces el seguimiento, qué diferencia tu enfoque…"></textarea>
@@ -165,7 +162,7 @@
         </div>
 
         <div class="card" style="margin-bottom:2rem;padding:1.5rem;">
-          <h3 style="font-size:0.9rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1.25rem;color:var(--green);">Redes sociales</h3>
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:1.25rem;color:var(--text-2);">Redes sociales</h3>
           <div class="form-group">
             <label>Instagram (usuario sin @)</label>
             <input type="text" id="instagram" placeholder="ej. carlos.trainer" />
@@ -404,7 +401,7 @@
       } catch {
         showToast('Error al subir la foto. Inténtalo de nuevo.', true);
       } finally {
-        if (label) label.textContent = '📷 Subir foto desde galería';
+        if (label) label.textContent = 'Subir foto';
       }
     }
 

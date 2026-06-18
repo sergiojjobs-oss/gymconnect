@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -21,18 +21,18 @@
     
     .main { padding:2rem 2.5rem; }
     .page-header { margin-bottom:2rem; }
-    .page-header h1 { font-size:1.5rem; font-weight:800; }
+    .page-header h1 { font-size:1.3rem; font-weight:700; }
     .page-header p { color:var(--muted); margin-top:0.3rem; font-size:0.9rem; }
     .rutina-meta { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem; }
-    .meta-chip { display:inline-flex; align-items:center; gap:0.4rem; padding:0.35rem 0.85rem; background:var(--surface); border:1px solid var(--border); border-radius:99px; font-size:0.8rem; font-weight:700; color:var(--text-2); }
+    .meta-chip { display:inline-flex; align-items:center; gap:0.4rem; padding:0.35rem 0.85rem; background:var(--surface); border:1px solid var(--border); border-radius:99px; font-size:0.8rem; font-weight:500; color:var(--text-2); }
     .ejercicios-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1rem; }
-    .ejercicio-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.25rem; }
+    .ejercicio-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1rem; }
     .ej-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem; }
-    .ej-num { width:32px; height:32px; border-radius:50%; background:rgba(22,163,74,0.12); border:2px solid rgba(22,163,74,0.3); color:var(--green); font-size:0.8rem; font-weight:900; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .ej-nombre { font-size:1rem; font-weight:800; color:var(--text); }
+    .ej-num { width:32px; height:32px; border-radius:50%; background:rgba(22,163,74,0.12); border:2px solid rgba(22,163,74,0.3); color:var(--green); font-size:0.8rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .ej-nombre { font-size:0.92rem; font-weight:600; color:var(--text); }
     .ej-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.5rem; margin-bottom:0.6rem; }
-    .ej-stat { background:var(--bg); border-radius:8px; padding:0.5rem; text-align:center; }
-    .ej-stat .v { font-size:0.95rem; font-weight:900; color:var(--text); }
+    .ej-stat { background:var(--bg); border-radius:var(--radius); padding:0.4rem; text-align:center; }
+    .ej-stat .v { font-size:0.9rem; font-weight:700; color:var(--text); }
     .ej-stat .l { font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:0.1rem; }
     .ej-notas { font-size:0.8rem; color:var(--muted); font-style:italic; border-left:2px solid rgba(22,163,74,0.3); padding-left:0.6rem; margin-top:0.5rem; }
     .sin-rutina { text-align:center; padding:4rem 2rem; color:var(--muted); }
@@ -55,7 +55,7 @@
     <span class="sidebar-label">Mi espacio</span>
     <a href="dashboard.html">Inicio</a>
     <a href="mi-rutina.html" class="active">Mi rutina</a>
-    <a href="mi-nutricion.html">🥗 Mi nutrición</a>
+    <a href="mi-nutricion.html">Mi nutrición</a>
     <a href="mi-progreso.html">Mi progreso</a>
     <a href="../chat/index.html">Mensajes</a>
     <span class="sidebar-label">Buscar</span>

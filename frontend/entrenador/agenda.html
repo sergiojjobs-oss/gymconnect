@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -23,22 +23,22 @@
     
 
     .semana-nav { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; }
-    .semana-nav button { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.4rem 0.85rem; color:var(--text); cursor:pointer; font-weight:700; font-size:0.82rem; }
-    .semana-nav button:hover { border-color:var(--green); }
-    .semana-titulo { font-size:1rem; font-weight:800; color:var(--text); }
+    .semana-nav button { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:0.4rem 0.85rem; color:var(--text); cursor:pointer; font-weight:700; font-size:0.82rem; }
+    .semana-nav button:hover { border-color:var(--brand); }
+    .semana-titulo { font-size:1rem; font-weight:600; color:var(--text); }
 
     .calendario { display:grid; grid-template-columns:repeat(7,1fr); gap:0.5rem; }
-    .dia-col { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; min-height:220px; }
+    .dia-col { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; min-height:220px; }
     .dia-header { padding:0.6rem 0.75rem; border-bottom:1px solid var(--border); text-align:center; }
-    .dia-nombre { font-size:0.65rem; font-weight:900; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
-    .dia-num { font-size:1.1rem; font-weight:900; color:var(--text); }
+    .dia-nombre { font-size:0.65rem; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); }
+    .dia-num { font-size:1.1rem; font-weight:700; color:var(--text); }
     .dia-header.hoy { background:rgba(22,163,74,0.08); border-bottom-color:rgba(22,163,74,0.2); }
     .dia-header.hoy .dia-num { color:var(--green); }
     .dia-body { padding:0.5rem; display:flex; flex-direction:column; gap:0.4rem; }
 
     .sesion-pill { border-radius:8px; padding:0.4rem 0.6rem; font-size:0.72rem; cursor:pointer; transition:opacity 0.15s; position:relative; }
     .sesion-pill:hover { opacity:0.85; }
-    .sesion-pill .sp-hora { font-weight:900; }
+    .sesion-pill .sp-hora { font-weight:600; }
     .sesion-pill .sp-cliente { font-weight:600; opacity:0.85; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .sp-tipo-fuerza { background:rgba(99,102,241,0.18); border:1px solid rgba(99,102,241,0.3); color:#818cf8; }
     .sp-tipo-cardio { background:rgba(239,68,68,0.14); border:1px solid rgba(239,68,68,0.25); color:#f87171; }
@@ -48,16 +48,16 @@
     .sp-estado-completada { opacity:0.5; }
     .sp-estado-cancelada { opacity:0.35; text-decoration:line-through; }
     .btn-add-dia { width:100%; background:transparent; border:1px dashed var(--border); border-radius:6px; padding:0.3rem; color:var(--muted); font-size:0.75rem; cursor:pointer; margin-top:0.2rem; }
-    .btn-add-dia:hover { border-color:var(--green); color:var(--green); }
+    .btn-add-dia:hover { border-color:var(--brand); color:var(--brand); }
 
     /* Modal */
     .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:1000; padding:1rem; }
-    .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:2rem; width:100%; max-width:480px; }
-    .modal-box h3 { font-size:1.1rem; font-weight:800; margin-bottom:1.25rem; }
+    .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2rem; width:100%; max-width:480px; }
+    .modal-box h3 { font-size:1.1rem; font-weight:600; margin-bottom:1.25rem; }
     .form-row { margin-bottom:1rem; }
-    .form-row label { display:block; font-size:0.78rem; font-weight:700; color:var(--muted); margin-bottom:0.3rem; }
+    .form-row label { display:block; font-size:0.78rem; font-weight:500; color:var(--text-2); margin-bottom:0.3rem; }
     .form-row input, .form-row select, .form-row textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.75rem; color:var(--text); font-size:0.88rem; }
-    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline:none; border-color:var(--green); }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline:none; border-color:var(--brand); }
     .form-row select option { background:#ffffff; color:#111827; }
     .modal-btns { display:flex; gap:0.75rem; margin-top:1.5rem; }
     .btn-danger { background:rgba(220,38,38,0.1); border:1px solid rgba(220,38,38,0.3); color:#f87171; border-radius:8px; padding:0.6rem 1.25rem; font-weight:700; cursor:pointer; font-size:0.85rem; }
@@ -78,27 +78,27 @@
       background: var(--surface); cursor: pointer; flex-shrink: 0;
       transition: border-color 0.15s, background 0.15s;
     }
-    .dia-btn .db-nombre { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
-    .dia-btn .db-num   { font-size: 1rem; font-weight: 900; color: var(--text); line-height: 1; }
+    .dia-btn .db-nombre { font-size: 0.58rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+    .dia-btn .db-num   { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1; }
     .dia-btn .db-dot   { width: 5px; height: 5px; border-radius: 50%; background: var(--green); margin-top: 2px; opacity: 0; }
     .dia-btn.tiene-sesiones .db-dot { opacity: 1; }
-    .dia-btn.hoy { border-color: rgba(22,163,74,0.4); }
+    .dia-btn.hoy { border-color: rgba(22,163,74,0.35); }
     .dia-btn.hoy .db-num { color: var(--green); }
-    .dia-btn.activo { background: rgba(22,163,74,0.12); border-color: var(--green); }
+    .dia-btn.activo { background: rgba(22,163,74,0.12); border-color: var(--brand); }
     .dia-btn.activo .db-num { color: var(--green); }
 
     /* ── Vista lista (móvil) ── */
     .lista-dia { display: none; flex-direction: column; gap: 0.6rem; }
-    .lista-dia-titulo { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 0.25rem; }
+    .lista-dia-titulo { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 0.25rem; }
     .sesion-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
       padding: 0.9rem 1rem; display: flex; align-items: center; gap: 0.85rem;
       cursor: pointer; transition: border-color 0.15s;
     }
-    .sesion-card:hover { border-color: var(--green); }
-    .sesion-card-hora { font-size: 0.8rem; font-weight: 900; color: var(--text); min-width: 36px; }
+    .sesion-card:hover { border-color: var(--brand); }
+    .sesion-card-hora { font-size: 0.8rem; font-weight: 600; color: var(--text); min-width: 36px; }
     .sesion-card-info { flex: 1; min-width: 0; }
-    .sesion-card-cliente { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .sesion-card-cliente { font-size: 0.88rem; font-weight: 600; color: var(--text); }
     .sesion-card-tipo { font-size: 0.73rem; color: var(--muted); margin-top: 0.1rem; }
     .sesion-card-badge { font-size: 0.65rem; font-weight: 700; padding: 0.18rem 0.55rem; border-radius: 99px; flex-shrink: 0; }
     .sin-sesiones-dia { text-align: center; padding: 2.5rem 1rem; color: var(--muted); font-size: 0.85rem; }
@@ -136,6 +136,7 @@
     <a href="nutricion.html">Nutrición</a>
     <a href="../chat/index.html">Mensajes</a>
     <a href="clientes.html">Clientes</a>
+    <a href="ficha-cliente.html">Fichas de clientes</a>
     <a href="agenda.html" class="active">Agenda</a>
     <a href="ejercicios.html">Ejercicios</a>
     <a href="resultados.html">Progreso clientes</a>

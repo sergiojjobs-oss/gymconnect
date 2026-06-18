@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -14,41 +14,210 @@
   <script src="../js/plan-theme.js"></script>
   <script src="../js/auth-guard.js" data-rol="ENTRENADOR"></script>
   <style>
-    
-    
-    
-    
-    
-    
-    
-    .top-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem; }
-    .planes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.25rem; }
-    .plan-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.5rem; }
-    .plan-card-head { margin-bottom:0.75rem; }
-    .plan-cliente { font-size:0.75rem; color:var(--muted); margin-bottom:0.3rem; }
-    .plan-titulo { font-size:1rem; font-weight:800; }
-    .macro-row { display:flex; gap:0.5rem; margin:0.75rem 0; flex-wrap:wrap; }
-    .macro-chip { padding:0.2rem 0.6rem; border-radius:6px; font-size:0.72rem; font-weight:700; }
-    .plan-comidas { font-size:0.82rem; color:var(--muted); margin-bottom:1rem; }
-    .plan-actions { display:flex; gap:0.5rem; }
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:1000; padding:1rem; }
+    /* ── Lista de planes ── */
+    .nutri-list {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .nutri-list-header {
+      display: grid;
+      grid-template-columns: 1fr 140px 220px 80px 80px;
+      gap: 1rem;
+      padding: 0.55rem 1.25rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .nutri-row {
+      display: grid;
+      grid-template-columns: 1fr 140px 220px 80px 80px;
+      gap: 1rem;
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: center;
+      transition: background 0.1s;
+    }
+    .nutri-row:last-child { border-bottom: none; }
+    .nutri-row:hover { background: rgba(255,255,255,0.02); }
+    .nutri-row:hover .row-actions { opacity: 1; }
+
+    .plan-title { font-size: 0.875rem; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .plan-desc-snippet { font-size: 0.75rem; color: var(--muted); margin-top: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .cli-tag {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-size: 0.75rem; font-weight: 500; color: var(--text-2);
+      background: var(--surface-2); border: 1px solid var(--border-subtle);
+      border-radius: 99px; padding: 0.2rem 0.65rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;
+    }
+    .cli-tag-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--brand); flex-shrink: 0;
+    }
+
+    .macros-inline { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+    .m-chip {
+      font-size: 0.7rem; font-weight: 500;
+      padding: 0.15rem 0.5rem; border-radius: 4px;
+      white-space: nowrap;
+    }
+    .m-kcal { background: rgba(245,158,11,0.1); color: #d97706; }
+    .m-prot { background: rgba(59,130,246,0.1); color: #60a5fa; }
+    .m-carb { background: rgba(139,92,246,0.1); color: #a78bfa; }
+    .m-gras { background: rgba(236,72,153,0.1); color: #f472b6; }
+
+    .comidas-count { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+
+    .row-actions {
+      display: flex; gap: 0.35rem; justify-content: flex-end;
+      opacity: 0; transition: opacity 0.15s;
+    }
+    .btn-icon {
+      width: 28px; height: 28px; border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; cursor: pointer; border: 1px solid var(--border);
+      background: transparent; color: var(--text-2); transition: all 0.12s;
+    }
+    .btn-icon:hover { background: var(--surface-2); color: var(--text); border-color: var(--border); }
+    .btn-icon.danger:hover { background: rgba(220,38,38,0.1); color: #f87171; border-color: rgba(220,38,38,0.25); }
+
+    /* ── Modal ── */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; z-index:1000; padding:1rem; }
     .modal-overlay.open { display:flex; }
-    .modal { background:var(--surface); border:1px solid var(--border); border-radius:16px; width:100%; max-width:700px; max-height:90vh; overflow-y:auto; padding:2rem; }
-    .modal h2 { font-size:1.2rem; font-weight:800; margin-bottom:1.5rem; }
-    .form-group { margin-bottom:1rem; }
-    .form-group label { display:block; font-size:0.75rem; font-weight:700; color:var(--muted); margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.5px; }
-    .form-group input, .form-group select, .form-group textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.7rem 0.9rem; color:var(--text); font-size:0.9rem; }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:var(--green); }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%; max-width: 680px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-header h2 { font-size: 1rem; font-weight: 600; }
+    .modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; padding: 0.25rem; line-height: 1; border-radius: var(--radius); }
+    .modal-close:hover { color: var(--text); background: var(--surface-2); }
+    .modal-body { padding: 1.5rem; }
+    .modal-section { margin-bottom: 1.5rem; }
+    .modal-section-title {
+      font-size: 0.7rem; font-weight: 500; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.6px;
+      margin-bottom: 0.75rem;
+    }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-group label { display:block; font-size:0.78rem; font-weight:500; color:var(--text-2); margin-bottom:0.4rem; }
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; background:var(--bg); border:1px solid var(--border);
+      border-radius:var(--radius); padding:0.65rem 0.85rem;
+      color:var(--text); font-size:0.875rem; font-family: inherit;
+      transition: border-color 0.12s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:var(--brand); }
     .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-    .form-row-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:0.75rem; }
-    .comida-builder { border:1px solid var(--border); border-radius:10px; overflow:hidden; }
-    .comida-row-head { background:var(--bg); padding:0.6rem 1rem; font-size:0.72rem; font-weight:700; text-transform:uppercase; color:var(--muted); display:grid; grid-template-columns:1fr 70px 1fr 120px 32px; gap:0.5rem; letter-spacing:0.5px; }
-    .comida-row { padding:0.5rem 1rem; display:grid; grid-template-columns:1fr 70px 1fr 120px 32px; gap:0.5rem; align-items:center; border-top:1px solid var(--border); }
-    .comida-row input, .comida-row textarea { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:0.4rem 0.5rem; color:var(--text); font-size:0.82rem; width:100%; resize:none; }
-    .comida-row input:focus, .comida-row textarea:focus { outline:none; border-color:var(--green); }
-    .btn-del { width:28px; height:28px; border-radius:6px; background:rgba(220,38,38,0.1); border:1px solid rgba(220,38,38,0.2); color:#dc2626; font-size:0.85rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-    .modal-actions { display:flex; gap:0.75rem; margin-top:1.5rem; justify-content:flex-end; }
-    @media(max-width:768px){ .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1rem 0.85rem 5.5rem} .form-row{grid-template-columns:1fr} .form-row-4{grid-template-columns:1fr 1fr} .comida-row-head{display:none} .comida-row{grid-template-columns:1fr 1fr;} }
+
+    .macros-grid {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 0.75rem;
+    }
+    .macro-input-box {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 0.75rem;
+      transition: border-color 0.12s;
+    }
+    .macro-input-box:focus-within { border-color: var(--brand); }
+    .macro-input-box label { display: block; font-size: 0.68rem; font-weight: 500; color: var(--muted); margin-bottom: 0.3rem; }
+    .macro-input-box input {
+      width: 100%; background: transparent; border: none; padding: 0;
+      font-size: 1rem; font-weight: 600; color: var(--text); font-family: inherit;
+    }
+    .macro-input-box input:focus { outline: none; }
+    .macro-input-box .unit { font-size: 0.68rem; color: var(--muted); margin-top: 0.15rem; }
+    .macro-kcal label { color: #d97706; }
+    .macro-prot label { color: #60a5fa; }
+    .macro-carb label { color: #a78bfa; }
+    .macro-gras label { color: #f472b6; }
+
+    /* ── Comida builder ── */
+    .comida-builder {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .comida-row-head {
+      background: var(--bg); padding: 0.5rem 1rem;
+      font-size: 0.68rem; font-weight: 500; color: var(--muted);
+      display: grid; grid-template-columns: 1fr 64px 1fr 100px 32px;
+      gap: 0.5rem; letter-spacing: 0.3px;
+    }
+    .comida-row {
+      padding: 0.5rem 1rem;
+      display: grid; grid-template-columns: 1fr 64px 1fr 100px 32px;
+      gap: 0.5rem; align-items: center;
+      border-top: 1px solid var(--border-subtle);
+      transition: background 0.1s;
+    }
+    .comida-row:hover { background: rgba(255,255,255,0.01); }
+    .comida-row input, .comida-row textarea {
+      background: transparent; border: 1px solid transparent;
+      border-radius: var(--radius); padding: 0.3rem 0.5rem;
+      color: var(--text); font-size: 0.82rem; width: 100%; resize: none;
+      font-family: inherit; transition: border-color 0.12s, background 0.12s;
+    }
+    .comida-row input:hover, .comida-row textarea:hover { border-color: var(--border); background: var(--bg); }
+    .comida-row input:focus, .comida-row textarea:focus { outline: none; border-color: var(--brand); background: var(--bg); }
+    .btn-del {
+      width: 26px; height: 26px; border-radius: var(--radius);
+      background: transparent; border: 1px solid transparent;
+      color: var(--muted); font-size: 0.78rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.12s;
+    }
+    .btn-del:hover { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.2); color: #f87171; }
+
+    .btn-add-comida {
+      width: 100%; padding: 0.55rem; background: transparent;
+      border: 1px dashed var(--border); border-top: none;
+      color: var(--muted); font-size: 0.78rem; cursor: pointer;
+      font-family: inherit; transition: all 0.12s;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+    .btn-add-comida:hover { background: rgba(255,255,255,0.02); color: var(--text); border-color: var(--border); }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex; gap: 0.75rem; justify-content: flex-end;
+      background: var(--bg);
+    }
+
+    /* Empty state */
+    .empty-state { padding: 4rem 2rem; text-align: center; color: var(--muted); }
+    .empty-state p { font-size: 0.875rem; margin-bottom: 1rem; }
+    .empty-state .empty-title { font-size: 0.95rem; font-weight: 500; color: var(--text-2); margin-bottom: 0.4rem; }
+
+    @media(max-width:1024px){ .nutri-list-header,.nutri-row { grid-template-columns: 1fr 120px 180px 60px 72px; } }
+    @media(max-width:768px){
+      .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1rem 0.85rem 5.5rem}
+      .nutri-list-header { display: none; }
+      .nutri-row { grid-template-columns: 1fr auto; gap: 0.5rem; }
+      .nutri-row > :nth-child(3), .nutri-row > :nth-child(4) { display: none; }
+      .row-actions { opacity: 1; }
+      .macros-grid { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .comida-row-head { display: none; }
+      .comida-row { grid-template-columns: 1fr 1fr; }
+      .comida-row > :nth-child(2), .comida-row > :nth-child(4) { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -56,7 +225,8 @@
   <div class="container">
     <a href="../index.html" class="logo">Moment<em>Fit</em></a>
     <nav>
-      <button onclick="localStorage.clear();location.href='../login.html'">Cerrar sesión</button>
+      <a href="perfil.html">Mi perfil</a>
+      <a href="../login.html" onclick="localStorage.clear()" class="nav-cta">Cerrar sesión</a>
     </nav>
   </div>
 </header>
@@ -81,64 +251,91 @@
   </aside>
 
   <main class="main">
-    <div class="top-bar">
+    <div class="page-header">
       <div>
+        <span class="section-label">Nutrición</span>
         <h1>Planes nutricionales</h1>
-        <p class="page-subtitle">Crea planes de alimentación personalizados por cliente</p>
+        <p class="page-subtitle">Planes de alimentación personalizados por cliente</p>
       </div>
-      <button class="btn btn-primary" onclick="abrirModal()">+ Nuevo plan</button>
+      <div class="page-header-actions">
+        <button class="btn btn-primary" onclick="abrirModal()">+ Nuevo plan</button>
+      </div>
     </div>
-    <div class="planes-grid" id="grid"><p style="color:var(--muted);">Cargando…</p></div>
+
+    <div id="grid"><p style="color:var(--muted);font-size:0.875rem;">Cargando…</p></div>
   </main>
 </div>
 
+<!-- Modal -->
 <div class="modal-overlay" id="modalOverlay" onclick="cerrarModal(event)">
   <div class="modal">
-    <h2 id="modalTitulo">Nuevo plan nutricional</h2>
+    <div class="modal-header">
+      <h2 id="modalTitulo">Nuevo plan nutricional</h2>
+      <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')">✕</button>
+    </div>
     <input type="hidden" id="editId" />
-    <div class="form-row">
-      <div class="form-group">
-        <label>Título *</label>
-        <input type="text" id="titulo" placeholder="Plan de definición semana 1" />
-      </div>
-      <div class="form-group">
-        <label>Cliente *</label>
-        <select id="clienteId"><option value="">— Selecciona un cliente —</option></select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Descripción / objetivos</label>
-      <textarea id="descripcion" rows="2" placeholder="Objetivo del plan, restricciones, notas importantes…"></textarea>
-    </div>
-    <div class="form-row-4" style="margin-bottom:1rem;">
-      <div class="form-group" style="margin-bottom:0;">
-        <label>Calorías / día</label>
-        <input type="number" id="calorias" placeholder="2000" />
-      </div>
-      <div class="form-group" style="margin-bottom:0;">
-        <label>Proteínas (g)</label>
-        <input type="number" id="proteinas" placeholder="150" />
-      </div>
-      <div class="form-group" style="margin-bottom:0;">
-        <label>Carbos (g)</label>
-        <input type="number" id="carbos" placeholder="200" />
-      </div>
-      <div class="form-group" style="margin-bottom:0;">
-        <label>Grasas (g)</label>
-        <input type="number" id="grasas" placeholder="65" />
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Comidas del día</label>
-      <div class="comida-builder">
-        <div class="comida-row-head">
-          <span>Nombre</span><span>Hora</span><span>Alimentos</span><span>Notas</span><span></span>
+
+    <div class="modal-body">
+      <!-- Identificación -->
+      <div class="modal-section">
+        <div class="modal-section-title">Información general</div>
+        <div class="form-row" style="margin-bottom:1rem;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Título *</label>
+            <input type="text" id="titulo" placeholder="Plan de definición — semana 1" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Cliente *</label>
+            <select id="clienteId"><option value="">— Selecciona —</option></select>
+          </div>
         </div>
-        <div id="comidaRows"></div>
+        <div class="form-group">
+          <label>Descripción / objetivos</label>
+          <textarea id="descripcion" rows="2" placeholder="Objetivos del plan, restricciones alimentarias, notas…"></textarea>
+        </div>
       </div>
-      <button type="button" class="btn btn-outline" style="width:100%;margin-top:0.5rem;font-size:0.82rem;" onclick="addComida()">+ Añadir comida</button>
+
+      <!-- Macros -->
+      <div class="modal-section">
+        <div class="modal-section-title">Objetivos diarios</div>
+        <div class="macros-grid">
+          <div class="macro-input-box macro-kcal">
+            <label>Calorías</label>
+            <input type="number" id="calorias" placeholder="2000" />
+            <div class="unit">kcal / día</div>
+          </div>
+          <div class="macro-input-box macro-prot">
+            <label>Proteínas</label>
+            <input type="number" id="proteinas" placeholder="150" />
+            <div class="unit">gramos</div>
+          </div>
+          <div class="macro-input-box macro-carb">
+            <label>Carbohidratos</label>
+            <input type="number" id="carbos" placeholder="200" />
+            <div class="unit">gramos</div>
+          </div>
+          <div class="macro-input-box macro-gras">
+            <label>Grasas</label>
+            <input type="number" id="grasas" placeholder="65" />
+            <div class="unit">gramos</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comidas -->
+      <div class="modal-section" style="margin-bottom:0;">
+        <div class="modal-section-title">Comidas del día</div>
+        <div class="comida-builder">
+          <div class="comida-row-head">
+            <span>Nombre</span><span>Hora</span><span>Alimentos</span><span>Notas</span><span></span>
+          </div>
+          <div id="comidaRows"></div>
+        </div>
+        <button type="button" class="btn-add-comida" onclick="addComida()">+ Añadir comida</button>
+      </div>
     </div>
-    <div class="modal-actions">
+
+    <div class="modal-footer">
       <button class="btn btn-outline" onclick="document.getElementById('modalOverlay').classList.remove('open')">Cancelar</button>
       <button class="btn btn-primary" onclick="guardar()">Guardar plan</button>
     </div>
@@ -165,36 +362,58 @@ async function cargar() {
   try {
     const lista = await fetch(`${API}/api/nutricion/mis-planes`, { headers: hdr() }).then(r => r.json());
     if (!lista.length) {
-      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);"><span style="font-size:2.5rem;display:block;margin-bottom:1rem;">🥗</span><p>Aún no has creado ningún plan nutricional.</p></div>`;
-      return;
-    }
-    grid.innerHTML = lista.map(p => {
-      const comidas = p.comidasJson ? JSON.parse(p.comidasJson) : [];
-      const cli = clientes.find(c => p.cliente && String(c.id) === String(p.cliente.id));
-      return `
-        <div class="plan-card">
-          <div class="plan-card-head">
-            ${cli ? `<div class="plan-cliente">👤 ${cli.nombre}</div>` : ''}
-            <div class="plan-titulo">${p.titulo}</div>
-          </div>
-          <div class="macro-row">
-            ${p.caloriasTotal ? `<span class="macro-chip" style="background:rgba(245,158,11,0.1);color:#d97706;border:1px solid rgba(245,158,11,0.2);">${p.caloriasTotal} kcal</span>` : ''}
-            ${p.proteinasG ? `<span class="macro-chip" style="background:rgba(59,130,246,0.1);color:#3b82f6;border:1px solid rgba(59,130,246,0.2);">${p.proteinasG}g prot</span>` : ''}
-            ${p.carbohidratosG ? `<span class="macro-chip" style="background:rgba(139,92,246,0.1);color:#7c3aed;border:1px solid rgba(139,92,246,0.2);">${p.carbohidratosG}g carbs</span>` : ''}
-            ${p.grasasG ? `<span class="macro-chip" style="background:rgba(236,72,153,0.1);color:#ec4899;border:1px solid rgba(236,72,153,0.2);">${p.grasasG}g grasas</span>` : ''}
-          </div>
-          <div class="plan-comidas">${comidas.length} comidas · ${p.descripcion ? p.descripcion.slice(0,60)+'…' : ''}</div>
-          <div class="plan-actions">
-            <button class="btn btn-outline" style="font-size:0.78rem;padding:0.45rem 0.9rem;" onclick='editar(${JSON.stringify(p)})'>✏️ Editar</button>
-            <button class="btn" style="font-size:0.78rem;padding:0.45rem 0.9rem;background:rgba(220,38,38,0.08);color:#dc2626;border:1px solid rgba(220,38,38,0.2);" onclick="eliminar(${p.id})">🗑</button>
+      grid.innerHTML = `
+        <div class="nutri-list">
+          <div class="empty-state">
+            <p class="empty-title">Sin planes nutricionales</p>
+            <p>Crea el primer plan para uno de tus clientes.</p>
+            <button class="btn btn-primary" onclick="abrirModal()">+ Nuevo plan</button>
           </div>
         </div>`;
-    }).join('');
-  } catch { grid.innerHTML = '<p style="color:#dc2626;">Error al cargar.</p>'; }
+      return;
+    }
+    grid.innerHTML = `
+      <div class="nutri-list">
+        <div class="nutri-list-header">
+          <span>Plan</span>
+          <span>Cliente</span>
+          <span>Macros</span>
+          <span>Comidas</span>
+          <span></span>
+        </div>
+        ${lista.map(p => {
+          const comidasArr = p.comidasJson ? JSON.parse(p.comidasJson) : [];
+          const cli = clientes.find(c => p.cliente && String(c.id) === String(p.cliente.id));
+          const macros = [
+            p.caloriasTotal ? `<span class="m-chip m-kcal">${p.caloriasTotal} kcal</span>` : '',
+            p.proteinasG    ? `<span class="m-chip m-prot">${p.proteinasG}g P</span>` : '',
+            p.carbohidratosG ? `<span class="m-chip m-carb">${p.carbohidratosG}g C</span>` : '',
+            p.grasasG       ? `<span class="m-chip m-gras">${p.grasasG}g G</span>` : '',
+          ].filter(Boolean).join('');
+          const desc = p.descripcion ? p.descripcion.slice(0, 55) + (p.descripcion.length > 55 ? '…' : '') : '';
+          return `
+            <div class="nutri-row">
+              <div>
+                <div class="plan-title">${p.titulo}</div>
+                ${desc ? `<div class="plan-desc-snippet">${desc}</div>` : ''}
+              </div>
+              <div>
+                ${cli ? `<span class="cli-tag"><span class="cli-tag-dot"></span>${cli.nombre}</span>` : '<span style="color:var(--muted);font-size:0.75rem;">—</span>'}
+              </div>
+              <div class="macros-inline">${macros || '<span style="color:var(--muted);font-size:0.75rem;">Sin macros</span>'}</div>
+              <div class="comidas-count">${comidasArr.length} ${comidasArr.length === 1 ? 'comida' : 'comidas'}</div>
+              <div class="row-actions">
+                <button class="btn-icon" onclick='editar(${JSON.stringify(p).replace(/'/g, "&#39;")})' title="Editar">✎</button>
+                <button class="btn-icon danger" onclick="eliminar(${p.id})" title="Eliminar">✕</button>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>`;
+  } catch { grid.innerHTML = '<p style="color:#dc2626;font-size:0.875rem;">Error al cargar los planes.</p>'; }
 }
 
 function addComida(c = {}) {
-  comidas.push({ nombre: c.nombre||'', hora: c.hora||'', alimentos: c.alimentos||'', notas: c.notas||'', calorias: c.calorias||'' });
+  comidas.push({ nombre: c.nombre||'', hora: c.hora||'', alimentos: c.alimentos||'', notas: c.notas||'' });
   renderComidas();
 }
 
@@ -204,8 +423,8 @@ function renderComidas() {
       <input type="text" placeholder="Ej: Desayuno" value="${(c.nombre||'').replace(/"/g,'&quot;')}" oninput="comidas[${i}].nombre=this.value" />
       <input type="text" placeholder="08:00" value="${c.hora||''}" oninput="comidas[${i}].hora=this.value" />
       <textarea placeholder="Avena 80g, leche 200ml…" rows="2" oninput="comidas[${i}].alimentos=this.value">${c.alimentos||''}</textarea>
-      <input type="text" placeholder="Notas opcionales" value="${(c.notas||'').replace(/"/g,'&quot;')}" oninput="comidas[${i}].notas=this.value" />
-      <button class="btn-del" onclick="comidas.splice(${i},1);renderComidas()">✕</button>
+      <input type="text" placeholder="Notas" value="${(c.notas||'').replace(/"/g,'&quot;')}" oninput="comidas[${i}].notas=this.value" />
+      <button class="btn-del" onclick="comidas.splice(${i},1);renderComidas()" title="Eliminar">✕</button>
     </div>`).join('');
 }
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -43,12 +43,12 @@
     /* ── Modal ─────────────────────────────────────────────────── */
     .modal-bg { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center; }
     .modal-bg.open { display:flex; }
-    .modal-box { background:#fff;border-radius:16px;padding:2rem;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.25); }
-    .modal-box h2 { font-size:1.2rem;font-weight:900;text-transform:uppercase;margin-bottom:0.35rem; }
+    .modal-box { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;max-width:420px;width:90%; }
+    .modal-box h2 { font-size:1.1rem;font-weight:600;margin-bottom:0.35rem; }
     .modal-box .sub { font-size:0.83rem;color:var(--muted);margin-bottom:1.5rem; }
     .modal-summary { background:var(--bg);border-radius:8px;padding:1rem;margin-bottom:1.5rem;font-size:0.85rem; }
     .modal-summary-row { display:flex;justify-content:space-between;padding:0.3rem 0; }
-    .modal-summary-row:last-child { font-weight:900;border-top:1px solid var(--border);margin-top:0.4rem;padding-top:0.7rem;color:var(--plan-color); }
+    .modal-summary-row:last-child { font-weight:700;border-top:1px solid var(--border);margin-top:0.4rem;padding-top:0.7rem;color:var(--plan-color); }
     .modal-cancel-btn { width:100%;text-align:center;margin-top:0.75rem;font-size:0.82rem;color:var(--muted);cursor:pointer;background:none;border:none;font-weight:600; }
     .modal-cancel-btn:hover { color:var(--text); }
 
@@ -79,26 +79,26 @@
     .profile-big-avatar {
       width: 110px; height: 110px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 2.2rem; font-weight: 900; color: #fff;
+      font-size: 2.2rem; font-weight: 700; color: #fff;
       border: 3px solid var(--plan-color);
       box-shadow: 0 0 0 6px var(--plan-glow);
       flex-shrink: 0;
       overflow: hidden;
       transition: border-color 0.4s, box-shadow 0.4s;
     }
-    .profile-hero-info h1 { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; color: var(--text); margin-bottom: 0.25rem; }
+    .profile-hero-info h1 { font-size: 1.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.5px; color: var(--text); margin-bottom: 0.25rem; }
     .profile-hero-info p  { color: var(--text-2); font-size: 0.9rem; }
     .profile-hero-info .stars { color: var(--gold-l); margin-top: 0.5rem; font-size: 0.9rem; }
     .profile-hero-info .stars span { color: var(--text-2); }
     .profile-hero-cta { margin-left: auto; display: flex; flex-direction: column; gap: 0.75rem; align-items: flex-end; }
-    .profile-price-big { font-size: 2.4rem; font-weight: 900; color: var(--plan-color); line-height: 1; text-shadow: 0 0 30px var(--plan-glow); }
+    .profile-price-big { font-size: 2.4rem; font-weight: 700; color: var(--plan-color); line-height: 1; text-shadow: 0 0 30px var(--plan-glow); }
     .profile-price-big small { font-size: 0.8rem; color: var(--text-2); font-weight: 400; }
 
     /* Plan badge */
     .plan-badge {
       display: inline-flex; align-items: center; gap: 0.35rem;
       padding: 0.3rem 0.85rem; border-radius:8px;
-      font-size: 0.72rem; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
       background: var(--plan-bg);
       border: 1px solid var(--plan-border);
       color: var(--plan-color);
@@ -120,7 +120,7 @@
     .info-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       padding: 1.75rem;
       margin-bottom: 1.25rem;
     }
@@ -128,11 +128,11 @@
     .info-card.accented {
       border-top: 2px solid var(--plan-color);
     }
-    .info-card h2 { font-size: 0.85rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 1rem; }
+    .info-card h2 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 1rem; }
 
     .stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1.25rem; }
     .stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; }
-    .stat-box strong { display: block; font-size: 1.5rem; font-weight: 900; color: var(--plan-color); }
+    .stat-box strong { display: block; font-size: 1.5rem; font-weight: 700; color: var(--plan-color); }
     .stat-box span   { font-size: 0.73rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
 
     /* Sidebar CTA card */
@@ -140,17 +140,17 @@
       background: var(--surface);
       border: 1px solid var(--plan-border);
       border-top: 3px solid var(--plan-color);
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       padding: 1.75rem;
       margin-bottom: 1.25rem;
       box-shadow: 0 0 20px var(--plan-glow);
     }
-    .sidebar-cta-card h2 { font-size: 0.85rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 1rem; }
+    .sidebar-cta-card h2 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 1rem; }
 
     .review-item { padding: 1rem 0; border-bottom: 1px solid var(--border); }
     .review-item:last-child { border-bottom: none; }
     .review-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem; }
-    .review-avatar { width: 32px; height: 32px; border-radius: 50%; background: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; color: #fff; }
+    .review-avatar { width: 32px; height: 32px; border-radius: 50%; background: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: #fff; }
     .review-name { font-size: 0.85rem; font-weight: 700; }
     .review-stars { color: var(--gold-l); font-size: 0.78rem; margin-left: auto; }
     .review-text { font-size: 0.83rem; color: var(--text-2); line-height: 1.65; }
@@ -246,7 +246,7 @@
         <div class="sticky-cta">
           <div class="sidebar-cta-card">
             <h2>Contratar plan</h2>
-            <div style="font-size:2rem;font-weight:900;color:var(--plan-color);margin-bottom:0.25rem;" id="sidebarPrecio"></div>
+            <div style="font-size:2rem;font-weight:700;color:var(--plan-color);margin-bottom:0.25rem;" id="sidebarPrecio"></div>
             <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.25rem;">Pago mensual · Cancela cuando quieras</p>
             <button class="btn btn-plan" style="width:100%;justify-content:center;margin-bottom:0.75rem;" onclick="abrirModalContratacion()">Contratar ahora →</button>
             <button class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;" onclick="irAlChat()">💬 Enviar mensaje</button>
@@ -457,7 +457,7 @@
             <div style="display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;">
               <div style="font-size:2.5rem;">📸</div>
               <div style="flex:1;">
-                <div style="font-weight:900;font-size:1rem;margin-bottom:0.2rem;">Instagram</div>
+                <div style="font-weight:700;font-size:1rem;margin-bottom:0.2rem;">Instagram</div>
                 <div style="font-size:0.85rem;color:var(--muted);">@${e.instagram}</div>
               </div>
               <a href="https://instagram.com/${e.instagram}" target="_blank"
@@ -499,7 +499,7 @@
           `<span class="star-btn" data-v="${n}" onclick="selStar(${n})" style="font-size:1.5rem;cursor:pointer;color:${n<=estrellas?'#f59e0b':'#d1d5db'};">★</span>`
         ).join('');
 
-        html += `<div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem;">
+        html += `<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.25rem;">
           <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.75rem;">${miResena ? 'Tu reseña' : 'Deja tu reseña'}</div>
           <div id="starsRow" style="margin-bottom:0.75rem;">${starsHtml}</div>
           <input type="hidden" id="starVal" value="${estrellas}" />

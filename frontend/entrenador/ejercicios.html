@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -24,19 +24,19 @@
 
     .filtros { display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.5rem; align-items:center; }
     .filtros input { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.85rem; color:var(--text); font-size:0.85rem; width:220px; }
-    .filtros input:focus { outline:none; border-color:var(--green); }
+    .filtros input:focus { outline:none; border-color:var(--brand); }
     .filtros select { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; color:var(--text); font-size:0.85rem; }
     .filtros select option { background:#ffffff; color:#111827; }
 
     .ejercicios-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; }
 
     /* ── Card ── */
-    .ej-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:border-color 0.15s; position:relative; }
-    .ej-card:hover { border-color:rgba(22,163,74,0.3); }
+    .ej-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; transition:border-color 0.15s; position:relative; }
+    .ej-card:hover { border-color:var(--brand-border); }
     .ej-img { width:100%; height:130px; object-fit:cover; background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:2.5rem; }
     .ej-body { padding:1rem; }
-    .ej-nombre { font-size:0.92rem; font-weight:800; margin-bottom:0.3rem; }
-    .ej-grupo { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--green); margin-bottom:0.5rem; }
+    .ej-nombre { font-size:0.9rem; font-weight:600; margin-bottom:0.3rem; }
+    .ej-grupo { font-size:0.72rem; font-weight:500; color:var(--muted); margin-bottom:0.5rem; }
     .ej-tags { display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:0.6rem; }
     .ej-tag { font-size:0.68rem; font-weight:700; padding:0.15rem 0.5rem; border-radius:99px; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--muted); }
     .ej-desc { font-size:0.78rem; color:var(--muted); line-height:1.5; }
@@ -75,12 +75,12 @@
 
     /* Modal */
     .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:1000; padding:1rem; }
-    .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:2rem; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; }
-    .modal-box h3 { font-size:1.1rem; font-weight:800; margin-bottom:1.25rem; }
+    .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2rem; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; }
+    .modal-box h3 { font-size:1rem; font-weight:600; margin-bottom:1.25rem; }
     .form-row { margin-bottom:1rem; }
     .form-row label { display:block; font-size:0.78rem; font-weight:700; color:var(--muted); margin-bottom:0.3rem; }
     .form-row input, .form-row select, .form-row textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.75rem; color:var(--text); font-size:0.88rem; }
-    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline:none; border-color:var(--green); }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline:none; border-color:var(--brand); }
     .form-row select option { background:#ffffff; color:#111827; }
     .modal-btns { display:flex; gap:0.75rem; margin-top:1.5rem; }
     .btn-danger { background:rgba(220,38,38,0.1); border:1px solid rgba(220,38,38,0.3); color:#f87171; border-radius:8px; padding:0.6rem 1.25rem; font-weight:700; cursor:pointer; font-size:0.85rem; }
@@ -107,6 +107,7 @@
     <a href="nutricion.html">Nutrición</a>
     <a href="../chat/index.html">Mensajes</a>
     <a href="clientes.html">Clientes</a>
+    <a href="ficha-cliente.html">Fichas de clientes</a>
     <a href="agenda.html">Agenda</a>
     <a href="ejercicios.html" class="active">Ejercicios</a>
     <a href="resultados.html">Progreso clientes</a>

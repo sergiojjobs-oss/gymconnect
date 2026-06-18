@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -21,20 +21,20 @@
     
     .main { padding:2rem 2.5rem; }
     .macros-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
-    .macro-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.25rem; text-align:center; }
-    .macro-card .val { font-size:1.8rem; font-weight:900; color:var(--green); }
+    .macro-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1rem; text-align:center; }
+    .macro-card .val { font-size:1.5rem; font-weight:700; color:var(--brand-light); }
     .macro-card .lbl { font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:0.25rem; }
     .macro-card.kcal .val { color:#f59e0b; }
     .macro-card.prot .val { color:#3b82f6; }
     .macro-card.carb .val { color:#8b5cf6; }
     .macro-card.gras .val { color:#ec4899; }
-    .comida-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+    .comida-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1rem; margin-bottom:0.75rem; }
     .comida-header { display:flex; align-items:center; gap:1rem; margin-bottom:0.75rem; }
-    .comida-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
-    .comida-title { font-size:0.95rem; font-weight:800; }
+    .comida-icon { width:40px; height:40px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+    .comida-title { font-size:0.9rem; font-weight:600; }
     .comida-hora { font-size:0.78rem; color:var(--muted); }
-    .comida-cals { margin-left:auto; font-size:0.8rem; font-weight:700; color:var(--muted); }
-    .alimentos-list { font-size:0.88rem; color:var(--text-2); line-height:1.7; padding-left:0.5rem; border-left:3px solid rgba(22,163,74,0.3); }
+    .comida-cals { margin-left:auto; font-size:0.8rem; font-weight:500; color:var(--muted); }
+    .alimentos-list { font-size:0.88rem; color:var(--text-2); line-height:1.7; padding-left:0.5rem; border-left:2px solid var(--border-subtle); }
     .comida-notas { font-size:0.8rem; color:var(--muted); font-style:italic; margin-top:0.5rem; }
     .sin-plan { text-align:center; padding:4rem 2rem; color:var(--muted); }
     .sin-plan span { font-size:3rem; display:block; margin-bottom:1rem; }
@@ -56,7 +56,7 @@
     <span class="sidebar-label">Mi espacio</span>
     <a href="dashboard.html">Inicio</a>
     <a href="mi-rutina.html">Mi rutina</a>
-    <a href="mi-nutricion.html" class="active">🥗 Mi nutrición</a>
+    <a href="mi-nutricion.html" class="active">Mi nutrición</a>
     <a href="mi-progreso.html">Mi progreso</a>
     <a href="../chat/index.html">Mensajes</a>
     <span class="sidebar-label">Buscar</span>
@@ -66,7 +66,7 @@
 
   <main class="main">
     <div class="page-header" style="margin-bottom:1.25rem"><div>
-      <h1>🥗 Mi plan nutricional</h1>
+      <h1>Mi plan nutricional</h1>
       <p style="color:var(--muted);margin-top:0.3rem;font-size:0.9rem;">El plan de alimentación que ha preparado tu entrenador</p>
     </div>
     <div id="contenido"><p style="color:var(--muted);">Cargando…</p></div>
