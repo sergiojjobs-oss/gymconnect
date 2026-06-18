@@ -308,7 +308,8 @@
 
     function irAlChat() {
       if (!e) return;
-      window.location.href = `../chat/index.html?userId=${e.usuarioId}&nombre=${encodeURIComponent(e.nombre + ' ' + e.apellido)}`;
+      if (window.openChatWithContact) openChatWithContact(e.usuarioId, e.nombre + ' ' + e.apellido);
+      else window.location.href = `../chat/index.html?userId=${e.usuarioId}&nombre=${encodeURIComponent(e.nombre + ' ' + e.apellido)}`;
     }
 
     function showToast(msg) {
@@ -571,5 +572,6 @@
     cargarPerfil();
   </script>
 <script src="../js/sidebar-user.js"></script>
+<script src="../js/chat-widget.js"></script>
 </body>
 </html>

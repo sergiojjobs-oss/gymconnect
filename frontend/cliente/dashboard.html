@@ -99,7 +99,7 @@
     <a href="mi-rutina.html">Mi rutina</a>
     <a href="mi-nutricion.html">Mi nutrición</a>
     <a href="mi-progreso.html">Mi progreso</a>
-    <a href="../chat/index.html">Mensajes <span id="badgeNav" style="display:none" class="mensaje-badge"></span></a>
+    <a href="#" onclick="openChatWidget();return false;">Mensajes <span id="badgeNav" style="display:none" class="mensaje-badge"></span></a>
     <span class="sidebar-label">Buscar</span>
     <a href="buscar.html">Buscar entrenador</a>
     <a href="../login.html" onclick="localStorage.clear()">Salir</a>
@@ -179,7 +179,7 @@ async function cargarEntrenador(){
     const avHtml=ent.fotoUrl
       ?`<div class="ent-avatar"><img src="${ent.fotoUrl}"/></div>`
       :`<div class="ent-avatar" style="background:#16a34a">${ini}</div>`;
-    blk.innerHTML=`<div class="entrenador-card">${avHtml}<div class="ent-info"><h3>${nombre}</h3><p>${ent.ciudad||"Entrenador personal"}</p><div style="color:#fbbf24;font-size:.8rem;margin-top:.25rem">${"★".repeat(Math.floor(ent.rating||5))} ${(ent.rating||5).toFixed(1)}</div><div class="ent-actions"><a href="../chat/index.html" class="btn btn-primary" style="font-size:.78rem;padding:.45rem 1rem">💬 Mensaje</a><a href="perfil.html?id=${ent.id}" class="btn btn-outline" style="font-size:.78rem;padding:.45rem 1rem">Ver perfil</a><button onclick="cancelarEntrenador(${ent.id})" class="btn" style="font-size:.78rem;padding:.45rem 1rem;background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.25)">🚫 Cancelar</button></div></div></div>`;
+    blk.innerHTML=`<div class="entrenador-card">${avHtml}<div class="ent-info"><h3>${nombre}</h3><p>${ent.ciudad||"Entrenador personal"}</p><div style="color:#fbbf24;font-size:.8rem;margin-top:.25rem">${"★".repeat(Math.floor(ent.rating||5))} ${(ent.rating||5).toFixed(1)}</div><div class="ent-actions"><button onclick="openChatWidget()" class="btn btn-primary" style="font-size:.78rem;padding:.45rem 1rem;cursor:pointer">💬 Mensaje</button><a href="perfil.html?id=${ent.id}" class="btn btn-outline" style="font-size:.78rem;padding:.45rem 1rem">Ver perfil</a><button onclick="cancelarEntrenador(${ent.id})" class="btn" style="font-size:.78rem;padding:.45rem 1rem;background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.25)">🚫 Cancelar</button></div></div></div>`;
   }catch{blk.innerHTML=`<div class="sin-entrenador">No se pudo cargar</div>`;}
 }
 
@@ -244,5 +244,6 @@ async function cargarProgreso(){
 init();
 </script>
 <script src="../js/sidebar-user.js"></script>
+<script src="../js/chat-widget.js"></script>
 </body>
 </html>

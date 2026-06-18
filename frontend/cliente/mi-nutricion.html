@@ -58,7 +58,7 @@
     <a href="mi-rutina.html">Mi rutina</a>
     <a href="mi-nutricion.html" class="active">Mi nutrición</a>
     <a href="mi-progreso.html">Mi progreso</a>
-    <a href="../chat/index.html">Mensajes</a>
+    <a href="#" onclick="openChatWidget();return false;">Mensajes</a>
     <span class="sidebar-label">Buscar</span>
     <a href="buscar.html">Buscar entrenador</a>
     <a href="../login.html" onclick="localStorage.clear()">Salir</a>
@@ -124,5 +124,6 @@ async function cargar() {
 cargar();
 </script>
 <script src="../js/sidebar-user.js"></script>
+<script src="../js/chat-widget.js"></script>
 </body>
 </html>
