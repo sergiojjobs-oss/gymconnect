@@ -322,6 +322,10 @@
 
     function abrirModalContratacion() {
       if (!e) return;
+      if (!e.paypalEmail) {
+        showToast('Este entrenador aún no ha configurado su cuenta PayPal para recibir pagos.');
+        return;
+      }
       document.getElementById('mNombre').textContent = e.nombre + ' ' + e.apellido;
       document.getElementById('mPrecio').textContent = e.precioMensual + '€/mes';
       document.getElementById('mTotal').textContent  = e.precioMensual + '€';

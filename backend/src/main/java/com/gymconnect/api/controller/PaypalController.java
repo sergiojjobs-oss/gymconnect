@@ -98,6 +98,10 @@ public class PaypalController {
                         .orElse(null);
             }
 
+            if (payeeEmail == null || payeeEmail.isBlank()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El entrenador no tiene una cuenta PayPal configurada para recibir pagos"));
+            }
+
             JsonNode orden = paypalService.crearOrdenConPayee(descripcion, importe, "EUR", payeeEmail);
             String orderId = orden.get("id").asText();
 
