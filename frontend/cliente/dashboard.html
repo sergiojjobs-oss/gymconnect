@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi espacio — MomentFit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -109,7 +110,6 @@
     <a href="mi-rutina.html">Mi rutina</a>
     <a href="mi-nutricion.html">Mi nutrición</a>
     <a href="mi-progreso.html">Mi progreso</a>
-    <a href="#" onclick="openChatWidget();return false;">Mensajes <span id="badgeNav" style="display:none" class="mensaje-badge"></span></a>
     <span class="sidebar-label">Buscar</span>
     <a href="buscar.html">Buscar entrenador</a>
     <a href="../login.html" onclick="localStorage.clear()">Salir</a>
@@ -126,7 +126,7 @@
     <div class="grid-3" id="statsRow" style="display:none">
       <div class="stat-mini c1"><div class="val" id="stPeso">—</div><div class="lbl">Ultimo peso (kg)</div></div>
       <div class="stat-mini c2"><div class="val" id="stSemanas">—</div><div class="lbl">Semanas registradas</div></div>
-      <div class="stat-mini c3"><div class="val" id="stEnergia">—</div><div class="lbl">Energia media</div></div>
+      <div class="stat-mini c3"><div class="val" id="stEnergia">—</div><div class="lbl">Energía media</div></div>
     </div>
 
     <div class="grid-2">
@@ -158,13 +158,9 @@ async function init(){
   const u=await fetch(`${API}/api/usuario/perfil`,{headers:h()}).then(r=>r.json()).catch(()=>null);
   if(u){
     document.getElementById("saludo").textContent="Hola, "+u.nombre+" 👋";
-    document.getElementById("subtitulo").textContent="Aqui tienes el resumen de tu entrenamiento";
+    document.getElementById("subtitulo").textContent="Aquí tienes el resumen de tu entrenamiento";
   }
-  fetch(`${API}/api/chat/no-leidos`,{headers:h()})
-    .then(r=>r.json()).then(d=>{
-      const b=document.getElementById("badgeNav");
-      if(d.total>0){b.textContent=d.total;b.style.display="inline-flex";}
-    }).catch(()=>{});
+  fetch(`${API}/api/chat/no-leidos`,{headers:h()}).catch(()=>{});
   cargarEntrenador();
   cargarRutina();
   cargarNutricion();
@@ -176,7 +172,7 @@ async function cargarEntrenador(){
   try{
     const res=await fetch(`${API}/api/entrenadores/mi-entrenador`,{headers:h()});
     if(res.status===204||!res.ok){
-      blk.innerHTML=`<div class="sin-entrenador"><span style="font-size:2rem">🏋️</span><p>Aun no tienes entrenador.<br>Busca uno y empieza hoy!</p><a href="buscar.html" class="btn btn-primary" style="margin-top:1rem;font-size:.85rem">Buscar entrenador</a></div>`;
+      blk.innerHTML=`<div class="sin-entrenador"><span style="font-size:2rem">🏋️</span><p>Aún no tienes entrenador.<br>Busca uno y empieza hoy.</p><a href="buscar.html" class="btn btn-primary" style="margin-top:1rem;font-size:.85rem">Buscar entrenador</a></div>`;
       // Ocultar secciones que dependen del entrenador
       ['rutinaSection','nutricionSection'].forEach(id=>{
         const el=document.getElementById(id); if(el) el.style.display='none';
@@ -214,7 +210,7 @@ async function cargarRutina(){
   const blk=document.getElementById("rutinaBlock");
   try{
     const res=await fetch(`${API}/api/rutinas/mi-rutina`,{headers:h()});
-    if(res.status===204){blk.innerHTML=`<div class="rutina-preview"><p style="color:var(--muted);font-size:.88rem;text-align:center;padding:1rem">Tu entrenador aun no te ha asignado una rutina.</p></div>`;return;}
+    if(res.status===204){blk.innerHTML=`<div class="rutina-preview"><p style="color:var(--muted);font-size:.88rem;text-align:center;padding:1rem">Tu entrenador aún no te ha asignado una rutina.</p></div>`;return;}
     const r=await res.json();
     const ejs=r.ejerciciosJson?JSON.parse(r.ejerciciosJson):[];
     const prev=ejs.slice(0,4);
@@ -226,7 +222,7 @@ async function cargarNutricion(){
   const blk=document.getElementById("nutricionBlock");
   try{
     const res=await fetch(`${API}/api/nutricion/mi-plan`,{headers:h()});
-    if(res.status===204){blk.innerHTML=`<div class="nutricion-card"><p style="color:var(--muted);font-size:.88rem;text-align:center;padding:.5rem">Tu entrenador aun no te ha creado un plan nutricional.</p></div>`;return;}
+    if(res.status===204){blk.innerHTML=`<div class="nutricion-card"><p style="color:var(--muted);font-size:.88rem;text-align:center;padding:.5rem">Tu entrenador aún no te ha creado un plan nutricional.</p></div>`;return;}
     const p=await res.json();
     const comidas=p.comidasJson?JSON.parse(p.comidasJson):[];
     blk.innerHTML=`<div class="nutricion-card"><h3>${p.titulo} <a href="mi-nutricion.html" style="font-size:.75rem;font-weight:600;color:#22c55e">Ver completo →</a></h3>${p.caloriasTotal?`<div class="macro-row"><div class="macro"><div class="mv">${p.caloriasTotal}</div><div class="ml">kcal</div></div><div class="macro"><div class="mv">${p.proteinasG||"—"}g</div><div class="ml">Proteína</div></div><div class="macro"><div class="mv">${p.carbohidratosG||"—"}g</div><div class="ml">Carbs</div></div><div class="macro"><div class="mv">${p.grasasG||"—"}g</div><div class="ml">Grasas</div></div></div>`:""} ${comidas.slice(0,3).map(c=>`<div class="comida-row"><strong>${c.nombre}${c.hora?" · "+c.hora:""}</strong><span>${c.alimentos}</span></div>`).join("")}${comidas.length>3?`<p style="text-align:center;color:var(--muted);font-size:.78rem;padding-top:.5rem">+${comidas.length-3} comidas mas</p>`:""}</div>`;

@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ajustes de perfil — MomentFit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -487,12 +488,10 @@
         }
         if (!res.ok) {
           const txt = await res.text();
-          console.error('Error guardando:', res.status, txt);
           throw new Error(res.status + ': ' + txt);
         }
         showToast('✓ Perfil actualizado correctamente');
       } catch (err) {
-        console.error(err);
         showToast('Error al guardar: ' + err.message, true);
       } finally {
         btn.disabled = false;

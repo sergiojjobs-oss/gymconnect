@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi progreso — MomentFit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -162,7 +163,7 @@ async function subirFoto(input) {
 function showMsg(txt, err) {
   const el = document.getElementById('msg');
   el.textContent = txt;
-  el.style.color = err ? '#dc2626' : 'var(--green)';
+  el.style.color = err ? '#f87171' : 'var(--brand-light)';
   el.style.display = 'block';
   setTimeout(() => el.style.display = 'none', 3000);
 }
