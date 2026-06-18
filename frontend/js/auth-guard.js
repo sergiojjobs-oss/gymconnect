@@ -17,5 +17,14 @@
   const rolRequerido = script && script.getAttribute('data-rol');
   if (rolRequerido && user.rol !== rolRequerido) {
     window.location.href = '../login.html';
+    return;
+  }
+
+  // Inyectar chat widget en todas las páginas autenticadas
+  const src = script ? script.src.replace('auth-guard.js', 'chat-widget.js') : null;
+  if (src && !document.getElementById('gc-chat-widget')) {
+    const s = document.createElement('script');
+    s.src = src;
+    document.addEventListener('DOMContentLoaded', () => document.body.appendChild(s));
   }
 })();
