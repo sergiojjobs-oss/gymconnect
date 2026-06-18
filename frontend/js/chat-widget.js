@@ -431,11 +431,16 @@
 
   window.openChatWithContact = function (id, nombre) {
     openChatWidget();
-    // Wait for contacts to load then open
+    let intentos = 0;
     function tryOpen() {
       const item = document.querySelector(`.gc-ci[data-id="${id}"]`);
-      if (item) { abrirChat({ id: +id, nombre }); }
-      else { setTimeout(tryOpen, 300); }
+      if (item) {
+        abrirChat({ id: +id, nombre });
+      } else if (intentos++ < 10) {
+        setTimeout(tryOpen, 300);
+      } else {
+        abrirChat({ id: +id, nombre });
+      }
     }
     tryOpen();
   };
