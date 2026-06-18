@@ -136,6 +136,13 @@
           <h3>Redes sociales</h3>
           <div id="redes" style="display:flex;gap:1rem;flex-wrap:wrap"></div>
         </div>
+
+        <div class="section-card">
+          <h3>Disponibilidad</h3>
+          <p id="dispEstado" style="font-size:0.85rem;margin-bottom:0.4rem;"></p>
+          <p id="dispTiempo" style="font-size:0.83rem;color:var(--text-2);"></p>
+          <a href="ajustes.html" style="display:inline-block;margin-top:0.75rem;font-size:0.78rem;color:var(--brand-light);text-decoration:none;">Cambiar en ajustes →</a>
+        </div>
       </div>
     </main>
   </div>
@@ -174,6 +181,10 @@
         if(ent.instagram)rds.push(`<a href="https://instagram.com/${ent.instagram}" target="_blank" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:700;color:#e1306c;text-decoration:none">📷 @${ent.instagram}</a>`);
         if(ent.youtube)rds.push(`<a href="${ent.youtube}" target="_blank" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:700;color:#f00;text-decoration:none">▶ YouTube</a>`);
         if(rds.length){document.getElementById("redesCard").style.display="";document.getElementById("redes").innerHTML=rds.join("");}
+        const disp=ent.disponible!==false;
+        document.getElementById("dispEstado").textContent=disp?"🟢 Acepta nuevos clientes":"🔴 No acepta nuevos clientes";
+        document.getElementById("dispEstado").style.color=disp?"var(--text)":"var(--muted)";
+        document.getElementById("dispTiempo").textContent="Responde en "+(ent.tiempoRespuesta||"menos de 24h");
         document.title=ent.nombre+" — MomentFit";
       }catch(e){document.getElementById("cargando").textContent="Error al cargar el perfil.";}
     }
