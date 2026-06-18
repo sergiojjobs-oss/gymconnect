@@ -43,11 +43,17 @@
     .service-item:last-child{border-bottom:none}
     .service-check{color:var(--brand-light);font-weight:700;font-size:.85rem;margin-top:1px;flex-shrink:0}
     @media(max-width:768px){
-      .main-content{padding:1rem .85rem 5.5rem}
       .stats-row{grid-template-columns:1fr 1fr}
       .stats-row .stat-pill:last-child{grid-column:span 2}
       .perfil-hero{flex-direction:column;align-items:flex-start;gap:.875rem;padding:1.125rem}
       .perfil-hero-name{font-size:1.15rem}
+    }
+    @media(max-width:480px){
+      .perfil-hero-avatar{width:56px;height:56px;font-size:1.2rem}
+      .perfil-hero-name{font-size:1rem}
+      .stats-row{grid-template-columns:1fr 1fr}
+      input,select,textarea{font-size:16px !important}
+      #especChecks,#certChecks,#idiomasChecks,#servChecks{grid-template-columns:1fr 1fr !important}
     }
   </style>
   <header>

@@ -44,7 +44,14 @@
     .foto-preview { width:80px; height:80px; border-radius:8px; object-fit:cover; margin-left:auto; }
     .cumpl-bar { height:3px; background:var(--border-subtle); border-radius:99px; margin-top:0.5rem; overflow:hidden; }
     .cumpl-fill { height:100%; background:#16a34a; border-radius:99px; }
-    @media(max-width:768px){ .dashboard-layout{grid-template-columns:1fr} .sidebar{display:none} .main{padding:1rem 0.85rem 5.5rem} .form-row{grid-template-columns:1fr} }
+    @media(max-width:768px){
+      .form-row{grid-template-columns:1fr}
+    }
+    @media(max-width:480px){
+      .form-row{grid-template-columns:1fr}
+      input,select,textarea{font-size:16px !important}
+      .checkin-peso{font-size:1.5rem}
+    }
   </style>
 </head>
 <body>

@@ -103,18 +103,24 @@
     .sesion-card-badge { font-size: 0.65rem; font-weight: 700; padding: 0.18rem 0.55rem; border-radius: 99px; flex-shrink: 0; }
     .sin-sesiones-dia { text-align: center; padding: 2.5rem 1rem; color: var(--muted); font-size: 0.85rem; }
 
-    @media(max-width:900px){ .calendario{grid-template-columns:repeat(7,minmax(100px,1fr)); overflow-x:auto;} }
+    @media(max-width:900px){ .calendario{grid-template-columns:repeat(7,minmax(110px,1fr)); overflow-x:auto; -webkit-overflow-scrolling:touch;} }
     @media(max-width:768px){
-      .dashboard-layout{grid-template-columns:1fr}
-      .sidebar{display:none}
-      .main{padding:1rem 0.85rem 2rem}
       /* Ocultar vista semanal, mostrar lista */
-      .semana-nav { gap: 0.5rem; }
-      .semana-nav button { padding: 0.35rem 0.6rem; font-size: 0.78rem; }
-      .semana-titulo { font-size: 0.82rem; text-align: center; flex: 1; }
+      .semana-nav { gap: 0.4rem; flex-wrap: wrap; }
+      .semana-nav button { padding: 0.35rem 0.6rem; font-size: 0.78rem; min-height: 38px; }
+      .semana-titulo { font-size: 0.82rem; text-align: center; flex: 1; min-width: 0; }
       .calendario { display: none !important; }
       .dias-strip  { display: flex; }
       .lista-dia   { display: flex; }
+      .sesion-card { padding: 0.75rem 0.875rem; }
+    }
+    @media(max-width:480px){
+      .semana-nav { gap: 0.3rem; }
+      .semana-nav button { padding: 0.3rem 0.5rem; font-size: 0.75rem; }
+      .sesion-card { gap: 0.6rem; }
+      .sesion-card-cliente { font-size: 0.82rem; }
+      .dias-strip { gap: 0.3rem; }
+      .dia-btn { min-width: 40px; padding: 0.4rem 0.5rem; }
     }
   </style>
 </head>

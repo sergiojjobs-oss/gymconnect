@@ -552,17 +552,45 @@ footer a:hover { color: var(--text-2); }
   nav { display: none; }
   .form-row { grid-template-columns: 1fr; }
   .profile-hero { flex-direction: column; gap: 1.25rem; }
-  .filter-bar { gap: 0.5rem; }
-  .filter-bar .filter-search { max-width: 100%; }
+  .filter-bar { gap: 0.5rem; flex-direction: column; }
+  .filter-bar .filter-search { max-width: 100%; width: 100%; }
+  .filter-bar select { width: 100%; }
   .trainers-grid { grid-template-columns: 1fr; }
   .modal-box { padding: 1.25rem 1rem; max-height: 92vh; }
   .modal-footer { flex-direction: column-reverse; }
   .modal-footer .btn { width: 100%; justify-content: center; }
   .btn { min-height: 42px; }
+  .profile-section { padding: 1.5rem 0; }
 }
 
 @media (max-width: 640px) {
   .container { padding: 0 1rem; }
-  .form-box { padding: 1.5rem !important; }
-  .role-grid { grid-template-columns: 1fr; }
+  .form-box { padding: 1.25rem !important; }
+  .role-grid { grid-template-columns: 1fr 1fr; }
+  .form-box input, .form-box select, .form-box textarea {
+    font-size: 16px !important; /* prevent iOS auto-zoom */
+  }
+  .search-hero { padding: 1.5rem 0 1.25rem; }
+  .trainer-card { padding: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 0.875rem; }
+  .form-box { padding: 1rem !important; }
+  .role-grid { grid-template-columns: 1fr 1fr; }
+  .form-section { padding: 1rem 0.875rem; }
+  .modal-box {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    max-width: 100%; max-height: 94vh;
+    animation: modalUp 0.2s ease;
+  }
+  .modal-bg { align-items: flex-end; padding: 0; }
+  @keyframes modalUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .profile-hero { gap: 1rem; }
+  .profile-avatar { width: 72px; height: 72px; }
+  .profile-info h1 { font-size: 1.1rem; }
 }

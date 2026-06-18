@@ -55,7 +55,20 @@
     .feedback-form textarea:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(22,163,74,0.1); }
     .feedback-saved { background: rgba(22,163,74,0.04); border: 1px solid rgba(22,163,74,0.12); border-radius: var(--radius); padding: 0.55rem 0.8rem; font-size: 0.76rem; color: var(--text-2); margin-top: 0.4rem; }
     .feedback-saved strong { display: block; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--brand-light); margin-bottom: 0.15rem; }
-    @media(max-width:768px){ .stats-row { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:768px){
+      .stats-row { grid-template-columns: repeat(2,1fr); }
+      .feedback-form { flex-direction: column; }
+      .feedback-form textarea { font-size: 16px !important; }
+      .checkin-head { gap: 0.6rem; }
+      .ch-foto { width: 44px; height: 44px; }
+    }
+    @media(max-width:480px){
+      .stats-row { grid-template-columns: repeat(2,1fr); }
+      .stat-card .v { font-size: 1.1rem; }
+      .checkin-item { padding: 0.75rem; }
+      .cliente-selector { gap: 0; }
+      .cli-pill { padding: 0.45rem 0.65rem; font-size: 0.74rem; }
+    }
   </style>
 </head>
 <body>

@@ -47,7 +47,19 @@
     .plantillas-panel { background: rgba(139,92,246,0.04); border: 1px solid rgba(139,92,246,0.12); border-radius: var(--radius-lg); padding: 0.875rem 1rem; margin-bottom: 1.25rem; display: none; }
     .plantillas-label { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: #a78bfa; margin-bottom: 0.5rem; }
 
-    @media(max-width:768px){ .rutina-actions { opacity: 1; } .ej-builder-head { display: none; } .ej-row { grid-template-columns: 1fr 1fr; } }
+    @media(max-width:768px){
+      .rutina-actions { opacity: 1; }
+      .ej-builder-head { display: none; }
+      .ej-row { grid-template-columns: 1fr 1fr; gap: 0.35rem; padding: 0.5rem 0.6rem; }
+      .ej-row input { font-size: 16px !important; padding: 0.4rem 0.5rem; min-height: 36px; }
+      .btn-del-ej { width: 32px; height: 32px; }
+      .rutina-desc { max-width: 100% !important; white-space: normal; }
+    }
+    @media(max-width:480px){
+      .ej-row { grid-template-columns: 1fr 1fr; gap: 0.25rem; }
+      .rutina-row { padding: 0.6rem 0.875rem; }
+      .rutina-info .rutina-desc { display: none; }
+    }
   </style>
 </head>
 <body>

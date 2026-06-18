@@ -100,8 +100,8 @@
     if (!sidebar) return;
     sidebar.style.cssText =
       'display:flex;flex-direction:column;position:fixed;top:0;left:0;' +
-      'width:270px;height:100vh;z-index:300;padding-top:1.5rem;' +
-      'background:#0f2318;border-right:1px solid rgba(255,255,255,0.07);' +
+      'width:270px;height:100vh;height:100dvh;z-index:300;padding-top:1.5rem;' +
+      'background:var(--surface,#111111);border-right:1px solid var(--border,#262626);' +
       'overflow-y:auto;box-shadow:6px 0 40px rgba(0,0,0,0.6);' +
       'animation:sidebarIn 0.22s ease;';
     sidebar.classList.add('open');
@@ -116,6 +116,6 @@
       sidebar.classList.remove('open');
     }
     backdrop.classList.remove('open');
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = '';
   }
 })();

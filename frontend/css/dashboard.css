@@ -650,7 +650,7 @@ tbody td:first-child { color: var(--text); }
 @media (max-width: 900px) {
   .dashboard-layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
-  .main-content, .main { padding: 1.1rem 0.875rem 5rem !important; min-height: unset; }
+  .main-content, .main { padding: 1.1rem 0.875rem 5.5rem !important; min-height: unset; }
   .page-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .page-header-actions { width: 100%; }
   .page-header-actions .btn { flex: 1; justify-content: center; }
@@ -659,20 +659,27 @@ tbody td:first-child { color: var(--text); }
   .modal-box, .modal { padding: 1.1rem 0.875rem; max-height: 92vh; }
   .modal-footer, .modal-actions { flex-direction: column-reverse; }
   .modal-footer .btn, .modal-actions .btn { width: 100%; justify-content: center; }
-  .table-wrap, table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { min-width: 460px; }
-  .tab-strip { overflow-x: auto; flex-wrap: nowrap; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table-wrap table { min-width: 520px; }
+  table { display: table; }
+  .tab-strip { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
   .tab-btn { font-size: 0.74rem; padding: 0.45rem 0.75rem; }
+  /* Ensure buttons are finger-friendly */
+  .btn { min-height: 40px; }
+  /* Header: compact on tablet */
+  header .container { padding: 0 1rem; }
+  nav button { padding: 0.28rem 0.6rem; font-size: 0.73rem; }
 
   aside.sidebar.open {
     display: flex !important;
     position: fixed; top: 0; left: 0;
-    width: 220px; height: 100vh; z-index: 300;
+    width: 260px; height: 100vh; height: 100dvh; z-index: 300;
     padding-top: 0.5rem;
     border-right: 1px solid var(--border);
     box-shadow: 16px 0 48px rgba(0,0,0,0.5);
     animation: sidebarSlideIn 0.18s ease;
     overflow-y: auto;
+    background: var(--surface);
   }
   @keyframes sidebarSlideIn {
     from { transform: translateX(-100%); }
@@ -680,7 +687,45 @@ tbody td:first-child { color: var(--text); }
   }
 }
 
-@media (max-width: 640px) {
-  .page-header h1 { font-size: 0.95rem; }
-  .stat-card .stat-val { font-size: 1.25rem; }
+/* ─── SMALL PHONES (≤ 480px) ─── */
+@media (max-width: 480px) {
+  .main-content, .main { padding: 0.875rem 0.75rem 5.5rem !important; }
+  .page-header h1 { font-size: 0.9rem; }
+  .page-header .page-subtitle { font-size: 0.72rem; }
+  .stat-card { padding: 0.875rem 0.75rem; }
+  .stat-card .stat-val { font-size: 1.1rem; letter-spacing: -0.5px; }
+  .stat-card .stat-lbl { font-size: 0.6rem; }
+  .btn { font-size: 0.78rem; padding: 0.42rem 0.75rem; min-height: 42px; }
+  .card { padding: 0.875rem 0.875rem; }
+  .modal-box, .modal {
+    padding: 1rem 0.875rem;
+    max-height: 94vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    max-width: 100%;
+    animation: modalUp 0.2s ease;
+  }
+  .modal-bg, .modal-overlay { align-items: flex-end; padding: 0; }
+  @keyframes modalUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .form-field input, .form-field select, .form-field textarea,
+  .form-group input, .form-group select, .form-group textarea {
+    font-size: 16px !important; /* prevents iOS zoom on focus */
+    padding: 0.6rem 0.75rem;
+  }
+  .tab-btn { font-size: 0.72rem; padding: 0.4rem 0.65rem; }
+  .section-label, .sec-label { font-size: 0.58rem; }
+  .empty-state { padding: 2rem 1rem; }
+}
+
+/* ─── VERY SMALL (≤ 375px — iPhone SE) ─── */
+@media (max-width: 375px) {
+  .main-content, .main { padding: 0.75rem 0.625rem 5.5rem !important; }
+  .stat-grid { grid-template-columns: 1fr 1fr; gap: 1px; }
+  .stat-card .stat-val { font-size: 1rem; }
+  .page-header h1 { font-size: 0.85rem; }
+  header .container { padding: 0 0.75rem; }
+  .badge, .chip { font-size: 0.58rem; padding: 0.1rem 0.4rem; }
 }

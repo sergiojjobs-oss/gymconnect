@@ -226,10 +226,19 @@
     .example-sep::before, .example-sep::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
 
     @media (max-width: 768px) {
-      .filters-inner { flex-wrap: wrap; }
+      .filters-inner { flex-wrap: wrap; gap: 0.5rem; }
       .sort-wrap { margin-left: 0; width: 100%; justify-content: flex-end; }
       .trainers-grid { grid-template-columns: 1fr; }
       .stats-strip-inner { gap: 0.875rem; }
+    }
+    @media (max-width: 480px) {
+      .filters-inner { flex-direction: column; }
+      .filters-inner input,
+      .filters-inner select { width: 100%; font-size: 16px !important; }
+      .sort-wrap { justify-content: flex-start; }
+      .trainers-grid { grid-template-columns: 1fr; }
+      .trainer-card { padding: 1rem; }
+      .trainer-rate .btn { min-height: 38px; font-size: 0.78rem; }
     }
   </style>
 </head>
