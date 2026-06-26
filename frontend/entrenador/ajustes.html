@@ -37,7 +37,14 @@
     .hint { font-size:0.75rem; color:var(--muted); margin-top:0.35rem; }
     .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(20px); background:var(--surface-3); color:var(--text); padding:.85rem 1.5rem; border-radius:8px; font-size:.88rem; font-weight:600; opacity:0; transition:opacity .3s,transform .3s; z-index:1100; border-left:4px solid var(--brand); white-space:nowrap; pointer-events:none; }
     .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    @media (max-width:900px) {
+      .dashboard-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main-content { padding: 1.1rem 0.875rem 5.5rem; }
+    }
     @media (max-width:480px) {
+      .dashboard-layout { grid-template-columns: 1fr; }
+      .main-content { padding: 0.875rem 0.75rem 5.5rem; }
       .toast { white-space: normal; text-align: center; width: calc(100vw - 2rem); left: 1rem; transform: translateX(0) translateY(20px); }
       .toast.show { transform: translateX(0) translateY(0); }
       input, select, textarea { font-size: 16px !important; }

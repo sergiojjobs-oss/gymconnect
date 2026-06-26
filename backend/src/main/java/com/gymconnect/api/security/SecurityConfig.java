@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/resenas/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/api/ping").permitAll()
                 // Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
             )

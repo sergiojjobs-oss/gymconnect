@@ -156,8 +156,17 @@
     .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface-3); color: var(--text); padding: .85rem 1.5rem; border-radius: 8px; font-size: .88rem; font-weight: 600; opacity: 0; transition: opacity .3s, transform .3s; z-index: 1100; border-left: 4px solid var(--brand); white-space: nowrap; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    @media (max-width: 900px) { .plans-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 768px) { .dashboard-layout { grid-template-columns: 1fr; } .sidebar { display: none; } .main-content { padding: 1.5rem; } }
+    @media (max-width: 900px) {
+      .plans-grid { grid-template-columns: 1fr; }
+      .dashboard-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main-content { padding: 1.1rem 0.875rem 5.5rem; }
+    }
+    @media (max-width: 480px) {
+      .dashboard-layout { grid-template-columns: 1fr; }
+      .main-content { padding: 0.875rem 0.75rem 5.5rem; }
+      input, select, textarea { font-size: 16px !important; }
+    }
   </style>
 </head>
 <body>
